@@ -1,0 +1,24 @@
+$mycolor:red;
+
+@mixin border-1px($color) {
+    position: relative;
+
+    &::after {
+        display: block;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        border-bottom: solid 1px $color;
+        content: '';
+    }
+}
+
+@mixin bg-image($url) {
+    background-image: url($url + ".png");
+
+    @media (-webkit-min-device-pixel-ratio: 2),
+    (min-device-pixel-ratio: 2) {
+        background-image: url($url + "@2x.png");
+    }
+}
