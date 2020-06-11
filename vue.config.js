@@ -55,6 +55,12 @@ module.exports = {
           // 在这种情况下，我们可以使用 `scss` 选项，对 `scss` 语法进行单独配置
           scss: {
             prependData: `@import "~@/assets/css/mixin.scss";`
+          },
+          postcss: {
+            'postcss-pxtorem': {
+                rootValue: 16,//结果为：设计稿元素尺寸/16，比如元素宽320px,最终页面会换算成 20rem
+                propList: ['*']
+              }
           }
         }
       }
