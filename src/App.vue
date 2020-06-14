@@ -11,7 +11,7 @@
   </div>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -30,6 +30,7 @@
   background: #ffffff;
   a {
     flex: 1;
+    font-size: 15px;
     font-weight: bold;
     color: #666666;
     &.router-link-exact-active {
