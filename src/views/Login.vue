@@ -1,44 +1,32 @@
 <template>
   <div class="container">
-    <van-icon name="cross" />
-    <h1>手机号登陆/注册</h1>
-    <van-form @submit="onSubmit">
-      <!-- <van-field
-        v-model="username"
-        name="用户名"
-        label="用户名"
-        placeholder="用户名"
-        :rules="[{ required: true, message: '请填写用户名' }]"
-      />-->
-      <!-- <van-field
-        readonly
-        clickable
-        name="picker"
-        :value="value"
-        label="选择器"
-        placeholder="请输入手机号"
-        @click="showPicker = true"
-      >-->
-      <!-- </van-field> -->
-      <div class="row">
-        <div class="country-code" @click="showPicker = true">
-          {{countryCode}}
-          <van-icon name="arrow-down" />
-        </div>
-        <input type="text" placeholder="请输入手机号" v-model="tel" />
-      </div>
-      <div class="forget-password">忘记密码</div>
-      <!-- <van-field
-        v-model="password"
-        type="password"
-        name="密码"
-        label="密码"
-        placeholder="密码"
-        :rules="[{ required: true, message: '请填写密码' }]"
-      />-->
-      <div style="margin: 16px;">
-        <van-button round block color="#FDD004" native-type="submit">下一步</van-button>
-      </div>
+    <van-icon name="cross" @click="step=1" />
+    <h1>{{text}}</h1>
+    <!-- step1 -->
+    <div v-if="step===1" style="margin-top: 58px;">
+      <van-form @submit="onSubmit1">
+        <van-field v-model="telephone" type="text" placeholder="请输入手机号">
+          <template #left-icon>
+            <span @click="showPicker = true">
+              {{cnName+'+'+countryTel}}
+              <van-icon
+                name="arrow-down"
+                size="8"
+                color="#AEAEAE"
+                style="display:inline-block;vertical-align:middle"
+              />
+            </span>
+          </template>
+        </van-field>
+        <div class="desc" @click="step=4">忘记密码</div>
+        <van-button
+          style="margin-top:50px;background: #fdd004;border:none;"
+          round
+          block
+          :disabled="telephone===''"
+          native-type="submit"
+        >{{btnText}}</van-button>
+      </van-form>
       <div class="tips">未注册的手机号码验证后自动注册</div>
       <div class="share">
         <div class="title">第三方登录</div>
@@ -47,16 +35,144 @@
           <img src="../assets/img/icon-qq.png" alt="qq" />
         </div>
       </div>
-      <van-popup v-model="showPicker" position="bottom">
-        <van-picker
-          show-toolbar
-          :columns="countryList"
-          :default-index="countryIndex"
-          @confirm="onConfirm"
-          @cancel="showPicker = false"
-        />
-      </van-popup>
-    </van-form>
+    </div>
+    <!-- step2 -->
+    <div v-if="step===2">
+      <div class="telephone-entered">
+        <i>您输入的号码是</i>
+        <span>{{'+'+countryTel+' '+telephone}}</span>
+      </div>
+      <van-form @submit="onSubmit2">
+        <van-field
+          v-model="password"
+          :type="eyeType===1?'password':'text'"
+          placeholder="请输入密码"
+        >
+          <template #right-icon>
+            <van-icon name="closed-eye" v-if="eyeType===1" @click="eyeType=2" />
+            <van-icon name="eye-o" v-if="eyeType===2" @click="eyeType=1" />
+          </template>
+        </van-field>
+        <div class="desc" @click="step=3">验证码登录</div>
+        <div style="margin-top: 50px;">
+          <van-button round block native-type="submit" :disabled="password===''"  style="background: #fdd004;border:none;">登录</van-button>
+        </div>
+      </van-form>
+    </div>
+    <!-- step3 -->
+    <div v-if="step===3">
+      <div class="telephone-entered">
+        <i>您输入的号码是</i>
+        <span>{{'+'+countryTel+' '+telephone}}</span>
+      </div>
+      <van-form @submit="onSubmit3">
+        <van-field
+          v-model="code"
+          center
+          clearable
+          placeholder="请输入验证码"
+        >
+          <template #button>
+            <van-button
+              style="background: #f3f3f3;border:none"
+              round
+              clearable
+              size="small"
+              :disabled="codeText!='获取验证码'"
+              @click="sendCode()"
+            >{{codeText}}</van-button>
+          </template>
+        </van-field>
+        <div class="desc" @click="step=2">密码登录</div>
+        <div style="margin-top: 50px;">
+          <van-button round block native-type="submit" :disabled="code===''" style="background: #fdd004;border:none;">登录</van-button>
+        </div>
+      </van-form>
+    </div>
+    <div v-if="step===4" style="margin-top:50px;">
+      <van-form @submit="onSubmit4">
+        <van-field v-model="telephone" type="text" placeholder="请输入手机号">
+          <template #left-icon>
+            <span @click="showPicker = true">
+              {{cnName+'+'+countryTel}}
+              <van-icon
+                name="arrow-down"
+                size="8"
+                color="#AEAEAE"
+                style="display:inline-block;vertical-align:middle"
+              />
+            </span>
+          </template>
+        </van-field>
+        <div style="margin-top: 50px;">
+          <van-button
+            round
+            block
+            native-type="submit"
+            :disabled="telephone===''"
+            style="background: #fdd004;border:none;"
+          >下一步</van-button>
+        </div>
+      </van-form>
+    </div>
+    <div v-if="step===5">
+      <div class="telephone-entered">
+        <i>您输入的号码是</i>
+        <span>{{'+'+countryTel+' '+telephone}}</span>
+      </div>
+      <van-form @submit="onSubmit5">
+        <van-field
+          v-model="code"
+          center
+          clearable
+          placeholder="请输入验证码"
+        >
+          <template #button>
+            <van-button
+              style="background: #f3f3f3;border:none"
+              round
+              clearable
+              size="small"
+              :disabled="codeText!='获取验证码'"
+              @click="sendCode()"
+            >{{codeText}}</van-button>
+          </template>
+        </van-field>
+        <van-field
+          v-model="password1"
+          :type="eyeType1===1?'password':'text'"
+          placeholder="设置新密码"
+        >
+          <template #right-icon>
+            <van-icon name="closed-eye" v-if="eyeType1===1" @click="eyeType1=2" />
+            <van-icon name="eye-o" v-if="eyeType1===2" @click="eyeType1=1" />
+          </template>
+        </van-field>
+        <van-field
+          v-model="password2"
+          :type="eyeType2===1?'password':'text'"
+          placeholder="确认新密码"
+        >
+          <template #right-icon>
+            <van-icon name="closed-eye" v-if="eyeType2===1" @click="eyeType2=2" />
+            <van-icon name="eye-o" v-if="eyeType2===2" @click="eyeType2=1" />
+          </template>
+        </van-field>
+        <div style="margin-top: 50px;">
+          <van-button round block native-type="submit" :disabled="!(code!=''&&password1!=''&&password2!='')" style="background: #fdd004;border:none;">登录</van-button>
+        </div>
+      </van-form>
+    </div>
+
+    <van-popup v-model="showPicker" position="bottom">
+      <van-picker
+        show-toolbar
+        :columns="countryList"
+        :default-index="countryIndex"
+        @confirm="onConfirm"
+        @cancel="showPicker = false"
+      />
+    </van-popup>
   </div>
 </template>
 
@@ -73,10 +189,22 @@ export default {
     return {
       username: "",
       password: "",
+      code: "",
       showPicker: false,
-      tel: "",
+      telephone: "",
       countryList: [],
-      countryCode: ""
+      countryIndex: 0,
+      cnName: "中国",
+      countryTel: "86",
+      step: 1,
+      text: "手机号登陆/注册",
+      btnText: "下一步",
+      eyeType: 1,
+      codeText: "获取验证码",
+      password1: "",
+      password2: "",
+      eyeType1: 1,
+      eyeType2: 1
     };
   },
   created() {
@@ -87,11 +215,12 @@ export default {
       })
       .then(res => {
         this.countryList = res.data.data.map(item => {
-          return { text: `${item.cnName}+${item.countryTel}` };
+          return { text: item.cnName, code: item.countryTel };
         });
         this.countryList.filter((item, index) => {
-          if (item.text.indexOf("中国") != -1) {
-            this.countryCode = this.countryList[index].text;
+          if (item.text === "中国") {
+            this.cnName = this.countryList[index].text;
+            this.countryTel = this.countryList[index].code;
             this.countryIndex = index;
           }
         });
@@ -103,16 +232,65 @@ export default {
   },
   mounted() {},
   methods: {
-    onSubmit(values) {
-      console.log("submit", values);
+    onSubmit1() {
+      this.step = 2;
     },
-    onConfirm(value) {
-      this.value = value;
+    onSubmit2() {
+      console.log(2);
+    },
+    onSubmit3() {
+      console.log(3);
+    },
+    onSubmit4() {
+      this.step = 5;
+    },
+    onSubmit5() {
+      console.log(5);
+    },
+    onConfirm(item) {
+      this.cnName = item.text;
+      this.countryTel = item.code;
       this.showPicker = false;
+    },
+    sendCode() {
+      let num = 60;
+      this.codeInstance = setInterval(() => {
+        num--;
+        this.codeText = `重新发送（${num}）`;
+        if (num === 0) {
+          clearInterval(this.codeInstance);
+          this.codeText = "获取验证码";
+        }
+      }, 1000);
     }
   },
   computed: {},
-  watch: {},
+  watch: {
+    step: function(val) {
+      switch (val) {
+        case 1:
+          this.text = "手机号登陆/注册";
+          this.btnText = "下一步";
+          break;
+        case 2:
+          this.text = "密码登录";
+          this.btnText = "登录";
+          break;
+        case 3:
+          this.text = "验证码登录";
+          this.btnText = "登录";
+          break;
+        case 4:
+          this.text = "找回密码";
+          this.btnText = "下一步";
+          break;
+        case 5:
+          this.text = "手机号验证";
+          this.btnText = "登录";
+          break;
+      }
+    }
+  },
   components: {
     "van-icon": Icon,
     "van-form": Form,
@@ -133,13 +311,13 @@ export default {
   font-size: 21px;
 }
 h1 {
-  margin-bottom: 58px;
   font-size: 19px;
   font-family: PingFang SC Bold, PingFang SC Bold-Bold;
   font-weight: 700;
   color: #333333;
 }
 .tips {
+  margin-top: 19px;
   font-size: 12px;
   font-family: PingFang SC Medium, PingFang SC Medium-Medium;
   font-weight: 500;
@@ -181,6 +359,11 @@ h1 {
 }
 .row {
   display: flex;
+  padding-bottom: 10px;
+  border-bottom: solid 1px #f0f0f0;
+  input {
+    flex: 1;
+  }
   .country-code {
     margin-right: 15px;
     font-size: 15px;
@@ -193,12 +376,32 @@ h1 {
     }
   }
 }
-.forget-password {
-  margin-bottom: 50px;
-  margin-top: 30px;
+.desc {
+  display: inline-block;
+  margin-top: 12px;
+  margin-left: 16px;
   font-size: 12px;
   font-family: PingFang SC Medium, PingFang SC Medium-Medium;
   font-weight: 500;
   color: #2b548a;
+}
+.telephone-entered {
+  margin-top: 11px;
+  margin-bottom: 48px;
+  font-size: 13px;
+  font-family: PingFang SC Medium, PingFang SC Medium-Medium;
+  font-weight: 500;
+  i {
+    font-style: normal;
+
+    color: #666666;
+  }
+  span {
+    margin-left: 10px;
+    font-size: 13px;
+    font-family: PingFang SC Bold, PingFang SC Bold-Bold;
+    font-weight: 700;
+    color: #333333;
+  }
 }
 </style>
