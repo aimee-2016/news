@@ -1,13 +1,15 @@
 import Vue from 'vue'
-import axios from 'axios'
+// import axios from 'axios'
 import App from './App.vue'
 import router from './router'
 import store from './store'
 import './assets/css/index.scss'
 import './assets/js/rem.js'
+import axios from './http/axios.js'
+Vue.prototype.$ajax = axios
 
 Vue.config.productionTip = false
-axios.defaults.baseURL = 'http://47.56.186.16:8089'
+// axios.defaults.baseURL = 'http://47.56.186.16:8089'
 new Vue({
   router,
   store,

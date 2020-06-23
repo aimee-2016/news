@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <van-icon name="cross" @click="step=1" />
+    <van-icon name="cross" @click="close()" />
     <h1>{{text}}</h1>
     <!-- step1 -->
     <div v-if="step===1" style="margin-top: 58px;">
@@ -25,7 +25,7 @@
           block
           :disabled="telephone===''"
           native-type="submit"
-        >{{btnText}}</van-button>
+        >下一步</van-button>
       </van-form>
       <div class="tips">未注册的手机号码验证后自动注册</div>
       <div class="share">
@@ -43,11 +43,7 @@
         <span>{{'+'+countryTel+' '+telephone}}</span>
       </div>
       <van-form @submit="onSubmit2">
-        <van-field
-          v-model="password"
-          :type="eyeType===1?'password':'text'"
-          placeholder="请输入密码"
-        >
+        <van-field v-model="password" :type="eyeType===1?'password':'text'" placeholder="请输入密码">
           <template #right-icon>
             <van-icon name="closed-eye" v-if="eyeType===1" @click="eyeType=2" />
             <van-icon name="eye-o" v-if="eyeType===2" @click="eyeType=1" />
@@ -55,7 +51,13 @@
         </van-field>
         <div class="desc" @click="step=3">验证码登录</div>
         <div style="margin-top: 50px;">
-          <van-button round block native-type="submit" :disabled="password===''"  style="background: #fdd004;border:none;">登录</van-button>
+          <van-button
+            round
+            block
+            native-type="submit"
+            :disabled="password===''"
+            style="background: #fdd004;border:none;"
+          >登录</van-button>
         </div>
       </van-form>
     </div>
@@ -66,12 +68,7 @@
         <span>{{'+'+countryTel+' '+telephone}}</span>
       </div>
       <van-form @submit="onSubmit3">
-        <van-field
-          v-model="code"
-          center
-          clearable
-          placeholder="请输入验证码"
-        >
+        <van-field v-model="code" center clearable placeholder="请输入验证码">
           <template #button>
             <van-button
               style="background: #f3f3f3;border:none"
@@ -79,13 +76,20 @@
               clearable
               size="small"
               :disabled="codeText!='获取验证码'"
+              native-type="button"
               @click="sendCode()"
             >{{codeText}}</van-button>
           </template>
         </van-field>
         <div class="desc" @click="step=2">密码登录</div>
         <div style="margin-top: 50px;">
-          <van-button round block native-type="submit" :disabled="code===''" style="background: #fdd004;border:none;">登录</van-button>
+          <van-button
+            round
+            block
+            native-type="submit"
+            :disabled="code===''"
+            style="background: #fdd004;border:none;"
+          >登录</van-button>
         </div>
       </van-form>
     </div>
@@ -121,45 +125,39 @@
         <span>{{'+'+countryTel+' '+telephone}}</span>
       </div>
       <van-form @submit="onSubmit5">
-        <van-field
-          v-model="code"
-          center
-          clearable
-          placeholder="请输入验证码"
-        >
+        <van-field v-model="code" center clearable placeholder="请输入验证码">
           <template #button>
             <van-button
               style="background: #f3f3f3;border:none"
               round
               clearable
               size="small"
+              native-type="button"
               :disabled="codeText!='获取验证码'"
               @click="sendCode()"
             >{{codeText}}</van-button>
           </template>
         </van-field>
-        <van-field
-          v-model="password1"
-          :type="eyeType1===1?'password':'text'"
-          placeholder="设置新密码"
-        >
+        <van-field v-model="password1" :type="eyeType1===1?'password':'text'" placeholder="设置新密码">
           <template #right-icon>
             <van-icon name="closed-eye" v-if="eyeType1===1" @click="eyeType1=2" />
             <van-icon name="eye-o" v-if="eyeType1===2" @click="eyeType1=1" />
           </template>
         </van-field>
-        <van-field
-          v-model="password2"
-          :type="eyeType2===1?'password':'text'"
-          placeholder="确认新密码"
-        >
+        <van-field v-model="password2" :type="eyeType2===1?'password':'text'" placeholder="确认新密码">
           <template #right-icon>
             <van-icon name="closed-eye" v-if="eyeType2===1" @click="eyeType2=2" />
             <van-icon name="eye-o" v-if="eyeType2===2" @click="eyeType2=1" />
           </template>
         </van-field>
         <div style="margin-top: 50px;">
-          <van-button round block native-type="submit" :disabled="!(code!=''&&password1!=''&&password2!='')" style="background: #fdd004;border:none;">登录</van-button>
+          <van-button
+            round
+            block
+            native-type="submit"
+            :disabled="!(code!=''&&password1!=''&&password2!='')"
+            style="background: #fdd004;border:none;"
+          >登录</van-button>
         </div>
       </van-form>
     </div>
@@ -177,7 +175,7 @@
 </template>
 
 <script type="text/ecmascript-6">
-import axios from "axios";
+// import axios from "axios";
 import { Icon } from "vant";
 import { Form } from "vant";
 import { Field } from "vant";
@@ -198,48 +196,80 @@ export default {
       countryTel: "86",
       step: 1,
       text: "手机号登陆/注册",
-      btnText: "下一步",
       eyeType: 1,
       codeText: "获取验证码",
       password1: "",
       password2: "",
       eyeType1: 1,
-      eyeType2: 1
+      eyeType2: 1,
+      codeInstance: null
     };
   },
   created() {
-    axios
-      .get("api/front/member/findPhoneCode.json", {
-        // 还可以直接把参数拼接在url后边
-        params: {}
-      })
-      .then(res => {
-        this.countryList = res.data.data.map(item => {
-          return { text: item.cnName, code: item.countryTel };
-        });
-        this.countryList.filter((item, index) => {
-          if (item.text === "中国") {
-            this.cnName = this.countryList[index].text;
-            this.countryTel = this.countryList[index].code;
-            this.countryIndex = index;
-          }
-        });
-        // console.log(this.countryList);
-      })
-      .catch(function(error) {
-        console.log(error);
-      });
+    this.getContryList();
   },
   mounted() {},
   methods: {
+    close() {
+      this.step = 1;
+      clearInterval(this.codeInstance);
+    },
+    getContryList() {
+      this.$ajax
+        .post("api/front/member/findPhoneCode.json", {})
+        .then(res => {
+          this.countryList = res.data.map(item => {
+            return { text: item.cnName, code: item.countryTel };
+          });
+          this.countryList.filter((item, index) => {
+            if (item.text === "中国") {
+              this.cnName = this.countryList[index].text;
+              this.countryTel = this.countryList[index].code;
+              this.countryIndex = index;
+            }
+          });
+          // console.log(this.countryList);
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+    },
     onSubmit1() {
       this.step = 2;
     },
     onSubmit2() {
       console.log(2);
+      this.$ajax
+        .post("api/front/member/login.json", {
+          account: this.telephone,
+          passWord: this.password,
+          loginType: "PASSWORD",
+          codeArea: this.countryTel
+        })
+        .then(res => {
+          console.log(res)
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
     },
     onSubmit3() {
       console.log(3);
+      this.$ajax
+        .post("api/front/member/login.json", {
+          // account: "",
+          // passWord: this.password,
+          phone: this.telephone,
+          sysCode: this.code,
+          loginType: "SYSCODE",
+          codeArea: this.countryTel
+        })
+        .then(res => {
+          this.$store.commit("SET_TOKEN", res.data.accessToken);
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
     },
     onSubmit4() {
       this.step = 5;
@@ -253,15 +283,26 @@ export default {
       this.showPicker = false;
     },
     sendCode() {
-      let num = 60;
-      this.codeInstance = setInterval(() => {
-        num--;
-        this.codeText = `重新发送（${num}）`;
-        if (num === 0) {
-          clearInterval(this.codeInstance);
-          this.codeText = "获取验证码";
-        }
-      }, 1000);
+      this.$ajax
+        .post("api/front/member/sysCode.json", {
+          phone: this.telephone,
+          codeArea: this.countryTel
+        })
+        .then(res => {
+          console.log(res)
+          let num = 60;
+          this.codeInstance = setInterval(() => {
+            num--;
+            this.codeText = `重新发送（${num}）`;
+            if (num === 0) {
+              clearInterval(this.codeInstance);
+              this.codeText = "获取验证码";
+            }
+          }, 1000);
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
     }
   },
   computed: {},
@@ -270,23 +311,18 @@ export default {
       switch (val) {
         case 1:
           this.text = "手机号登陆/注册";
-          this.btnText = "下一步";
           break;
         case 2:
           this.text = "密码登录";
-          this.btnText = "登录";
           break;
         case 3:
           this.text = "验证码登录";
-          this.btnText = "登录";
           break;
         case 4:
           this.text = "找回密码";
-          this.btnText = "下一步";
           break;
         case 5:
           this.text = "手机号验证";
-          this.btnText = "登录";
           break;
       }
     }
@@ -298,6 +334,11 @@ export default {
     "van-button": Button,
     "van-picker": Picker,
     "van-popup": Popup
+  },
+  destroyed() {
+    if (this.codeInstance) {
+      clearInterval(this.codeInstance);
+    }
   }
 };
 </script>
