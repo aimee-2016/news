@@ -182,6 +182,7 @@ import { Field } from "vant";
 import { Button } from "vant";
 import { Picker } from "vant";
 import { Popup } from "vant";
+import { mapActions } from 'vuex'
 export default {
   data() {
     return {
@@ -210,6 +211,10 @@ export default {
   },
   mounted() {},
   methods: {
+    ...mapActions([
+      'handleLogin',
+      'getUserInfo'
+    ]),
     close() {
       this.step = 1;
       clearInterval(this.codeInstance);
@@ -253,23 +258,48 @@ export default {
           console.log(error);
         });
     },
+    // handleSubmit ({ userName, password }) {
+    //   this.handleLogin({ userName, password,loginType,codeArea}).then(res => {
+    //     this.getUserInfo().then(res => {
+    //       this.$router.push({
+    //         name: this.$config.homeName
+    //       })
+    //     })
+    //   })
+    // },
     onSubmit3() {
       console.log(3);
-      this.$ajax
-        .post("api/front/member/login.json", {
-          // account: "",
-          // passWord: this.password,
-          phone: this.telephone,
-          sysCode: this.code,
-          loginType: "SYSCODE",
-          codeArea: this.countryTel
-        })
-        .then(res => {
-          this.$store.commit("SET_TOKEN", res.data.accessToken);
-        })
-        .catch(function(error) {
-          console.log(error);
-        });
+      // this.$ajax
+      //   .post("api/front/member/login.json", {
+      //     // account: "",
+      //     // passWord: this.password,
+      //     phone: this.telephone,
+      //     sysCode: this.code,
+      //     loginType: "SYSCODE",
+      //     codeArea: this.countryTel
+      //   })
+      //   .then(res => {
+      //     console.log(res)
+      //     // this.$store.commit("SET_TOKEN", res.data.accessToken);
+      //   })
+      //   .catch(function(error) {
+      //     console.log(error);
+      //   });
+      const userName = this.telephone
+      const password = this.password
+      const codeArea = this.countryTel
+      const loginType = "SYSCODE"
+      
+      this.handleLogin({userName, password,loginType,codeArea}).then(res => {
+        
+        console.log('登陆成功')
+        console.log(res)
+        // this.getUserInfo().then(res => {
+        //   this.$router.push({
+        //     name: this.$config.homeName
+        //   })
+        // })
+      })
     },
     onSubmit4() {
       this.step = 5;

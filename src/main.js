@@ -5,7 +5,7 @@ import router from './router'
 import store from './store'
 import './assets/css/index.scss'
 import './assets/js/rem.js'
-import axios from './http/axios.js'
+import axios from '@/libs/axios.js'
 Vue.prototype.$ajax = axios
 
 Vue.config.productionTip = false
