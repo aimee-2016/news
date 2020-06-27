@@ -77,6 +77,8 @@ router.beforeEach((to, from, next) => {
     next({
       name: homeName // 跳转到homeName页
     })
+  } else {
+    next()
   }
 })
 export default router
