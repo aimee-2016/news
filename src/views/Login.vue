@@ -273,18 +273,13 @@ export default {
       const password = this.code
       const codeArea = this.countryTel
       const loginType = "SYSCODE"
-      this.handleLogin({userName, password,loginType,codeArea}).then(res => {
-        // this.getUserInfo().then(res => {
-        //   this.$router.push({
-        //     name: this.$config.homeName
-        //   })
-        // })
-        console.log(res)
-        // this.getUserInfo().then(res => {
-        //   this.$router.push({
-        //     name: this.$config.homeName
-        //   })
-        // })
+      this.handleLogin({userName, password,loginType,codeArea}).then(() => {
+        console.log(this.$store.state.token)
+        this.getUserInfo().then(() => {
+          this.$router.push({
+            name: 'home'
+          })
+        })
       })
     },
     onSubmit4() {

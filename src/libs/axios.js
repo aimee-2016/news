@@ -1,5 +1,6 @@
 // 引入axios
 import axios from 'axios';
+import store from '@/store'
 
 // 创建axios实例
 const httpService = axios.create({
@@ -17,6 +18,9 @@ httpService.interceptors.request.use(
             // 让每个请求携带token
             config.headers['Authorization'] = 'Basic TW9iaWxlSDU6Rm5xaGtBd25vTEU9';
             // Basic MobileH5:FnqhkAwnoLE=
+        } else {
+            "登录接口返回的tokenType+半角空格+登录返回的token"
+            config.headers['Authorization'] = store.state.tokenType+' '+store.state.token;
         }
         // console.log(config)
         return config;

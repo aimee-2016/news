@@ -7,15 +7,21 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    token: getToken()
+    token: getToken(),
+    tokenType: '',
+    userInfo: null
   },
   mutations: {
     // 'SET_TOKEN'(state, data) {
     //   state.token = data
     // },
-    setToken (state, token) {
+    setToken (state, {token,tokenType}) {
       state.token = token
+      state.tokenType = tokenType
       setToken(token)
+    },
+    setUserInfo (state,data) {
+      state.userInfo = data
     },
   },
   actions: {
@@ -39,9 +45,7 @@ export default new Vuex.Store({
           }
         }
         axios.post('api/front/member/login.json', params).then(response => {
-          console.log(22)
-          console.log(response)
-            commit('setToken', response.data.accessToken)
+            commit('setToken', {token:response.data.accessToken,tokenType:response.data.tokenType})
         }).catch(function(error) {
           console.log(error);
         });
@@ -63,11 +67,11 @@ export default new Vuex.Store({
     //   })
     // },
     // 获取用户相关信息
-    getUserInfo ({ state, commit }) {
-      axios.post('api/front/member/findMember.json', params).then(response => {
-        console.log(22)
+    getUserInfo ({ commit }) {
+      axios.post('api/front/member/findMember.json').then(response => {
+        console.log(33)
         console.log(response)
-          // commit('setToken', response.data.accessToken)
+          commit('setUserInfo', response.data)
       }).catch(function(error) {
         console.log(error);
       });
