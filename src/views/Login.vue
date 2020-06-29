@@ -182,6 +182,7 @@ import { Field } from "vant";
 import { Button } from "vant";
 import { Picker } from "vant";
 import { Popup } from "vant";
+import { Toast } from 'vant';
 import { mapActions } from 'vuex'
 export default {
   data() {
@@ -268,19 +269,19 @@ export default {
     //   })
     // },
     onSubmit3() {
-      console.log(3);
       const userName = this.telephone
       const password = this.code
       const codeArea = this.countryTel
       const loginType = "SYSCODE"
       this.handleLogin({userName, password,loginType,codeArea}).then(() => {
-        console.log(this.$store.state.token)
         this.getUserInfo().then(() => {
           this.$router.push({
             name: 'home'
           })
         })
-      })
+      }).catch(function(error) {
+          Toast(error.message)
+        })
     },
     onSubmit4() {
       this.step = 5;
@@ -300,7 +301,9 @@ export default {
           codeArea: this.countryTel
         })
         .then(res => {
-          console.log(res)
+          // console.log(res)
+          // console.log(11)
+          Toast('发送成功')
           let num = 60;
           this.codeInstance = setInterval(() => {
             num--;
@@ -312,7 +315,9 @@ export default {
           }, 1000);
         })
         .catch(function(error) {
-          console.log(error);
+          // console.log(22)
+          // console.log(error);
+          Toast(error.message)
         });
     }
   },
