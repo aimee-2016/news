@@ -11,12 +11,12 @@ Vue.use(VueRouter)
     path: '/',
     redirect: '/home',
     name: 'main',
-    component: () => import('../views/Home.vue'),
+    component: () => import('../views/Main.vue'),
     children: [
       {
         path: 'home',
         name: 'home',
-        component: () => import('../views/News.vue'),
+        component: () => import('../views/Home.vue'),
       },
       {
         path: 'video',
@@ -34,9 +34,9 @@ Vue.use(VueRouter)
         component: () => import('../views/Topic.vue')
       },
       {
-        path: 'about',
-        name: 'about',
-        component: () => import('../views/About.vue')
+        path: 'my',
+        name: 'my',
+        component: () => import('../views/My.vue')
       },
     ]
   },

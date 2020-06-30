@@ -176,13 +176,7 @@
 
 <script type="text/ecmascript-6">
 // import axios from "axios";
-import { Icon } from "vant";
-import { Form } from "vant";
-import { Field } from "vant";
-import { Button } from "vant";
-import { Picker } from "vant";
-import { Popup } from "vant";
-import { Toast } from 'vant';
+import { Icon,Form,Field,Button,Picker,Popup,Toast } from "vant";
 import { mapActions } from 'vuex'
 export default {
   data() {
