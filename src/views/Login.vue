@@ -7,7 +7,7 @@
       <van-form @submit="onSubmit1">
         <van-field v-model="telephone" type="text" placeholder="请输入手机号">
           <template #left-icon>
-            <span @click="showPicker = true">
+            <span @click="getContryList()">
               {{cnName+'+'+countryTel}}
               <van-icon
                 name="arrow-down"
@@ -208,7 +208,6 @@ export default {
     };
   },
   created() {
-    this.getContryList();
   },
   mounted() {},
   methods: {
@@ -218,6 +217,7 @@ export default {
     ]),
     close() {
       this.step = 1;
+      this.codeText = "获取验证码";
       clearInterval(this.codeInstance);
     },
     getContryList() {
@@ -228,13 +228,13 @@ export default {
             return { text: item.cnName, code: item.countryTel };
           });
           this.countryList.filter((item, index) => {
-            if (item.text === "中国") {
+            if (item.text === this.cnName) {
               this.cnName = this.countryList[index].text;
               this.countryTel = this.countryList[index].code;
               this.countryIndex = index;
             }
           });
-          // console.log(this.countryList);
+          this.showPicker = true 
         })
         .catch(function(error) {
           console.log(error);
@@ -244,30 +244,20 @@ export default {
       this.step = 2;
     },
     onSubmit2() {
-      console.log(2);
-      this.$ajax
-        .post("api/front/member/login.json", {
-          account: this.telephone,
-          passWord: this.password,
-          loginType: "PASSWORD",
-          codeArea: this.countryTel
-        })
-        .then(res => {
-          console.log(res)
-        })
-        .catch(function(error) {
-          console.log(error);
-        });
+        const userName = this.telephone
+        const password = this.password
+        const codeArea = this.countryTel
+        const loginType = "PASSWORD"
+        this.handleLogin({userName, password,loginType,codeArea}).then(() => {
+          this.getUserInfo().then(() => {
+            this.$router.push({
+              name: 'home'
+            })
+          })
+        }).catch(function(error) {
+            Toast(error.message)
+          })
     },
-    // handleSubmit ({ userName, password }) {
-    //   this.handleLogin({ userName, password,loginType,codeArea}).then(res => {
-    //     this.getUserInfo().then(res => {
-    //       this.$router.push({
-    //         name: this.$config.homeName
-    //       })
-    //     })
-    //   })
-    // },
     onSubmit3() {
       const userName = this.telephone
       const password = this.code
@@ -287,7 +277,24 @@ export default {
       this.step = 5;
     },
     onSubmit5() {
-      console.log(5);
+      if(this.password1!=this.password2) {
+        Toast('两次密码不一致！')
+        return false
+      }
+      this.$ajax
+        .post("api/front/member/forgetPassWord.json", {
+          phone: this.telephone,
+          passWord: this.password1,
+          sysCode: this.code,
+          codeArea: this.countryTel
+        })
+        .then(() => {
+          Toast('修改成功')
+          this.step = 3
+        })
+        .catch(function(error) {
+          Toast(error.message)
+        });
     },
     onConfirm(item) {
       this.cnName = item.text;
@@ -295,28 +302,24 @@ export default {
       this.showPicker = false;
     },
     sendCode() {
+      let num = 60;
+      this.codeInstance = setInterval(() => {
+        num--;
+        this.codeText = `重新发送（${num}）`;
+        if (num === 0) {
+          clearInterval(this.codeInstance);
+          this.codeText = "获取验证码";
+        }
+      }, 1000);
       this.$ajax
         .post("api/front/member/sysCode.json", {
           phone: this.telephone,
           codeArea: this.countryTel
         })
-        .then(res => {
-          // console.log(res)
-          // console.log(11)
+        .then(() => {
           Toast('发送成功')
-          let num = 60;
-          this.codeInstance = setInterval(() => {
-            num--;
-            this.codeText = `重新发送（${num}）`;
-            if (num === 0) {
-              clearInterval(this.codeInstance);
-              this.codeText = "获取验证码";
-            }
-          }, 1000);
         })
         .catch(function(error) {
-          // console.log(22)
-          // console.log(error);
           Toast(error.message)
         });
     }
