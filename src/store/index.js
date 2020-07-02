@@ -8,16 +8,14 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     token: getToken(),
-    tokenType: '',
     userInfo: null
   },
   mutations: {
     // 'SET_TOKEN'(state, data) {
     //   state.token = data
     // },
-    setToken(state, { token, tokenType }) {
+    setToken(state, { token }) {
       state.token = token
-      state.tokenType = tokenType
       setToken(token)
     },
     setUserInfo(state, data) {
@@ -46,7 +44,8 @@ export default new Vuex.Store({
           }
         }
         axios.post('api/front/member/login.json', params).then(response => {
-          commit('setToken', { token: response.data.accessToken, tokenType: response.data.tokenType })
+          "登录接口返回的tokenType+半角空格+登录返回的token"
+          commit('setToken', { token: response.data.tokenType+' '+response.data.accessToken})
           resolve()
         }).catch(function (error) {
           reject(error);
@@ -68,8 +67,8 @@ export default new Vuex.Store({
     getUserInfo({ commit }) {
       return new Promise((resolve, reject) => {
         axios.post('api/front/member/findMember.json').then(response => {
-          console.log(33)
-          console.log(response)
+          // console.log(33)
+          // console.log(response)
           commit('setUserInfo', response.data)
           resolve()
         }).catch(function (error) {

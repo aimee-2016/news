@@ -11,17 +11,35 @@
         <li
           v-for="(item,index) in navList"
           :key="index"
-          :class="{selected:navId===index}"
-          @click="navId=index"
+          :class="{selected:navId===item.id}"
+          @click="getArticle(item.id)"
         >{{item.name}}</li>
       </ul>
       <van-icon name="wap-nav" @click="columnShow=true" />
     </div>
-    <div class="display">
-      <div class="no-login">
+    <div class="article">
+      <!-- <div class="no-login">
         <img src="../assets/img/形状55.png" alt="add" />
         <p>您还没有登录，请前往登录</p>
-      </div>
+      </div>-->
+      <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
+        <div v-for="(item,index) in articleList" :key="index" class="article-item">
+          <h3>{{item.title}}</h3>
+          <div class="img-wrap">
+            <img :src="inner" alt v-for="(inner,index) in item.imagePaths" :key="index" />
+          </div>
+          <div class="operat">
+            <div class="left">
+              <span>{{item.author.nickName}}</span>
+              <span>{{item.commentCount}}评论</span>
+              <span>{{item.pubDate|changeTime}}</span>
+            </div>
+            <div class="close">
+              <van-icon name="cross" />
+            </div>
+          </div>
+        </div>
+      </van-list>
     </div>
     <div class="overlay" v-if="columnShow">
       <div class="column">
@@ -36,10 +54,16 @@
                 <span class="title">我的栏目</span>
                 <span class="desc">点击进入栏目</span>
               </div>
-              <button>编辑</button>
+              <button @click="isEdit=false" v-if="isEdit">编辑</button>
+              <button @click="addColumn()" v-else>完成</button>
             </div>
             <ul class="list">
-              <li v-for="(item,index) in myList" :key="index">{{item.name}}</li>
+              <li v-for="(item,index) in myList" :key="index">
+                {{item.name}}
+                <span v-if="!isEdit&&!item.mustHave" @click="delId(item.id)">
+                  <van-icon name="cross" />
+                </span>
+              </li>
             </ul>
           </div>
           <div class="item">
@@ -50,7 +74,7 @@
               </div>
             </div>
             <ul class="list">
-              <li v-for="(item,index) in recommendList" :key="index">
+              <li v-for="(item,index) in recommendList" :key="index" @click="addId(item.id)">
                 <van-icon name="plus" />
                 {{item.name}}
               </li>
@@ -65,12 +89,12 @@
 <script>
 // @ is an alias to /src
 // import HelloWorld from '@/components/HelloWorld.vue'
-import { Search } from "vant";
-import { Icon } from "vant";
+import { Icon, Search, Toast, List } from "vant";
 export default {
   name: "Home",
   data() {
     return {
+      // timeago,
       navList: [
         { name: "关注", id: 1 },
         { name: "热点", id: 1 },
@@ -107,12 +131,126 @@ export default {
         { name: "娱乐", id: 1 },
         { name: "体育", id: 1 }
       ],
-      columnShow: false
+      columnShow: false,
+      isEdit: true,
+      list: [],
+      loading: false,
+      finished: false,
+      page: 1,
+      size: 2,
+      articleList: []
     };
   },
   components: {
     "van-search": Search,
-    "van-icon": Icon
+    "van-icon": Icon,
+    "van-list": List
+  },
+  created() {
+    this.getNavList();
+    this.getRecommendList();
+  },
+  methods: {
+    getNavList() {
+      this.$ajax
+        .post("api/front/member/findIndexColumnList.json", {})
+        .then(res => {
+          this.navList = res.data;
+          this.navId = res.data[0].id;
+          this.getArticle(this.navId);
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+    },
+    getArticle(id) {
+      this.navId = id;
+      this.$ajax
+        .post("api/front/articles/findArticlesByColumnId.json", {
+          page: this.page,
+          size: this.size,
+          columnId: this.navId,
+          type: "PublishArticle"
+        })
+        .then(res => {
+          // this.navList = res.data
+          this.articleList = res.data.content;
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+    },
+    onLoad() {
+      // 异步更新数据
+      // setTimeout 仅做示例，真实场景中一般为 ajax 请求
+      setTimeout(() => {
+        for (let i = 0; i < 10; i++) {
+          this.list.push(this.list.length + 1);
+        }
+
+        // 加载状态结束
+        this.loading = false;
+
+        // 数据全部加载完成
+        if (this.list.length >= 40) {
+          this.finished = true;
+        }
+      }, 1000);
+      // this.page++
+      // this.$ajax
+      //   .post("api/front/articles/findArticlesByColumnId.json", {
+      //     page: this.page,
+      //     size: this.size,
+      //     columnId: this.navId,
+      //     type: "PublishArticle"
+      //   })
+      //   .then(res => {
+      //     // this.navList = res.data
+      //     this.articleList = res.data.content
+      //     this.loading = false;
+      //     if(this.page=res.data.totalPages) {
+      //       this.finished = true;
+      //     }
+      //   })
+      //   .catch(function(error) {
+      //     console.log(error);
+      //   });
+    },
+    getRecommendList() {
+      this.$ajax
+        .post("api/front/articles/findArticlesAddColumn.json", {})
+        .then(res => {
+          this.myList = res.data.memberColumns;
+          this.recommendList = res.data.recommendedColumns;
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+    },
+    delId(id) {
+      let endIndex = this.myList.findIndex(item => item.id === id);
+      let endItem = this.myList.filter(item => item.id === id);
+      this.myList.splice(endIndex, 1);
+      this.recommendList.push(endItem[0]);
+    },
+    addId(id) {
+      let endIndex = this.recommendList.findIndex(item => item.id === id);
+      let endItem = this.recommendList.filter(item => item.id === id);
+      this.recommendList.splice(endIndex, 1);
+      this.myList.push(endItem[0]);
+    },
+    addColumn() {
+      let ids = this.myList.map(item => item.id);
+      this.$ajax
+        .post("api/front/member/addColumn.json", { ids: ids })
+        .then(() => {
+          Toast("修改成功");
+          this.isEdit = true;
+        })
+        .catch(function(error) {
+          Toast(error.message);
+        });
+    }
   }
 };
 </script>
@@ -138,9 +276,10 @@ export default {
   padding: 0 16px;
   ul {
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    padding-right: 20px;
     li {
+      margin-right: 20px;
       font-size: 15px;
       font-family: PingFang SC Medium, PingFang SC Medium-Medium;
       font-weight: 500;
@@ -174,17 +313,56 @@ export default {
     background: #fff;
   }
 }
-.display {
-  .no-login {
-    padding-top: 136px;
-    p {
-      margin-top: 18px;
-      font-size: 13px;
-      font-family: PingFang SC Medium, PingFang SC Medium-Medium;
-      font-weight: 500;
-      color: #666666;
+.article {
+  padding: 40px 16px 0;
+  text-align: left;
+  .article-item {
+    margin-bottom: 17px;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  h3 {
+    margin-bottom: 10px;
+    font-size: 16px;
+    font-family: PingFang SC Bold, PingFang SC Bold-Bold;
+    font-weight: 700;
+    color: #333333;
+    line-height: 22px;
+    letter-spacing: -1px;
+  }
+  .img-wrap {
+    display: flex;
+    img {
+      width: 110px;
+      height: 80px;
+      margin-right: 10px;
     }
   }
+  .operat {
+    display: flex;
+    justify-content: space-between;
+    margin: 13px 0 15px;
+    font-size: 10px;
+    font-family: PingFang SC Medium, PingFang SC Medium-Medium;
+    font-weight: 500;
+    color: #999999;
+    line-height: 20px;
+    letter-spacing: 0px;
+    .left {
+      span {
+        margin-right: 10px;
+      }
+    }
+  }
+  // .no-login {
+  //   padding-top: 136px;
+  //   p {
+  //     margin-top: 18px;
+  //     font-size: 13px;
+  //     font-family: PingFang SC Medium, PingFang SC Medium-Medium;
+  //     font-weight: 500;
+  //     color: #666666;
+  //   }
+  // }
 }
 .overlay {
   position: fixed;
@@ -199,10 +377,10 @@ export default {
   .head {
     text-align: center;
     margin: 17px 0 31px;
-      font-size: 17px;
-      font-family: PingFang SC Medium, PingFang SC Medium-Medium;
-      font-weight: 500;
-      color: #333333;
+    font-size: 17px;
+    font-family: PingFang SC Medium, PingFang SC Medium-Medium;
+    font-weight: 500;
+    color: #333333;
     .van-icon-cross {
       position: absolute;
       right: 15px;
@@ -217,21 +395,21 @@ export default {
 
       margin-bottom: 23px;
       .text {
-         .title {
-        margin-right: 9px;
-        font-size: 17px;
-        font-family: PingFang SC Heavy, PingFang SC Heavy-Heavy;
-        font-weight: 800;
-        color: #333333;
+        .title {
+          margin-right: 9px;
+          font-size: 17px;
+          font-family: PingFang SC Heavy, PingFang SC Heavy-Heavy;
+          font-weight: 800;
+          color: #333333;
+        }
+        .desc {
+          font-size: 11px;
+          font-family: PingFang SC Medium, PingFang SC Medium-Medium;
+          font-weight: 500;
+          color: #666666;
+        }
       }
-      .desc {
-        font-size: 11px;
-        font-family: PingFang SC Medium, PingFang SC Medium-Medium;
-        font-weight: 500;
-        color: #666666;
-      }
-      }
-     
+
       button {
         width: 60px;
         height: 27px;
@@ -260,11 +438,15 @@ export default {
         font-weight: 500;
         text-align: center;
         color: #333333;
-        &:nth-of-type(4n+4) {
+        &:nth-of-type(4n + 4) {
           margin-right: 0;
         }
         .van-icon-plus {
-          color: #F99307;
+          color: #f99307;
+        }
+        .van-icon-cross {
+          font-size: 8px;
+          color: #666666;
         }
       }
     }
