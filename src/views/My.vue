@@ -104,6 +104,7 @@
 </template>
 
 <script type="text/ecmascript-6">
+import { mapActions } from 'vuex'
 import { Cell, CellGroup, Button, Icon } from "vant";
 export default {
   data() {
@@ -111,7 +112,15 @@ export default {
   },
   created() {},
   mounted() {},
-  methods: {},
+  methods: {
+    ...mapActions([
+      'getUserInfo'
+    ]),
+    init() {
+      // if()
+      // this.
+    }
+  },
   computed: {},
   watch: {},
   components: {

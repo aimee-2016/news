@@ -1,9 +1,10 @@
 <template>
   <div class="container">
-    <van-icon name="cross" @click="close()" />
-    <h1>{{text}}</h1>
-    <!-- step1 -->
-    <div v-if="step===1" style="margin-top: 58px;">
+    <div v-if="step===1">
+      <div class="top-text" style="margin-bottom:58px;">
+        <van-icon name="cross" @click="$router.go(-1)" />
+        <h1>{{text}}</h1>
+      </div>
       <van-form @submit="onSubmit1">
         <van-field v-model="telephone" type="text" placeholder="请输入手机号">
           <template #left-icon>
@@ -38,6 +39,10 @@
     </div>
     <!-- step2 -->
     <div v-if="step===2">
+      <div class="top-text">
+        <van-icon name="cross" @click="close()" />
+        <h1>{{text}}</h1>
+      </div>
       <div class="telephone-entered">
         <i>您输入的号码是</i>
         <span>{{'+'+countryTel+' '+telephone}}</span>
@@ -63,6 +68,10 @@
     </div>
     <!-- step3 -->
     <div v-if="step===3">
+      <div class="top-text">
+        <van-icon name="cross" @click="close()" />
+        <h1>{{text}}</h1>
+      </div>
       <div class="telephone-entered">
         <i>您输入的号码是</i>
         <span>{{'+'+countryTel+' '+telephone}}</span>
@@ -93,7 +102,11 @@
         </div>
       </van-form>
     </div>
-    <div v-if="step===4" style="margin-top:50px;">
+    <div v-if="step===4">
+      <div class="top-text" style="margin-bottom:50px;">
+        <van-icon name="cross" @click="close()" />
+        <h1>{{text}}</h1>
+      </div>
       <van-form @submit="onSubmit4">
         <van-field v-model="telephone" type="text" placeholder="请输入手机号">
           <template #left-icon>
@@ -120,6 +133,10 @@
       </van-form>
     </div>
     <div v-if="step===5">
+      <div class="top-text">
+      <van-icon name="cross" @click="close()" />
+      <h1>{{text}}</h1>
+      </div>
       <div class="telephone-entered">
         <i>您输入的号码是</i>
         <span>{{'+'+countryTel+' '+telephone}}</span>

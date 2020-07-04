@@ -15,7 +15,7 @@
           @click="getArticle(item.id)"
         >{{item.name}}</li>
       </ul>
-      <van-icon name="wap-nav" @click="columnShow=true" />
+      <van-icon name="wap-nav" @click="getRecommendList()" />
     </div>
     <div class="article">
       <!-- <div class="no-login">
@@ -148,7 +148,6 @@ export default {
   },
   created() {
     this.getNavList();
-    this.getRecommendList();
   },
   methods: {
     getNavList() {
@@ -222,9 +221,14 @@ export default {
         .then(res => {
           this.myList = res.data.memberColumns;
           this.recommendList = res.data.recommendedColumns;
+          this.columnShow=true
         })
-        .catch(function(error) {
+        .catch((error)=> {
           console.log(error);
+          // console(this.$router)
+          this.$router.push({
+              name: 'login'
+            })
         });
     },
     delId(id) {
