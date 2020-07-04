@@ -19,8 +19,7 @@ httpService.interceptors.request.use(
             config.headers['Authorization'] = 'Basic TW9iaWxlSDU6Rm5xaGtBd25vTEU9';
             // Basic MobileH5:FnqhkAwnoLE=
         } else {
-            "登录接口返回的tokenType+半角空格+登录返回的token"
-            config.headers['Authorization'] = store.state.tokenType+' '+store.state.token;
+            config.headers['Authorization'] = store.state.token;
         }
         // console.log(config)
         return config;

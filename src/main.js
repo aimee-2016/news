@@ -7,9 +7,13 @@ import './assets/css/index.scss'
 import './assets/js/rem.js'
 import axios from '@/libs/axios.js'
 Vue.prototype.$ajax = axios
+import { format } from 'timeago.js';
+Vue.filter('changeTime', function(dateStr) {
+  return format(dateStr, 'zh_CN');
+})
 
 Vue.config.productionTip = false
-// axios.defaults.baseURL = 'http://47.56.186.16:8089'
+// axios.defaults.baseURL = 'http://47.56.186.16:8089's
 new Vue({
   router,
   store,
