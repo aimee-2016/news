@@ -25,7 +25,6 @@
   width: 100%;
   height: 58px;
   background: #ffffff;
-  text-align: center;
   a {
     font-size: 15px;
     font-weight: bold;
