@@ -31,8 +31,8 @@
       <div class="share">
         <div class="title">第三方登录</div>
         <div class="place">
-          <img src="../assets/img/icon-wechat.png" alt="微信" />
-          <img src="../assets/img/icon-qq.png" alt="qq" />
+          <span class="we-chat"></span>
+          <span class="qq"></span>
         </div>
       </div>
     </div>
@@ -403,10 +403,18 @@ h1 {
   }
   .place {
     margin-top: 24px;
-    img {
+    span {
+      display: inline-block;
       width: 37px;
-      &:last-child {
+      height: 36px;
+      background-size: 37px 36px;
+      background-repeat: no-repeat;
+      &.we-chat {
+        @include bg-image("../assets/img/login/icon-wechat");
+      }
+      &.qq {
         margin-left: 20px;
+        @include bg-image("../assets/img/login/icon-qq");
       }
     }
   }
