@@ -7,28 +7,32 @@
       </div>
       <div class="top">
         <div class="avatar">
-          <i class="auth"></i>
+          <img :src="userInfo.headImgPath" alt />
+          <i class="auth" v-if="userInfo.memberStatus.name==='CertifyAdopt'"></i>
         </div>
         <div class="text">
-          <div class="name">包小白</div>
+          <div class="name">{{userInfo.nickName}}</div>
           <div class="obtain">
-            <span class="tech-video"></span>
-            <span class="tech-article"></span>
+            <!-- <span class="icon-tech tech-video"></span>
+            <span class="icon-tech tech-article"></span> -->
+            <span class="icon-auth noauth" v-if="userInfo.memberStatus.name==='NotApplied'"></span>
+            <span class="icon-auth authing" v-if="userInfo.memberStatus.name==='AssessmentPeriod'"></span>
+            <span class="icon-auth authed" v-if="userInfo.memberStatus.name==='CertifyAdopt'"></span>
           </div>
         </div>
       </div>
       <div class="follow">
         <ul>
           <li>
-            <span class="num">5</span>
+            <span class="num">{{userInfo.followCount}}</span>
             <span class="text">关注</span>
           </li>
           <li>
-            <span class="num">5</span>
+            <span class="num">{{userInfo.fansCount}}</span>
             <span class="text">粉丝</span>
           </li>
           <li>
-            <span class="num">5</span>
+            <span class="num">{{userInfo.fabulousCount}}</span>
             <span class="text">获赞</span>
           </li>
         </ul>
@@ -95,39 +99,79 @@
       </li>
     </ul>
     <van-cell-group>
-      <van-cell icon="envelop-o" title="消息中心" is-link url="/vant/mobile.html" />
+      <van-cell is-link url="/vant/mobile.html">
+        <template #title>
+          <span class="icon-news"></span>
+          <span>消息中心</span>
+        </template>
+        <template #right-icon>
+          <span class="badge">2</span>
+          <van-icon name="arrow" style="line-height: inherit;font-size:16px;color:#969799;" />
+        </template>
+      </van-cell>
+      <van-cell is-link url="/vant/mobile.html">
+        <template #title>
+          <span class="icon-broke"></span>
+          <span>我的爆料</span>
+        </template>
+      </van-cell>
+      <van-cell is-link url="/vant/mobile.html">
+        <template #title>
+          <span class="icon-edit"></span>
+          <span>反馈帮助</span>
+        </template>
+      </van-cell>
+      <van-cell is-link url="/vant/mobile.html">
+        <template #title>
+          <span class="icon-setting"></span>
+          <span>系统设置</span>
+        </template>
+      </van-cell>
+      <van-cell is-link url="/vant/mobile.html">
+        <template #title>
+          <span class="icon-info"></span>
+          <span>关于我们</span>
+        </template>
+      </van-cell>
+      <!-- <van-cell icon="envelop-o" title="我的爆料" is-link url="/vant/mobile.html" />
       <van-cell icon="edit" title="反馈帮助" is-link to="index" />
       <van-cell icon="setting-o" title="系统设置" is-link url="/vant/mobile.html" />
-      <van-cell icon="info-o" title="关于我们" is-link to="index" />
+      <van-cell icon="info-o" title="关于我们" is-link to="index" /> -->
     </van-cell-group>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
-import { mapActions } from 'vuex'
-import { Cell, CellGroup, Button, Icon } from "vant";
+import { mapActions } from "vuex";
+import { Cell, CellGroup, Button, Icon, Tag} from "vant";
 export default {
   data() {
     return {};
   },
-  created() {},
+  created() {
+    this.init()
+  },
   mounted() {},
   methods: {
-    ...mapActions([
-      'getUserInfo'
-    ]),
+    ...mapActions(["getUserInfo"]),
     init() {
-      // if()
-      // this.
+      if(this.$store.state.token&&!this.userInfo) {
+        this.getUserInfo()
+      }
     }
   },
-  computed: {},
+  computed: {
+    userInfo() {
+      return this.$store.state.userInfo;
+    }
+  },
   watch: {},
   components: {
     "van-cell-group": CellGroup,
     "van-cell": Cell,
     "van-button": Button,
-    "van-icon": Icon
+    "van-icon": Icon,
+    "van-tag": Tag
   }
 };
 </script>
@@ -161,8 +205,14 @@ export default {
       width: 58px;
       height: 58px;
       margin-right: 10px;
-      border-radius: 50%;
-      border: #666666 1px solid;
+      // border-radius: 50%;
+      // border: red 1px solid;
+      font-size: 0;
+      img {
+        width: 58px;
+        height: 58px;
+        border-radius: 50%;
+      }
       .auth {
         display: inline-block;
         position: absolute;
@@ -185,7 +235,7 @@ export default {
         color: #000006;
       }
       .obtain {
-        span {
+        .icon-tech {
           display: inline-block;
           width: 82px;
           height: 21px;
@@ -198,6 +248,25 @@ export default {
         }
         .tech-article {
           @include bg-image("../assets/img/my/tech-article");
+        }
+        .icon-auth {
+          display: inline-block;
+          width: 47px;
+          height: 21px;
+          margin-right: 5px;
+          background-size: 47px 21px;
+          background-repeat: no-repeat;
+        }
+        .noauth {
+          width: 55px;
+          background-size: 55px 21px;
+          @include bg-image("../assets/img/my/NotApplied");
+        }
+        .authing {
+          @include bg-image("../assets/img/my/AssessmentPeriod");
+        }
+        .authed {
+          @include bg-image("../assets/img/my/CertifyAdopt");
         }
       }
     }
@@ -351,5 +420,69 @@ export default {
     display: block;
     margin-top: 10px;
   }
+}
+.badge {
+  display:inline-block;
+height: 20px;
+min-width: 20px;
+padding:0 4px;
+background: #fd4040;
+border-radius: 10px;
+font-size: 12px;
+font-family: PingFang SC Bold, PingFang SC Bold-Bold;
+font-weight: 700;
+color: #ffffff;
+text-align:center;
+line-height:20px;
+}
+.icon-news {
+  display: inline-block;
+  width: 16px;
+  height: 14px;
+  margin-right: 6px;
+  background-size: 16px 14px;
+  background-repeat: no-repeat;
+  @include bg-image("../assets/img/my/news");
+  vertical-align: middle;
+}
+.icon-broke {
+  display: inline-block;
+  width: 16px;
+  height: 18px;
+  margin-right: 6px;
+  background-size: 16px 18px;
+  background-repeat: no-repeat;
+  @include bg-image("../assets/img/my/broke");
+  vertical-align: middle;
+}
+.icon-edit {
+  display: inline-block;
+  width: 14px;
+  height: 17px;
+  margin-right: 6px;
+  background-size: 14px 17px;
+  background-repeat: no-repeat;
+  @include bg-image("../assets/img/my/edit");
+  vertical-align: middle;
+}
+.icon-setting {
+  display: inline-block;
+  width: 17px;
+  height: 15px;
+  margin-right: 6px;
+  background-size: 17px 15px;
+  background-repeat: no-repeat;
+  @include bg-image("../assets/img/my/setting");
+  vertical-align: middle;
+}
+.icon-info {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  margin-right: 6px;
+  background-size: 16px 16px;
+  background-repeat: no-repeat;
+  @include bg-image("../assets/img/my/info");
+  vertical-align: middle;
 }
 </style>
