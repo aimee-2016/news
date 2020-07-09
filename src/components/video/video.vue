@@ -1,6 +1,6 @@
 <template>
   <div class="jz-vbox">
-    <div class="vd-title">
+    <!-- <div class="vd-title">
       <p>标题</p>
     </div>
     <video id="video" class="jz-video">
@@ -8,17 +8,25 @@
     </video>
     <i class="vd-play" @click="player" v-if="pyImg">
         <img src='../../assets/img/video/play2x.png' />
-      </i>
+    </i>
     <div class="vd-info">
         <p>652万次播放量 | 03:58:29</p>
+    </div> -->
+    <div :id="id">
+
     </div>
   </div>
 </template>
 
 <script>
+import Player from "xgplayer";
 export default {
   name: "vd",
-  props: {},
+  props: {
+    videoUrl: '',
+    videoImg: '',
+    id: ''
+  },
   data() {
     return {
       pyImg: true,
@@ -26,12 +34,39 @@ export default {
       _dom: ''
     };
   },
+  created() {
+    let loadings = function () {
+      let player = this; let util = Player.util; let container = util.createDom('xg-loading', `
+        <img src="../../assets/img/home/play2x.png" style='width: 50px;height:50px'>
+        </img>
+        `, {}, 'xgplayer-loading')
+      player.root.appendChild(container)
+    }
+    Player.install('zxloading', loadings)
+  },
+  mounted() {
+    let play = new Player({
+        id: this.id,
+        url: this.videoUrl,
+        width: '100%',
+        height: 200,
+        poster: this.videoImg,
+        cssFullscreen: true,
+        // closeVideoTouch: true,
+        ignores: ['pc', 'play', 'volume', 'fullscreen', 'loading'],
+        preview: {
+          // uploadEl
+        },
+        zxloading: true
+    })
+    
+  },
   methods: {
-    player() {
-      this._dom = document.getElementById('video');
-      this.pyImg = !this.pyImg;
-      dom.play()
-    },
+    // player() {
+    //   this._dom = document.getElementById('video');
+    //   this.pyImg = !this.pyImg;
+    //   this._dom.play()
+    // },
     showOtherVideo(){
       setTimeout(() => {
           this.flag = this._dom.paused;
@@ -45,8 +80,15 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.jz-vbox:first-child {
+  margin-top: 0;
+}
+.jz-vbox:last-child {
+  margin-bottom: 0;
+}
 .jz-vbox {
     position: relative;
+    margin: 15px 0;
     .vd-title {
         position:absolute;
         width: 100%;
