@@ -1,7 +1,11 @@
 <template>
   <div>
-    <div class="info-top">
-      <div class="back-home">
+    <div class="no-login" v-if="!userInfo">
+      <div class="avatar"></div>
+      <van-button color="#F99307" plain round to="login" class="login-btn">登陆/注册</van-button>
+    </div>
+    <div class="info-top" v-if="userInfo">
+      <div class="back-home" @click="$router.push('myhome')">
         <span>个人主页</span>
         <van-icon name="arrow" />
       </div>
@@ -14,7 +18,7 @@
           <div class="name">{{userInfo.nickName}}</div>
           <div class="obtain">
             <!-- <span class="icon-tech tech-video"></span>
-            <span class="icon-tech tech-article"></span> -->
+            <span class="icon-tech tech-article"></span>-->
             <span class="icon-auth noauth" v-if="userInfo.memberStatus.name==='NotApplied'"></span>
             <span class="icon-auth authing" v-if="userInfo.memberStatus.name==='AssessmentPeriod'"></span>
             <span class="icon-auth authed" v-if="userInfo.memberStatus.name==='CertifyAdopt'"></span>
@@ -38,7 +42,7 @@
         </ul>
       </div>
     </div>
-    <div class="signin">
+    <div class="signin" v-if="userInfo">
       <div class="date">
         <div class="day-box">
           <ul>
@@ -133,30 +137,26 @@
           <span>关于我们</span>
         </template>
       </van-cell>
-      <!-- <van-cell icon="envelop-o" title="我的爆料" is-link url="/vant/mobile.html" />
-      <van-cell icon="edit" title="反馈帮助" is-link to="index" />
-      <van-cell icon="setting-o" title="系统设置" is-link url="/vant/mobile.html" />
-      <van-cell icon="info-o" title="关于我们" is-link to="index" /> -->
     </van-cell-group>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
 import { mapActions } from "vuex";
-import { Cell, CellGroup, Button, Icon, Tag} from "vant";
+import { Cell, CellGroup, Button, Icon } from "vant";
 export default {
   data() {
     return {};
   },
   created() {
-    this.init()
+    this.init();
   },
   mounted() {},
   methods: {
     ...mapActions(["getUserInfo"]),
     init() {
-      if(this.$store.state.token&&!this.userInfo) {
-        this.getUserInfo()
+      if (this.$store.state.token && !this.userInfo) {
+        this.getUserInfo();
       }
     }
   },
@@ -170,13 +170,29 @@ export default {
     "van-cell-group": CellGroup,
     "van-cell": Cell,
     "van-button": Button,
-    "van-icon": Icon,
-    "van-tag": Tag
+    "van-icon": Icon
   }
 };
 </script>
 
 <style lang="scss" scoped>
+.no-login {
+  padding-bottom: 18px;
+  text-align: center;
+  .avatar {
+    margin: 36px auto 16px;
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    background: #e6f1ff;
+  }
+  .login-btn {
+    font-size: 14px;
+    font-family: PingFang SC Medium, PingFang SC Medium-Medium;
+    font-weight: 500;
+    padding: 10px 29px;
+  }
+}
 .info-top {
   margin: 40px 14px 0;
   .back-home {
@@ -422,18 +438,18 @@ export default {
   }
 }
 .badge {
-  display:inline-block;
-height: 20px;
-min-width: 20px;
-padding:0 4px;
-background: #fd4040;
-border-radius: 10px;
-font-size: 12px;
-font-family: PingFang SC Bold, PingFang SC Bold-Bold;
-font-weight: 700;
-color: #ffffff;
-text-align:center;
-line-height:20px;
+  display: inline-block;
+  height: 20px;
+  min-width: 20px;
+  padding: 0 4px;
+  background: #fd4040;
+  border-radius: 10px;
+  font-size: 12px;
+  font-family: PingFang SC Bold, PingFang SC Bold-Bold;
+  font-weight: 700;
+  color: #ffffff;
+  text-align: center;
+  line-height: 20px;
 }
 .icon-news {
   display: inline-block;
