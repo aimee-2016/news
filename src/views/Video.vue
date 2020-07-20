@@ -12,7 +12,12 @@
       <van-icon name="search" @click="columnShow=true" />
     </div>
     <div class="vd-list" v-if="videoList.length !== 0">
-      <jz-video v-for="(item, index) in videoList" :key="index" :id='item.id' :videoUrl='item.videoPath' :videoImg='item.videoImagePath' />
+      <jz-video v-for="(item, index) in videoList" 
+      :key="index" 
+      :id='item.id' 
+      :videoUrl='item.videoPath' 
+      :videoImg='item.videoImagePath'
+      :author='item' />
     </div>
     <div v-else class="vd-nodata">暂无数据</div>
   </div>
