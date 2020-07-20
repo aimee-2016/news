@@ -1,19 +1,20 @@
 <template>
   <div class="jz-vbox">
-    <!-- <div class="vd-title">
-      <p>标题</p>
-    </div>
-    <video id="video" class="jz-video">
-      <source src="../../assets/img/video/视频.mp4" />您的浏览器不支持 video 标签。
-    </video>
-    <i class="vd-play" @click="player" v-if="pyImg">
-        <img src='../../assets/img/video/play2x.png' />
-    </i>
-    <div class="vd-info">
-        <p>652万次播放量 | 03:58:29</p>
-    </div> -->
+    <p>{{author.title}}</p>
     <div :id="id">
 
+    </div>
+    <div class="video-info">
+      <div class="vi-left"> 
+        <img :src="author.author.headImgPath">
+        <span class="vi-name">{{author.author.nickName}}</span>
+        <span class="vi-gz">+关注</span>
+      </div>
+      <div class="vi-right">
+        <span>355</span>
+        <span>12</span>
+        <img src="../../assets/img/video/other2x.png">
+      </div>
     </div>
   </div>
 </template>
@@ -23,15 +24,27 @@ import Player from "xgplayer";
 export default {
   name: "vd",
   props: {
-    videoUrl: '',
-    videoImg: '',
-    id: ''
+    videoUrl: {
+      default: '',
+      type: String
+    },
+    videoImg: {
+      default: '',
+      type: String
+    },
+    id: {
+      default: '',
+      type: [String, Number]
+    },
+    author: {
+      default: function () {
+        return {}
+      },
+      type: Object
+    }
   },
   data() {
     return {
-      pyImg: true,
-      flag: false,
-      _dom: ''
     };
   },
   created() {
@@ -59,14 +72,9 @@ export default {
         },
         zxloading: true
     })
-    
+    play
   },
   methods: {
-    // player() {
-    //   this._dom = document.getElementById('video');
-    //   this.pyImg = !this.pyImg;
-    //   this._dom.play()
-    // },
     showOtherVideo(){
       setTimeout(() => {
           this.flag = this._dom.paused;
@@ -126,6 +134,42 @@ export default {
   .jz-video {
     width: 100%;
     // height: 182px;
+  }
+}
+.video-info {
+  padding: 0 15px 0 16px;
+  display: flex;
+  justify-content: space-between;
+  .vi-left {
+    .vi-name {
+      font-size: 14px;
+      color: #333333;
+      width: 55px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      margin:0 5px;
+    }
+    .vi-gz {
+      font-size: 14px;
+      color: #F99307;
+    }
+    span {
+      display: inline-block;
+      vertical-align: middle;
+    }
+    img {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      vertical-align: middle;
+    }
+  }
+  .vi-right {
+    img {
+      width: 16px;
+      height: 4px;
+    }
   }
 }
 </style>
