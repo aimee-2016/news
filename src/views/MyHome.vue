@@ -89,7 +89,7 @@
 </template>
 
 <script type="text/ecmascript-6">
-import { Cell, CellGroup, Button, Icon, Tabs, Tab } from "vant";
+import {  Icon, Tabs, Tab } from "vant"; // Cell, CellGroup, Button,
 export default {
   data() {
     return {
@@ -106,9 +106,9 @@ export default {
   },
   watch: {},
   components: {
-    "van-cell-group": CellGroup,
-    "van-cell": Cell,
-    "van-button": Button,
+    // "van-cell-group": CellGroup,
+    // "van-cell": Cell,
+    // "van-button": Button,
     "van-icon": Icon,
     "van-tabs": Tabs,
     "van-tab": Tab

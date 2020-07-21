@@ -90,7 +90,7 @@ export default {
 .about {
   position: relative;
   padding-top: 10px;
-  height: calc(100% - 25px);
+  height: calc(100% - 58px);
 }
 .search {
   display: flex;
