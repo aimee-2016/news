@@ -42,6 +42,11 @@ const routes = [
     ]
   },
   {
+    path: '/topicdetails',
+    name: 'topicdetails',
+    component: () => import('../views/TopicDetails.vue')
+  },
+  {
     path: '/myhome',
     name: 'myhome',
     component: () => import('../views/MyHome.vue')
@@ -70,7 +75,7 @@ const LOGIN_PAGE_NAME = 'login'
 // 路由守卫
 router.beforeEach((to, from, next) => {
   const token = getToken()
-  if (to.name == 'home' || to.name == 'video' || to.name == 'my' || to.name == 'topic') {
+  if (to.name == 'home' || to.name == 'video' || to.name == 'my' || to.name == 'topic' || to.name == 'topicdetails') {
     next()
   } else if (!token && to.name !== LOGIN_PAGE_NAME) {
     // 未登录且要跳转的页面不是登录页

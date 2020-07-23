@@ -6,13 +6,13 @@
           v-for="(item,index) in navList"
           :key="index"
           :class="{selected:navId===item.id}"
-          @click="getArticle(item.id)"
+          @click="getTopic(item.value)"
         >{{item.name}}</li>
       </ul>
       <van-icon name="search" />
     </div>
     <div class="tc-content">
-      <div v-for="(item, index) in topicList" :key="index">
+      <div v-for="(item, index) in topicList" :key="index" @click="$router.push({path: '/topicdetails/', query: {id: item.id}})">
         <div class="tc-fm">
           <img :src="item.imagePathsStr" />
         </div>
@@ -65,12 +65,12 @@ export default {
     this.getTopic();
   },
   methods: {
-    getTopic() {
+    getTopic(value) {
       this.$ajax
         .post("api/front/articles/findTopicArticles.json", {
           page: "1",
           size: "10",
-          topicQueryType: "Newest",
+          topicQueryType: value || "Newest",
           title: ""
         })
         .then(res => {
