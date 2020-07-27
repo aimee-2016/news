@@ -5,7 +5,7 @@ import store from '@/store'
 // 创建axios实例
 const httpService = axios.create({
     // url前缀-'https://some-domain.com/api/'
-    baseURL: 'http://47.56.186.16:8089/', // 需自定义
+    baseURL: 'https://www.c-cnews.com/', // 需自定义
     // 请求超时时间
     timeout: 3000 // 需自定义
 });
@@ -14,7 +14,7 @@ const httpService = axios.create({
 httpService.interceptors.request.use(
     config => {
         // 根据条件加入token-安全携带
-        if (config.url=='api/front/member/login.json'||config.url=='api/front/member/refreshToken.json') { // 需自定义
+        if (config.url === 'api/front/member/login.json' || config.url === 'api/front/member/refreshToken.json') { // 需自定义
             // 让每个请求携带token
             config.headers['Authorization'] = 'Basic TW9iaWxlSDU6Rm5xaGtBd25vTEU9';
             // Basic MobileH5:FnqhkAwnoLE=
