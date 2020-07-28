@@ -72,18 +72,111 @@
               <span class="icon-share"></span>
               <span>
                 <van-icon name="good-job-o" />
-                <i>12</i>
+                <i class="num">12</i>
               </span>
               <span>
                 <van-icon name="comment-o" />
-                <i>355</i>
+                <i class="num">355</i>
+              </span>
+            </div>
+          </li>
+          <li>
+            <div class="info">
+              <div class="left">
+                <img :src="userInfo.headImgPath" alt class="avatar" />
+                <div class="text">
+                  <span class="name">大马哈</span>
+                  <span class="time">5分钟前</span>
+                </div>
+              </div>
+              <div class="right">
+                <span class="icon-top"></span>
+                <van-icon name="ellipsis" />
+              </div>
+            </div>
+            <div class="content1">
+              <div class="article">三里屯街拍：身材这么好的妹子难遇到，网友：回家去三里屯街拍：身材这么好的妹子回家去三里屯街拍：身材这么好的妹子.</div>
+              <div class="picture"></div>
+            </div>
+            <div class="opreate">
+              <span class="icon-share"></span>
+              <span>
+                <van-icon name="good-job-o" />
+                <i class="num">12</i>
+              </span>
+              <span>
+                <van-icon name="comment-o" />
+                <i class="num">355</i>
               </span>
             </div>
           </li>
         </ul>
       </van-tab>
-      <van-tab title="文章">文章</van-tab>
-      <van-tab title="视频">视频</van-tab>
+      <van-tab title="文章">
+        <ul class="all">
+          <li>
+            <div class="info">
+              <div class="left">
+                <img :src="userInfo.headImgPath" alt class="avatar" />
+                <div class="text">
+                  <span class="name">大马哈</span>
+                  <span class="time">5分钟前</span>
+                </div>
+              </div>
+              <div class="right">
+                <span class="icon-top"></span>
+                <van-icon name="ellipsis" />
+              </div>
+            </div>
+            <div class="content1">
+              <div class="article">三里屯街拍：身材这么好的妹子难遇到，网友：回家去三里屯街拍：身材这么好的妹子身材这么好的妹子这么好的妹子这么好的妹子</div>
+              <div class="picture"></div>
+            </div>
+            <div class="opreate">
+              <span class="icon-share"></span>
+              <span>
+                <van-icon name="good-job-o" />
+                <i class="num">12</i>
+              </span>
+              <span>
+                <van-icon name="comment-o" />
+                <i class="num">355</i>
+              </span>
+            </div>
+          </li>
+        </ul>
+      </van-tab>
+      <van-tab title="视频">
+        <ul class="all">
+          <li>
+            <div class="info">
+              <div class="left">
+                <img :src="userInfo.headImgPath" alt class="avatar" />
+                <div class="text">
+                  <span class="name">大马哈</span>
+                  <span class="time">5分钟前</span>
+                </div>
+              </div>
+              <div class="right">
+                <span class="icon-top"></span>
+                <van-icon name="ellipsis" />
+              </div>
+            </div>
+            <div class="content"></div>
+            <div class="opreate">
+              <span class="icon-share"></span>
+              <span>
+                <van-icon name="good-job-o" />
+                <i class="num">12</i>
+              </span>
+              <span>
+                <van-icon name="comment-o" />
+                <i class="num">355</i>
+              </span>
+            </div>
+          </li>
+        </ul>
+      </van-tab>
     </van-tabs>
   </div>
 </template>
@@ -290,11 +383,36 @@ export default {
     height: 180px;
     border: #333333 solid 1px;
   }
+  .content1 {
+    display: flex;
+    margin-top: 18px;
+    .article {
+      margin-top: 10px;
+      width: 65%;
+      margin-right: 5%;
+      height: 60px;
+      overflow : hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      font-size: 16px;
+      font-family: PingFang SC Bold, PingFang SC Bold-Bold;
+      font-weight: 700;
+      line-height: 20px;
+      color: #333333;
+    }
+    .picture {  
+      width: 30%;
+      height: 81px;
+      background: pink;
+    }
+  }
   .opreate {
     margin-top: 18px;
     > span {
       margin-right: 27px;
-      i {
+      .num {
         margin-left: 4px;
         font-size: 13px;
         font-family: PingFang SC Medium, PingFang SC Medium-Medium;
@@ -302,15 +420,19 @@ export default {
         color: #666666;
         font-style: normal;
       }
+      .van-icon {
+        font-size: 20px;
+        vertical-align: -4px;
+      }
     }
     .icon-share {
       display: inline-block;
       width: 16px;
       height: 16px;
-
       background-size: 16px 16px;
       background-repeat: no-repeat;
       @include bg-image("../assets/img/myhome/icon-share");
+      vertical-align: top;
     }
   }
 }
