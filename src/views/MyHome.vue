@@ -4,6 +4,7 @@
       <div class="bg">
         <div class="return">
           <van-icon name="arrow-left" />
+          <van-icon name="ellipsis" style="float:right;font-size:24px" @click="modal.user = true" />
         </div>
         <div class="row-1">
           <img :src="userInfo.headImgPath" alt class="avatar" />
@@ -64,6 +65,101 @@
               </div>
               <div class="right">
                 <span class="icon-top"></span>
+                <van-icon name="ellipsis" @click="modal.article = true" />
+              </div>
+            </div>
+            <div class="content"></div>
+            <div class="opreate">
+              <span class="icon-share"></span>
+              <span>
+                <van-icon name="good-job-o" @click="modal.support=true" />
+                <i class="num">12</i>
+              </span>
+              <span>
+                <van-icon name="comment-o" />
+                <i class="num">355</i>
+              </span>
+            </div>
+          </li>
+          <li>
+            <div class="info">
+              <div class="left">
+                <img :src="userInfo.headImgPath" alt class="avatar" />
+                <div class="text">
+                  <span class="name">大马哈</span>
+                  <span class="time">5分钟前</span>
+                </div>
+              </div>
+              <div class="right">
+                <span class="icon-top"></span>
+                <van-icon name="ellipsis" />
+              </div>
+            </div>
+            <div class="content1">
+              <div class="article">三里屯街拍：身材这么好的妹子难遇到，网友：回家去三里屯街拍：身材这么好的妹子回家去三里屯街拍：身材这么好的妹子.</div>
+              <div class="picture"></div>
+            </div>
+            <div class="opreate">
+              <span class="icon-share"></span>
+              <span>
+                <van-icon name="good-job-o" />
+                <i class="num">12</i>
+              </span>
+              <span>
+                <van-icon name="comment-o" />
+                <i class="num">355</i>
+              </span>
+            </div>
+          </li>
+        </ul>
+      </van-tab>
+      <van-tab title="文章">
+        <ul class="all">
+          <li>
+            <div class="info">
+              <div class="left">
+                <img :src="userInfo.headImgPath" alt class="avatar" />
+                <div class="text">
+                  <span class="name">大马哈</span>
+                  <span class="time">5分钟前</span>
+                </div>
+              </div>
+              <div class="right">
+                <span class="icon-top"></span>
+                <van-icon name="ellipsis" />
+              </div>
+            </div>
+            <div class="content1">
+              <div class="article">三里屯街拍：身材这么好的妹子难遇到，网友：回家去三里屯街拍：身材这么好的妹子身材这么好的妹子这么好的妹子这么好的妹子</div>
+              <div class="picture"></div>
+            </div>
+            <div class="opreate">
+              <span class="icon-share"></span>
+              <span>
+                <van-icon name="good-job-o" />
+                <i class="num">12</i>
+              </span>
+              <span>
+                <van-icon name="comment-o" />
+                <i class="num">355</i>
+              </span>
+            </div>
+          </li>
+        </ul>
+      </van-tab>
+      <van-tab title="视频">
+        <ul class="all">
+          <li>
+            <div class="info">
+              <div class="left">
+                <img :src="userInfo.headImgPath" alt class="avatar" />
+                <div class="text">
+                  <span class="name">大马哈</span>
+                  <span class="time">5分钟前</span>
+                </div>
+              </div>
+              <div class="right">
+                <span class="icon-top"></span>
                 <van-icon name="ellipsis" />
               </div>
             </div>
@@ -72,51 +168,196 @@
               <span class="icon-share"></span>
               <span>
                 <van-icon name="good-job-o" />
-                <i>12</i>
+                <i class="num">12</i>
               </span>
               <span>
                 <van-icon name="comment-o" />
-                <i>355</i>
+                <i class="num">355</i>
               </span>
             </div>
           </li>
         </ul>
       </van-tab>
-      <van-tab title="文章">文章</van-tab>
-      <van-tab title="视频">视频</van-tab>
     </van-tabs>
+    <van-popup v-model="modal.article" class="more-popup">
+      <div>
+        <div class="img-wrap">
+          <img src="../assets/img/myhome/icon-56@2x.png" alt />
+        </div>
+        <div class="text">
+          <span>不感兴趣</span>
+        </div>
+      </div>
+      <div class="row-2">
+        <div class="img-wrap">
+          <img src="../assets/img/myhome/icon-57@2x.png" alt />
+        </div>
+        <div class="text" @click="modal.article=false;modal.report=true">
+          <span>举报内容</span>
+          <span>内容质量差 标题党 低俗 暴力血腥 恶心</span>
+        </div>
+      </div>
+      <div>
+        <div class="img-wrap">
+          <img src="../assets/img/myhome/icon-58@2x.png" alt />
+        </div>
+        <div class="text">
+          <span>拉黑作者：小千作者</span>
+        </div>
+      </div>
+    </van-popup>
+    <van-popup v-model="modal.report" class="more-popup">
+      <div>
+        <div class="text">
+          <span>内容质量差</span>
+        </div>
+      </div>
+      <div>
+        <div class="text">
+          <span>标题党</span>
+        </div>
+      </div>
+      <div>
+        <div class="text">
+          <span>低俗</span>
+        </div>
+      </div>
+      <div>
+        <div class="text">
+          <span>暴力血腥</span>
+        </div>
+      </div>
+      <div>
+        <div class="text">
+          <span>恶心</span>
+        </div>
+      </div>
+    </van-popup>
+    <van-action-sheet
+      v-model="modal.user"
+      :actions="actions"
+      cancel-text="取消"
+      close-on-click-action
+      @select="onSelect"
+    />
+    <!-- <van-dialog v-model="test" title="标题">
+      <div v-slot:title>12313131</div>
+    </van-dialog>-->
+    <!-- <van-popup v-model="modal.complaint" closeable position="bottom" :style="{ height: '30%' }" /> -->
+    <van-popup v-model="modal.complaint" closeable class="modal-complaint">
+      <div class="container">
+        <div class="title">举报用户</div>
+        <div class="center">
+          <div class="text">
+            <span>#</span>我有话要说:
+          </div>
+          <van-field
+            v-model="message"
+            rows="6"
+            autosize
+            type="textarea"
+            placeholder="请具体说明问题，我们将尽快处理"
+            style="background: #f0f0f0;"
+          />
+        </div>
+        <div class="footer">
+          <van-button type="primary" round class="btn-yellow" @click="modal.complaint=false">确定</van-button>
+        </div>
+      </div>
+    </van-popup>
+    <van-popup v-model="modal.support" class="modal-support">
+      <div class="container">
+        <div class="name">卡卡</div>
+        <div class="text">
+          共获得
+          <span>23424354</span>个赞
+        </div>
+        <img src="../assets/img/myhome/icon-44@2x.png" alt />
+        <van-button type="primary" round class="btn-yellow" @click="modal.support=false">好的</van-button>
+      </div>
+    </van-popup>
   </div>
 </template>
-
+btn-yellow
 <script type="text/ecmascript-6">
-import {  Icon, Tabs, Tab } from "vant"; // Cell, CellGroup, Button,
+import {
+  Icon,
+  Tabs,
+  Tab,
+  Popup,
+  ActionSheet,
+  Toast,
+  Dialog,
+  Field,
+  Button,
+} from "vant"; // Cell, CellGroup, Button,
 export default {
   data() {
     return {
-      active: 0
+      active: 0,
+      actions: [{ name: "拉黑/解绑拉黑" }, { name: "举报用户" }],
+      modal: {
+        report: false,
+        complaint: false,
+        article: false,
+        user: false,
+        support: false,
+      },
+      message: "",
     };
   },
   created() {},
   mounted() {},
-  methods: {},
+  methods: {
+    onSelect(item) {
+      this.modal.user = false;
+      if (item.name === "举报用户") {
+        this.modal.complaint = true;
+      } else {
+        Dialog.confirm({
+          title: "确定拉黑该用户？？",
+          message: "拉黑后此用户不能关注您，也无法给您发送任何消息",
+          confirmButtonColor: "rgb(255, 203, 0)",
+        })
+          .then(() => {
+            this.$toast(item.name + "成功");
+            // 已解除黑名单
+          })
+          .catch(() => {});
+      }
+    },
+  },
   computed: {
     userInfo() {
       return this.$store.state.userInfo;
-    }
+    },
   },
   watch: {},
   components: {
     // "van-cell-group": CellGroup,
     // "van-cell": Cell,
-    // "van-button": Button,
+    "van-button": Button,
     "van-icon": Icon,
     "van-tabs": Tabs,
-    "van-tab": Tab
-  }
+    "van-tab": Tab,
+    "van-popup": Popup,
+    "van-action-sheet": ActionSheet,
+    "van-dialog": Dialog,
+    "van-field": Field,
+  },
 };
 </script>
 
 <style lang="scss" scoped>
+.btn-yellow.van-button--primary {
+  display: block;
+  margin: 20px auto 0;
+  width: 95px;
+  height: 39px;
+  background: #ffdd00;
+  color: #333334;
+  border-color: #ffdd00;
+}
 .top-info {
   height: 307px;
   color: #fff;
@@ -290,11 +531,36 @@ export default {
     height: 180px;
     border: #333333 solid 1px;
   }
+  .content1 {
+    display: flex;
+    margin-top: 18px;
+    .article {
+      margin-top: 10px;
+      width: 65%;
+      margin-right: 5%;
+      height: 60px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      font-size: 16px;
+      font-family: PingFang SC Bold, PingFang SC Bold-Bold;
+      font-weight: 700;
+      line-height: 20px;
+      color: #333333;
+    }
+    .picture {
+      width: 30%;
+      height: 81px;
+      background: pink;
+    }
+  }
   .opreate {
     margin-top: 18px;
     > span {
       margin-right: 27px;
-      i {
+      .num {
         margin-left: 4px;
         font-size: 13px;
         font-family: PingFang SC Medium, PingFang SC Medium-Medium;
@@ -302,16 +568,116 @@ export default {
         color: #666666;
         font-style: normal;
       }
+      .van-icon {
+        font-size: 20px;
+        vertical-align: -4px;
+      }
     }
     .icon-share {
       display: inline-block;
       width: 16px;
       height: 16px;
-
       background-size: 16px 16px;
       background-repeat: no-repeat;
       @include bg-image("../assets/img/myhome/icon-share");
+      vertical-align: top;
     }
+  }
+}
+.more-popup {
+  padding: 0 22px;
+  width: 300px;
+  background: #ffffff;
+  border-radius: 5px;
+  > div {
+    display: flex;
+    padding: 24px 0;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  .img-wrap {
+    margin-right: 8px;
+    width: 15px;
+    img {
+      width: 100%;
+    }
+  }
+  .text {
+    font-size: 15px;
+    font-family: PingFang SC Medium, PingFang SC Medium-Medium;
+    font-weight: 500;
+    text-align: left;
+    color: #333333;
+    line-height: 1;
+    letter-spacing: -1px;
+  }
+  .row-2 {
+    .text {
+      span {
+        display: block;
+        &:last-child {
+          margin-top: 10px;
+          color: #999999;
+        }
+      }
+    }
+  }
+}
+.modal-complaint {
+  width: 320px;
+  border-radius: 5px;
+  padding: 17px;
+  .title {
+    font-size: 16px;
+    font-family: PingFang SC Medium, PingFang SC Medium-Medium;
+    font-weight: bold;
+    color: #333333;
+    line-height: 24px;
+    letter-spacing: 0px;
+    text-align: center;
+  }
+  .center {
+    margin-top: 14px;
+    .text {
+      margin-bottom: 12px;
+      font-size: 15px;
+      font-family: PingFang SC Medium, PingFang SC Medium-Medium;
+      font-weight: 500;
+      text-align: justifyLeft;
+      color: #333333;
+      span {
+        color: #f99307;
+      }
+    }
+  }
+}
+.modal-support {
+  padding: 36px 0;
+  width: 250px;
+  border-radius: 5px;
+  text-align: center;
+  .name {
+    font-size: 15px;
+    font-family: PingFang SC Bold, PingFang SC Bold-Bold;
+    font-weight: 700;
+    color: #333333;
+  }
+  .text {
+    margin-top: 13px;
+    font-size: 13px;
+    font-family: PingFang SC Medium, PingFang SC Medium-Medium;
+    font-weight: 500;
+    color: #333333;
+    span {
+      color: #f7962a;
+    }
+  }
+  img {
+    margin-top: 23px;
+    width: 92px;
+    height: 41px;
+  }
+  button {
+    margin-top: 22px;
   }
 }
 </style>
