@@ -70,13 +70,15 @@
             </div>
             <div class="content"></div>
             <div class="opreate">
-              <span class="icon-share"></span>
               <span>
-                <van-icon name="good-job-o" @click="modal.support=true" />
+                <img src="../assets/img/myhome/icon-share@2x.png" alt />
+              </span>
+              <span>
+                <img src="../assets/img/myhome/icon-50@2x.png" @click="modal.support=true" alt />
                 <i class="num">12</i>
               </span>
               <span>
-                <van-icon name="comment-o" />
+                <img src="../assets/img/myhome/icon-49@2x.png" alt />
                 <i class="num">355</i>
               </span>
             </div>
@@ -100,13 +102,15 @@
               <div class="picture"></div>
             </div>
             <div class="opreate">
-              <span class="icon-share"></span>
               <span>
-                <van-icon name="good-job-o" />
+                <img src="../assets/img/myhome/icon-share@2x.png" alt />
+              </span>
+              <span>
+                <img src="../assets/img/myhome/icon-50@2x.png" @click="modal.support=true" alt />
                 <i class="num">12</i>
               </span>
               <span>
-                <van-icon name="comment-o" />
+                <img src="../assets/img/myhome/icon-49@2x.png" alt />
                 <i class="num">355</i>
               </span>
             </div>
@@ -130,54 +134,26 @@
               </div>
             </div>
             <div class="content1">
-              <div class="article">三里屯街拍：身材这么好的妹子难遇到，网友：回家去三里屯街拍：身材这么好的妹子身材这么好的妹子这么好的妹子这么好的妹子</div>
+              <div class="article">三里屯街拍：身材这么好的妹子难遇到，网友：回家去三里屯街拍：身材这么好的妹子回家去三里屯街拍：身材这么好的妹子.</div>
               <div class="picture"></div>
             </div>
             <div class="opreate">
-              <span class="icon-share"></span>
               <span>
-                <van-icon name="good-job-o" />
+                <img src="../assets/img/myhome/icon-share@2x.png" alt />
+              </span>
+              <span>
+                <img src="../assets/img/myhome/icon-50@2x.png" @click="modal.support=true" alt />
                 <i class="num">12</i>
               </span>
               <span>
-                <van-icon name="comment-o" />
+                <img src="../assets/img/myhome/icon-49@2x.png" alt />
                 <i class="num">355</i>
               </span>
             </div>
           </li>
         </ul>
       </van-tab>
-      <van-tab title="视频">
-        <ul class="all">
-          <li>
-            <div class="info">
-              <div class="left">
-                <img :src="userInfo.headImgPath" alt class="avatar" />
-                <div class="text">
-                  <span class="name">大马哈</span>
-                  <span class="time">5分钟前</span>
-                </div>
-              </div>
-              <div class="right">
-                <span class="icon-top"></span>
-                <van-icon name="ellipsis" />
-              </div>
-            </div>
-            <div class="content"></div>
-            <div class="opreate">
-              <span class="icon-share"></span>
-              <span>
-                <van-icon name="good-job-o" />
-                <i class="num">12</i>
-              </span>
-              <span>
-                <van-icon name="comment-o" />
-                <i class="num">355</i>
-              </span>
-            </div>
-          </li>
-        </ul>
-      </van-tab>
+      <van-tab title="视频"></van-tab>
     </van-tabs>
     <van-popup v-model="modal.article" class="more-popup">
       <div>
@@ -240,10 +216,6 @@
       close-on-click-action
       @select="onSelect"
     />
-    <!-- <van-dialog v-model="test" title="标题">
-      <div v-slot:title>12313131</div>
-    </van-dialog>-->
-    <!-- <van-popup v-model="modal.complaint" closeable position="bottom" :style="{ height: '30%' }" /> -->
     <van-popup v-model="modal.complaint" closeable class="modal-complaint">
       <div class="container">
         <div class="title">举报用户</div>
@@ -286,10 +258,9 @@ import {
   Tab,
   Popup,
   ActionSheet,
-  Toast,
   Dialog,
   Field,
-  Button,
+  Button
 } from "vant"; // Cell, CellGroup, Button,
 export default {
   data() {
@@ -301,9 +272,9 @@ export default {
         complaint: false,
         article: false,
         user: false,
-        support: false,
+        support: false
       },
-      message: "",
+      message: ""
     };
   },
   created() {},
@@ -317,7 +288,7 @@ export default {
         Dialog.confirm({
           title: "确定拉黑该用户？？",
           message: "拉黑后此用户不能关注您，也无法给您发送任何消息",
-          confirmButtonColor: "rgb(255, 203, 0)",
+          confirmButtonColor: "rgb(255, 203, 0)"
         })
           .then(() => {
             this.$toast(item.name + "成功");
@@ -325,12 +296,12 @@ export default {
           })
           .catch(() => {});
       }
-    },
+    }
   },
   computed: {
     userInfo() {
       return this.$store.state.userInfo;
-    },
+    }
   },
   watch: {},
   components: {
@@ -343,8 +314,8 @@ export default {
     "van-popup": Popup,
     "van-action-sheet": ActionSheet,
     "van-dialog": Dialog,
-    "van-field": Field,
-  },
+    "van-field": Field
+  }
 };
 </script>
 
@@ -538,7 +509,7 @@ export default {
       margin-top: 10px;
       width: 65%;
       margin-right: 5%;
-      height: 60px;
+      height: 58px;
       overflow: hidden;
       text-overflow: ellipsis;
       display: -webkit-box;
@@ -568,19 +539,10 @@ export default {
         color: #666666;
         font-style: normal;
       }
-      .van-icon {
-        font-size: 20px;
-        vertical-align: -4px;
+      img {
+        width: 16px;
+        vertical-align: text-top;
       }
-    }
-    .icon-share {
-      display: inline-block;
-      width: 16px;
-      height: 16px;
-      background-size: 16px 16px;
-      background-repeat: no-repeat;
-      @include bg-image("../assets/img/myhome/icon-share");
-      vertical-align: top;
     }
   }
 }
