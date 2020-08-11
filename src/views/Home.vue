@@ -22,24 +22,27 @@
         <img src="../assets/img/形状55.png" alt="add" />
         <p>您还没有登录，请前往登录</p>
       </div>-->
-      <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
-        <div v-for="(item,index) in articleList" :key="index" class="article-item">
-          <h3>{{item.title}}</h3>
-          <div class="img-wrap">
-            <img :src="inner" alt v-for="(inner,index) in item.imagePaths" :key="index" />
-          </div>
-          <div class="operat">
-            <div class="left">
-              <span>{{item.author.nickName}}</span>
-              <span>{{item.commentCount}}评论</span>
-              <span>{{item.pubDate|changeTime}}</span>
+      <van-pull-refresh v-model="isLoading" @refresh="onRefresh" style="height:100%">
+        <p>柬中资讯成功为您推荐{{resultSize}}条内容</p>
+        <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
+          <div v-for="(item,index) in articleList" :key="index" class="article-item">
+            <h3>{{item.title}}</h3>
+            <div class="img-wrap">
+              <img :src="inner" alt v-for="(inner,index) in item.imagePaths" :key="index" />
             </div>
-            <div class="close">
-              <van-icon name="cross" />
+            <div class="operat">
+              <div class="left">
+                <span>{{item.author.nickName}}</span>
+                <span>{{item.commentCount}}评论</span>
+                <span>{{item.pubDate|changeTime}}</span>
+              </div>
+              <div class="close">
+                <van-icon name="cross" />
+              </div>
             </div>
           </div>
-        </div>
-      </van-list>
+        </van-list>
+      </van-pull-refresh>
     </div>
     <div class="overlay" v-if="columnShow">
       <div class="column">
@@ -89,7 +92,7 @@
 <script>
 // @ is an alias to /src
 // import HelloWorld from '@/components/HelloWorld.vue'
-import { Icon, Search, Toast, List } from "vant";
+import { Icon, Search, Toast, List, PullRefresh } from "vant";
 export default {
   name: "Home",
   data() {
@@ -128,8 +131,8 @@ export default {
         { name: "创业", id: 1 },
         { name: "快讯", id: 1 },
         { name: "新闻", id: 1 },
-        { name: "娱乐", id: 1 },
-        { name: "体育", id: 1 }
+        // { name: "娱乐", id: 1 },
+        // { name: "体育", id: 1 }
       ],
       columnShow: false,
       isEdit: true,
@@ -137,14 +140,18 @@ export default {
       loading: false,
       finished: false,
       page: 1,
-      size: 2,
-      articleList: []
+      size: 10,
+      resultSize: 10,
+      articleList: [],
+      count: 0,
+      isLoading: false,
     };
   },
   components: {
     "van-search": Search,
     "van-icon": Icon,
-    "van-list": List
+    "van-list": List,
+    "van-pull-refresh": PullRefresh
   },
   created() {
     this.getNavList();
@@ -174,10 +181,17 @@ export default {
         .then(res => {
           // this.navList = res.data
           this.articleList = res.data.content;
+          this.resultSize = res.data.size
         })
         .catch(function(error) {
           console.log(error);
         });
+    },
+    onRefresh() {
+      setTimeout(() => {
+        // this.$toast('刷新成功');
+        this.isLoading = false;
+      }, 1000);
     },
     onLoad() {
       // 异步更新数据
@@ -261,6 +275,7 @@ export default {
 <style lang="scss" scoped>
 .home {
   text-align: center;
+  height: 100%;
 }
 .search {
   display: flex;
@@ -318,6 +333,7 @@ export default {
   }
 }
 .article {
+  height: 100%;
   padding: 40px 16px 0;
   text-align: left;
   .article-item {

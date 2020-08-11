@@ -19,6 +19,7 @@
 #nav {
   position: fixed;
   bottom: 0;
+  z-index: 10;
   display: flex;
   justify-content: space-around;
   align-items: center;
