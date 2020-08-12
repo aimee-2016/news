@@ -258,7 +258,7 @@ import {
   Tab,
   Popup,
   ActionSheet,
-  Dialog,
+  // Dialog,
   Field,
   Button
 } from "vant"; // Cell, CellGroup, Button,
@@ -313,7 +313,7 @@ export default {
     "van-tab": Tab,
     "van-popup": Popup,
     "van-action-sheet": ActionSheet,
-    "van-dialog": Dialog,
+    // "van-dialog": Dialog,
     "van-field": Field
   }
 };

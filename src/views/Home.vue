@@ -2,28 +2,33 @@
   <div class="home">
     <!-- <img alt="Vue logo" src="../assets/logo.png"> -->
     <!-- <HelloWorld msg="Welcome to Your Vue.js App"/> -->
-    <div class="search">
-      <van-search v-model="serchValue" placeholder="请输入搜索关键词" />
-      <van-icon name="chat-o" badge="9" />
-    </div>
-    <div class="nav">
-      <ul>
-        <li
-          v-for="(item,index) in navList"
-          :key="index"
-          :class="{selected:navId===item.id}"
-          @click="getArticle(item.id)"
-        >{{item.name}}</li>
-      </ul>
-      <van-icon name="wap-nav" @click="getRecommendList()" />
+    <div class="top-f">
+      <div class="search">
+        <van-search v-model="serchValue" placeholder="请输入搜索关键词" />
+        <van-icon name="chat-o" badge="9" />
+      </div>
+      <div class="nav">
+        <ul>
+          <li
+            v-for="(item,index) in navList"
+            :key="index"
+            :class="{selected:navId===item.id}"
+            @click="navId=item.id;getArticle()"
+          >{{item.name}}</li>
+        </ul>
+        <van-icon name="wap-nav" @click="getRecommendList()" />
+      </div>
     </div>
     <div class="article">
-      <!-- <div class="no-login">
-        <img src="../assets/img/形状55.png" alt="add" />
-        <p>您还没有登录，请前往登录</p>
-      </div>-->
+      <div class="no-login" v-if="firstId===navId">
+        <img src="../assets/img/home/logo@2x.png" alt="add" />
+        <p v-if="!userInfo">您还没有登录，请前往登录</p>
+        <p v-if="userInfo&&articleList.length===0">你还没有关注任何人，请前往关注</p>
+      </div>
       <van-pull-refresh v-model="isLoading" @refresh="onRefresh" style="height:100%">
-        <p>柬中资讯成功为您推荐{{resultSize}}条内容</p>
+        <transition name="fade">+
+          <p class="refresh-m" v-if="refreshMessage">柬中资讯成功为您推荐{{resultSize}}条内容</p>
+        </transition>
         <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
           <div v-for="(item,index) in articleList" :key="index" class="article-item">
             <h3>{{item.title}}</h3>
@@ -108,6 +113,7 @@ export default {
         { name: "体育", id: 1 }
       ],
       navId: 0,
+      firstId: 0,
       serchValue: "",
       myList: [
         { name: "关注", id: 1 },
@@ -140,11 +146,12 @@ export default {
       loading: false,
       finished: false,
       page: 1,
-      size: 10,
+      size: 5,
       resultSize: 10,
       articleList: [],
       count: 0,
       isLoading: false,
+      refreshMessage: false
     };
   },
   components: {
@@ -163,14 +170,14 @@ export default {
         .then(res => {
           this.navList = res.data;
           this.navId = res.data[0].id;
-          this.getArticle(this.navId);
+          this.firstId = res.data[0].id;
+          this.getArticle();
         })
         .catch(function(error) {
           console.log(error);
         });
     },
-    getArticle(id) {
-      this.navId = id;
+    getArticle() {
       this.$ajax
         .post("api/front/articles/findArticlesByColumnId.json", {
           page: this.page,
@@ -187,47 +194,54 @@ export default {
           console.log(error);
         });
     },
+    testPromise() {
+      return new Promise((resolve, reject) => {
+        this.page = 1
+          this.$ajax
+            .post("api/front/articles/findArticlesByColumnId.json", {
+              page: this.page,
+              size: this.size,
+              columnId: this.navId,
+              type: "PublishArticle"
+            }).then(response=>{
+              resolve(response)
+            }).catch(error=>{
+              reject(error)
+            })
+        })
+    },
     onRefresh() {
-      setTimeout(() => {
-        // this.$toast('刷新成功');
-        this.isLoading = false;
-      }, 1000);
+      this.testPromise().then(res=> {
+        this.articleList = res.data.content;
+        this.resultSize = res.data.size
+        setTimeout(() => {
+          this.isLoading = false
+          this.refreshMessage = true
+        }, 1000);
+        setTimeout(() => {
+          this.refreshMessage = false
+        }, 3000);
+      })
     },
     onLoad() {
-      // 异步更新数据
-      // setTimeout 仅做示例，真实场景中一般为 ajax 请求
-      setTimeout(() => {
-        for (let i = 0; i < 10; i++) {
-          this.list.push(this.list.length + 1);
-        }
-
-        // 加载状态结束
-        this.loading = false;
-
-        // 数据全部加载完成
-        if (this.list.length >= 40) {
-          this.finished = true;
-        }
-      }, 1000);
-      // this.page++
-      // this.$ajax
-      //   .post("api/front/articles/findArticlesByColumnId.json", {
-      //     page: this.page,
-      //     size: this.size,
-      //     columnId: this.navId,
-      //     type: "PublishArticle"
-      //   })
-      //   .then(res => {
-      //     // this.navList = res.data
-      //     this.articleList = res.data.content
-      //     this.loading = false;
-      //     if(this.page=res.data.totalPages) {
-      //       this.finished = true;
-      //     }
-      //   })
-      //   .catch(function(error) {
-      //     console.log(error);
-      //   });
+        // this.page++
+        // this.$ajax
+        // .post("api/front/articles/findArticlesByColumnId.json", {
+        //   page: this.page,
+        //   size: this.size,
+        //   columnId: this.navId,
+        //   type: "PublishArticle"
+        // })
+        // .then(res => {
+        //   this.articleList.push(res.data.content)
+        //   this.loading = false;
+        //   if(this.page>res.data.totalPages) {
+        //     this.finished = true;
+        //   }
+        // })
+        // .catch(function(error) {
+        //   console.log(error);
+        // });
     },
     getRecommendList() {
       this.$ajax
@@ -269,13 +283,37 @@ export default {
           Toast(error.message);
         });
     }
+  },
+  computed: {
+    userInfo() {
+      return this.$store.state.userInfo;
+    }
   }
 };
 </script>
 <style lang="scss" scoped>
+.fade-leave-active {
+  transition: height .5s ease;
+}
+.fade-leave,.fade-enter-to {
+ opacity: 1;
+ height: 30px;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  height: 0;
+  opacity: 0;
+}
 .home {
+  position: relative;
   text-align: center;
-  height: 100%;
+  // height: 100%;
+}
+.top-f {
+  width: 100%;
+  position: fixed;
+  top: 0;
+  z-index: 2;
+  background:#fff;
 }
 .search {
   display: flex;
@@ -297,6 +335,7 @@ export default {
     display: flex;
     align-items: center;
     padding-right: 20px;
+    padding-bottom: 13px;
     li {
       margin-right: 20px;
       font-size: 15px;
@@ -333,12 +372,23 @@ export default {
   }
 }
 .article {
-  height: 100%;
-  padding: 40px 16px 0;
+  // min-height: 100%;
+  padding-top:100px;
   text-align: left;
+  .refresh-m {
+    // margin-bottom: 6px;
+    background: #faf2cd;
+    font-size: 13px;
+    font-family: PingFang SC Medium, PingFang SC Medium-Medium;
+    font-weight: 500;
+    color: #fb9600;
+    line-height: 30px;
+    text-align: center;
+  }
   .article-item {
     margin-bottom: 17px;
     border-bottom: 1px solid #f0f0f0;
+    padding: 0 16px;
   }
   h3 {
     margin-bottom: 10px;
@@ -373,16 +423,21 @@ export default {
       }
     }
   }
-  // .no-login {
-  //   padding-top: 136px;
-  //   p {
-  //     margin-top: 18px;
-  //     font-size: 13px;
-  //     font-family: PingFang SC Medium, PingFang SC Medium-Medium;
-  //     font-weight: 500;
-  //     color: #666666;
-  //   }
-  // }
+  .no-login {
+    padding-top: 136px;
+    text-align: center;
+    height: 100%;
+    img {
+      width: 63px;
+    }
+    p {
+      margin-top: 18px;
+      font-size: 13px;
+      font-family: PingFang SC Medium, PingFang SC Medium-Medium;
+      font-weight: 500;
+      color: #666666;
+    }
+  }
 }
 .overlay {
   position: fixed;
