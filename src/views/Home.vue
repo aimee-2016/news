@@ -1,7 +1,5 @@
 <template>
   <div class="home">
-    <!-- <img alt="Vue logo" src="../assets/logo.png"> -->
-    <!-- <HelloWorld msg="Welcome to Your Vue.js App"/> -->
     <div class="top-f">
       <div class="search">
         <van-search v-model="serchValue" placeholder="请输入搜索关键词" />
@@ -13,20 +11,20 @@
             v-for="(item,index) in navList"
             :key="index"
             :class="{selected:navId===item.id}"
-            @click="navId=item.id;getArticle()"
+            @click="checkNav(item.id)"
           >{{item.name}}</li>
         </ul>
         <van-icon name="wap-nav" @click="getRecommendList()" />
       </div>
     </div>
     <div class="article">
-      <div class="no-login" v-if="firstId===navId">
+      <!-- <div class="no-login" v-if="firstId===navId">
         <img src="../assets/img/home/logo@2x.png" alt="add" />
         <p v-if="!userInfo">您还没有登录，请前往登录</p>
         <p v-if="userInfo&&articleList.length===0">你还没有关注任何人，请前往关注</p>
-      </div>
-      <van-pull-refresh v-model="isLoading" @refresh="onRefresh" style="height:100%">
-        <transition name="fade">+
+      </div>-->
+      <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
+        <transition name="fade">
           <p class="refresh-m" v-if="refreshMessage">柬中资讯成功为您推荐{{resultSize}}条内容</p>
         </transition>
         <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
@@ -150,7 +148,7 @@ export default {
       resultSize: 10,
       articleList: [],
       count: 0,
-      isLoading: false,
+      refreshing: false,
       refreshMessage: false
     };
   },
@@ -171,32 +169,24 @@ export default {
           this.navList = res.data;
           this.navId = res.data[0].id;
           this.firstId = res.data[0].id;
-          this.getArticle();
+          // this.getArticle();
+          this.onLoad()
         })
         .catch(function(error) {
           console.log(error);
         });
     },
-    getArticle() {
-      this.$ajax
-        .post("api/front/articles/findArticlesByColumnId.json", {
-          page: this.page,
-          size: this.size,
-          columnId: this.navId,
-          type: "PublishArticle"
-        })
-        .then(res => {
-          // this.navList = res.data
-          this.articleList = res.data.content;
-          this.resultSize = res.data.size
-        })
-        .catch(function(error) {
-          console.log(error);
-        });
+    checkNav(id) {
+      this.navId=id;
+      this.page=1;
+      this.articleList=[];
+      this.loading = true;
+      this.onLoad();
     },
     testPromise() {
       return new Promise((resolve, reject) => {
-        this.page = 1
+        // console.log(this.page)
+        // console.log(this.size)
           this.$ajax
             .post("api/front/articles/findArticlesByColumnId.json", {
               page: this.page,
@@ -210,38 +200,35 @@ export default {
             })
         })
     },
-    onRefresh() {
-      this.testPromise().then(res=> {
-        this.articleList = res.data.content;
-        this.resultSize = res.data.size
-        setTimeout(() => {
-          this.isLoading = false
-          this.refreshMessage = true
-        }, 1000);
-        setTimeout(() => {
-          this.refreshMessage = false
-        }, 3000);
-      })
-    },
     onLoad() {
-        // this.page++
-        // this.$ajax
-        // .post("api/front/articles/findArticlesByColumnId.json", {
-        //   page: this.page,
-        //   size: this.size,
-        //   columnId: this.navId,
-        //   type: "PublishArticle"
-        // })
-        // .then(res => {
-        //   this.articleList.push(res.data.content)
-        //   this.loading = false;
-        //   if(this.page>res.data.totalPages) {
-        //     this.finished = true;
-        //   }
-        // })
-        // .catch(function(error) {
-        //   console.log(error);
-        // });
+        if (this.refreshing) {
+          this.page = 1
+          this.articleList = [];
+          this.refreshing = false;
+          this.refreshMessage = true;
+          setTimeout(() => {
+            this.refreshMessage = false
+          }, 3000);
+        }
+        this.testPromise().then(res=>{
+          // console.log(res.data.content)
+          this.resultSize = res.data.number*res.data.size
+          this.articleList.push(...res.data.content);
+          this.loading = false;
+          if(this.page>=res.data.totalPages) {
+            this.finished = true;
+          }
+          this.page++
+        })
+    },
+    onRefresh() {
+      // 清空列表数据
+      this.finished = false;
+
+      // 重新加载数据
+      // 将 loading 设置为 true，表示处于加载状态
+      this.loading = true;
+      this.onLoad();
     },
     getRecommendList() {
       this.$ajax
