@@ -2,7 +2,7 @@
   <div class="home">
     <div class="top-f">
       <div class="search">
-        <van-search v-model="serchValue" placeholder="请输入搜索关键词" />
+        <van-search v-model="serchValue" placeholder="请输入搜索关键词" @click="$router.push('/search')" />
         <van-icon name="chat-o" badge="9" />
       </div>
       <div class="nav">
