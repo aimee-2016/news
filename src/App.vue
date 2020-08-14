@@ -16,5 +16,8 @@
 #main {
   height: inherit;
 } */
+/* #app::-webkit-scrollbar {
+    display: none;
+} */
 </style>
 

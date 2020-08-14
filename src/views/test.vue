@@ -1,8 +1,8 @@
 <template>
   <div>
     <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
-      <p class="refresh-m" v-if="refreshMessage">柬中资讯成功为您推荐{{resultSize}}条内容</p>42424
-      <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
+      <p class="refresh-m" v-if="refreshMessage">柬中资讯成功为您推荐{{resultSize}}条内容</p>
+      <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad" ref="vanl">
         <div v-for="(item,index) in articleList" :key="index" class="article-item">
           <h3>{{item.title}}</h3>
           <div class="img-wrap">
@@ -71,6 +71,7 @@ export default {
           if(this.page>=res.data.totalPages) {
             this.finished = true;
           }
+          console.log(this.$refs.vanl)
           this.page++
         })
     },

@@ -107,8 +107,8 @@ export default {
         { name: "创业", id: 1 },
         { name: "快讯", id: 1 },
         { name: "新闻", id: 1 },
-        { name: "娱乐", id: 1 },
-        { name: "体育", id: 1 }
+        // { name: "娱乐", id: 1 },
+        // { name: "体育", id: 1 }
       ],
       navId: 0,
       firstId: 0,
@@ -135,8 +135,8 @@ export default {
         { name: "创业", id: 1 },
         { name: "快讯", id: 1 },
         { name: "新闻", id: 1 },
-        // { name: "娱乐", id: 1 },
-        // { name: "体育", id: 1 }
+        { name: "娱乐", id: 1 },
+        { name: "体育", id: 1 }
       ],
       columnShow: false,
       isEdit: true,
@@ -170,7 +170,7 @@ export default {
           this.navId = res.data[0].id;
           this.firstId = res.data[0].id;
           // this.getArticle();
-          this.onLoad()
+          // this.onLoad()
         })
         .catch(function(error) {
           console.log(error);
@@ -180,6 +180,7 @@ export default {
       this.navId=id;
       this.page=1;
       this.articleList=[];
+      this.finished = false;
       this.loading = true;
       this.onLoad();
     },
@@ -361,6 +362,7 @@ export default {
 .article {
   // min-height: 100%;
   padding-top:100px;
+  padding-bottom: 58px;
   text-align: left;
   .refresh-m {
     // margin-bottom: 6px;
@@ -429,6 +431,7 @@ export default {
 .overlay {
   position: fixed;
   top: 0;
+  z-index: 1001;
   width: 100%;
   height: 100%;
   background: #fff;
