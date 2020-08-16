@@ -11,15 +11,15 @@
       />
     </div>
     <div class="serch-container" v-if="navShow">
-      <div class="history">
+      <div class="history" v-if="historyRecordL.length">
         <p>
           <span>搜索历史</span>
-          <van-icon name="delete" />
+          <van-icon name="delete" @click="delAll" />
         </p>
         <ul>
-          <li v-for="(item,index) in historyList" :key="index">
-            <span>{{item}}</span>
-            <van-icon name="cross" />
+          <li v-for="(item,index) in historyRecordL" :key="index">
+            <span @click="serchValue=item;onSearch(item)">{{item}}</span>
+            <van-icon name="cross" @click="delId(index)" />
           </li>
         </ul>
       </div>
@@ -28,7 +28,7 @@
           <span>热门搜索</span>
         </p>
         <ul>
-          <li v-for="(item,index) in historyList" :key="index">
+          <li v-for="(item,index) in historyList" :key="index" @click="serchValue=item;onSearch(item)">
             <span>{{item}}</span>
           </li>
         </ul>
@@ -59,22 +59,25 @@
             
           </van-list>
         </van-pull-refresh> -->
-        <div v-for="(item,index) in articleList" :key="index" class="article-item">
-              <h3>{{item.title}}</h3>
-              <div class="img-wrap">
-                <img :src="inner" alt v-for="(inner,index) in item.imagePaths" :key="index" />
+        <div class="wrap-b" v-if="navId===1">
+          <div v-for="(item,index) in informationList" :key="index" class="article-item">
+            <h3>{{item.title}}</h3>
+            <div class="img-wrap">
+              <img :src="inner" alt v-for="(inner,index) in item.imagePaths" :key="index" />
+            </div>
+            <div class="operat">
+              <div class="left">
+                <span>{{item.author.nickName}}</span>
+                <span>{{item.commentCount}}评论</span>
+                <span>{{item.pubDate|changeTime}}</span>
               </div>
-              <div class="operat">
-                <div class="left">
-                  <span>{{item.author.nickName}}</span>
-                  <span>{{item.commentCount}}评论</span>
-                  <span>{{item.pubDate|changeTime}}</span>
-                </div>
-                <div class="close">
-                  <van-icon name="cross" @click="modal.article = true;selectedItem=item" />
-                </div>
+              <div class="close">
+                <van-icon name="cross" @click="modal.article = true;selectedItem=item" />
               </div>
             </div>
+          </div>
+        </div>
+          
       </div>
     </div>
   </div>
@@ -83,7 +86,7 @@
 <script>
 // @ is an alias to /src
 // import HelloWorld from '@/components/HelloWorld.vue'
-import { Icon, Search, Toast, List, PullRefresh, Popup } from "vant";
+import { Icon, Search, List, PullRefresh, Popup } from "vant";
 export default {
   name: "Home",
   data() {
@@ -97,7 +100,7 @@ export default {
         { name: "用户", id: 4 },
         { name: "话题", id: 5 }
       ],
-      navId: 0,
+      navId: 1,
       firstId: 0,
       serchValue: "",
       columnShow: false,
@@ -112,7 +115,12 @@ export default {
       refreshMessage: false,
       selectedItem: null,
       historyList: [],
-      allList: []
+      allList: [],
+      historyRecordL: [],
+      informationList: [],
+      memberList: [],
+      topicList: [],
+      videoList: []
     };
   },
   components: {
@@ -123,6 +131,7 @@ export default {
     "van-popup": Popup
   },
   created() {
+    this.historyRecordL = JSON.parse(localStorage.getItem('historyR'))?JSON.parse(localStorage.getItem('historyR')):[]
     this.getHistoryList();
   },
   methods: {
@@ -154,7 +163,12 @@ export default {
         this.$ajax
         .post("api/front/articles/findComprehensive.json", {queryValue: this.serchValue})
         .then(res => {
-          this.articleList = res.data
+          // this.articleList = res.data
+          this.informationList = res.data.informationList
+          console.log(this.informationList)
+          this.memberList = res.data.memberList
+          this.topicList = res.data.topicList
+          this.videoList = res.data.videoList
         })
         .catch(error=> {
           console.log(error);
@@ -199,10 +213,26 @@ export default {
     //   this.onLoad();
     // },
     onSearch(val) {
+      console.log(val)
       if(val) {
         this.navShow = false
+        let historyRecord = JSON.parse(localStorage.getItem('historyR'))?JSON.parse(localStorage.getItem('historyR')):[]
+        historyRecord.push(val)
+        let historyRecordL = historyRecord.filter(function(element,index,self){
+              return self.indexOf(element) == index;
+            });
+        this.historyRecordL = historyRecordL
+        localStorage.setItem('historyR',JSON.stringify(historyRecordL))
         this.getAll()
       }
+    },
+    delId(index) {
+      this.historyRecordL.splice(index,1)
+      localStorage.setItem('historyR',JSON.stringify(this.historyRecordL))
+    },
+    delAll() {
+      this.historyRecordL = []
+      localStorage.setItem('historyR',JSON.stringify(this.historyRecordL))
     },
     onCancel() {
       this.$router.push('/home')
@@ -265,7 +295,7 @@ export default {
   background:#fff;
   padding: 20px;
   >div {
-    margin-bottom: 28px;
+    margin-bottom: 24px;
   }
   p {
     margin-bottom: 12px;
@@ -284,6 +314,7 @@ export default {
     // justify-content: space-between;
     li {
       margin-right: 10px;
+      margin-bottom: 4px;
       padding: 6px;
       background: #f8f8f8;
       border-radius: 13px;
