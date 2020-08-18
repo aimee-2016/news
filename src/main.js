@@ -7,9 +7,9 @@ import './assets/css/index.scss'
 import 'vant/lib/icon/local.css'
 import './assets/js/rem.js'
 import axios from '@/libs/axios.js'
-import { Toast } from 'vant';
+import { Toast,Lazyload } from 'vant';
 Vue.use(Toast);
-
+Vue.use(Lazyload);
 Vue.prototype.$ajax = axios
 import { format } from 'timeago.js';
 Vue.filter('changeTime', function(dateStr) {

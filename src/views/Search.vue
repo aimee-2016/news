@@ -60,19 +60,207 @@
           </van-list>
         </van-pull-refresh> -->
         <div class="wrap-b" v-if="navId===1">
-          <div v-for="(item,index) in informationList" :key="index" class="article-item">
-            <h3>{{item.title}}</h3>
-            <div class="img-wrap">
-              <img :src="inner" alt v-for="(inner,index) in item.imagePaths" :key="index" />
+          <div class="div1" v-if="videoList.length">
+            <div class="article-head">
+              <h3>视频</h3>
+              <span>查看更多<van-icon name="arrow" @click="$router.push('/video')" /></span>
+            </div>
+            <div v-for="(item,index) in videoList" :key="index" class="article-item">
+              <div class="content">
+                <div class="img-wrap">
+                  <img v-lazy="item.videoImagePath" alt />
+                  <van-icon name="play-circle" />
+                </div>
+                <h3>{{item.title}}</h3>
+              </div>
+              <div class="operat">
+                <div class="left">
+                  <van-image
+                    round
+                    fit="cover"
+                    :src="item.author.headImgPath"
+                  />
+                  <span class="name">{{item.author.nickName}}</span>
+                  <img src="../assets/img/home/icon-auth@2x.png" alt="" v-if="item.author.memberStatus.name==='CertifyAdopt'" class="auth">
+                  <span>{{item.commentCount}}评论</span>
+                  <span>{{item.pubDate|changeTime}}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="div2" v-if="informationList.length">
+            <div class="article-head">
+              <h3>资讯</h3>
+              <span>查看更多<van-icon name="arrow" @click="$router.push('/home')" /></span>
+            </div>
+            <div v-for="(item,index) in informationList" :key="index" class="article-item">
+              <div class="content">
+                <div class="img-wrap">
+                  <img v-for="(inner,index) in item.imagePaths" :key="index" v-lazy="inner" />
+                </div>
+                <h3>{{item.title}}</h3>
+              </div>
+              <div class="operat">
+                <div class="left">
+                  <van-image
+                    round
+                    fit="cover"
+                    :src="item.author.headImgPath"
+                  />
+                  <span class="name">{{item.author.nickName}}</span>
+                  <img src="../assets/img/home/icon-auth@2x.png" alt="" v-if="item.author.memberStatus.name==='CertifyAdopt'" class="auth">
+                  <span>{{item.commentCount}}评论</span>
+                  <span>{{item.pubDate|changeTime}}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="div3" v-if="memberList.length">
+            <div class="article-head">
+              <h3>用户</h3>
+              <span>查看更多<van-icon name="arrow" /></span>
+            </div>
+            <div v-for="(item,index) in memberList" :key="index" class="member-item">
+              <div class="content">
+                <div class="left">
+                  <div class="head-img">
+                    <van-image
+                      round
+                      fit="cover"
+                      :src="item.headImgPath"
+                    />
+                    <img src="../assets/img/home/icon-auth-1@2x.png" alt="" v-if="item.memberStatus.name==='CertifyAdopt'" class="auth">
+                  </div>
+                  <div>
+                    <span class="name">{{item.nickName}}</span>
+                    <div class="desc">
+                      <span>{{item.memberFansCountCount}}个粉丝</span>
+                      <span>{{item.synopsis}}</span>
+                    </div>
+                  </div>
+                  
+                </div>
+                <div class="right">
+                  <!-- Fans 就是关注
+                  Block 是拉黑
+                  null 就是没有关注也没有拉黑 -->
+                  <self-button round @click="focusUser(item.id)" :disabled="!item.followType?false:true">{{focusText(item.followType)}}</self-button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="div4" v-if="topicList.length">
+            <div class="article-head">
+              <h3>话题</h3>
+              <span>查看更多<van-icon name="arrow" @click="$router.push('/topic')" /></span>
+            </div>
+            <div v-for="(item,index) in topicList" :key="index" class="article-item">
+              <div class="content">
+                <div class="img-wrap">
+                  <img v-lazy="item.imagePathsStr" />
+                </div>
+                <h3>{{item.title}}</h3>
+              </div>
+              <div class="operat">
+                <div class="left">
+                  <span>{{item.viewCount}}围观</span>
+                  <span>{{item.commentCount}}人评论</span>
+                  <span>{{item.pubDate|changeTime}}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="wrap-b" v-if="navId===2">
+          <div v-for="(item,index) in videoList" :key="index" class="article-item">
+            <div class="content">
+              <div class="img-wrap">
+                <img v-lazy="item.videoImagePath" alt />
+                <van-icon name="play-circle" />
+              </div>
+              <h3>{{item.title}}</h3>
             </div>
             <div class="operat">
               <div class="left">
-                <span>{{item.author.nickName}}</span>
+                <van-image
+                  round
+                  fit="cover"
+                  :src="item.author.headImgPath"
+                />
+                <span class="name">{{item.author.nickName}}</span>
+                <img src="../assets/img/home/icon-auth@2x.png" alt="" v-if="item.author.memberStatus.name==='CertifyAdopt'" class="auth">
                 <span>{{item.commentCount}}评论</span>
                 <span>{{item.pubDate|changeTime}}</span>
               </div>
-              <div class="close">
-                <van-icon name="cross" @click="modal.article = true;selectedItem=item" />
+            </div>
+          </div>
+        </div>
+        <div class="wrap-b" v-if="navId===3">
+          <div v-for="(item,index) in informationList" :key="index" class="article-item">
+            <div class="content">
+              <div class="img-wrap">
+                <img v-for="(inner,index) in item.imagePaths" :key="index" v-lazy="inner" />
+              </div>
+              <h3>{{item.title}}</h3>
+            </div>
+            <div class="operat">
+              <div class="left">
+                <van-image
+                  round
+                  fit="cover"
+                  :src="item.author.headImgPath"
+                />
+                <span class="name">{{item.author.nickName}}</span>
+                <img src="../assets/img/home/icon-auth@2x.png" alt="" v-if="item.author.memberStatus.name==='CertifyAdopt'" class="auth">
+                <span>{{item.commentCount}}评论</span>
+                <span>{{item.pubDate|changeTime}}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="wrap-b" v-if="navId===4">
+          <div v-for="(item,index) in memberList" :key="index" class="member-item">
+              <div class="content">
+                <div class="left">
+                  <div class="head-img">
+                    <van-image
+                      round
+                      fit="cover"
+                      :src="item.headImgPath"
+                    />
+                    <img src="../assets/img/home/icon-auth-1@2x.png" alt="" v-if="item.memberStatus.name==='CertifyAdopt'" class="auth">
+                  </div>
+                  <div>
+                    <span class="name">{{item.nickName}}</span>
+                    <div class="desc">
+                      <span>{{item.memberFansCountCount}}个粉丝</span>
+                      <span>{{item.synopsis}}</span>
+                    </div>
+                  </div>
+                  
+                </div>
+                <div class="right">
+                  <!-- Fans 就是关注
+                  Block 是拉黑
+                  null 就是没有关注也没有拉黑 -->
+                  <self-button round @click="focusUser(item.id)" :disabled="!item.followType?false:true">{{focusText(item.followType)}}</self-button>
+                </div>
+              </div>
+            </div>
+        </div>
+        <div class="wrap-b" v-if="navId===5">
+           <div v-for="(item,index) in topicList" :key="index" class="article-item">
+            <div class="content">
+              <div class="img-wrap">
+                <img v-lazy="item.imagePathsStr" />
+              </div>
+              <h3>{{item.title}}</h3>
+            </div>
+            <div class="operat">
+              <div class="left">
+                <span>{{item.viewCount}}围观</span>
+                <span>{{item.commentCount}}人评论</span>
+                <span>{{item.pubDate|changeTime}}</span>
               </div>
             </div>
           </div>
@@ -85,13 +273,12 @@
 
 <script>
 // @ is an alias to /src
-// import HelloWorld from '@/components/HelloWorld.vue'
-import { Icon, Search, List, PullRefresh, Popup } from "vant";
+import selfButton from '@/components/button';
+import { Icon, Search, Image} from "vant";
 export default {
   name: "Home",
   data() {
     return {
-      // timeago,
       navShow: true,
       navList: [
         { name: "综合", id: 1 },
@@ -126,29 +313,35 @@ export default {
   components: {
     "van-search": Search,
     "van-icon": Icon,
-    "van-list": List,
-    "van-pull-refresh": PullRefresh,
-    "van-popup": Popup
+    "van-image": Image,
+    'self-button': selfButton
   },
   created() {
     this.historyRecordL = JSON.parse(localStorage.getItem('historyR'))?JSON.parse(localStorage.getItem('historyR')):[]
     this.getHistoryList();
   },
   methods: {
-    // getNavList() {
-    //   this.$ajax
-    //     .post("api/front/member/findIndexColumnList.json", {})
-    //     .then(res => {
-    //       this.navList = res.data;
-    //       this.navId = res.data[0].id;
-    //       this.firstId = res.data[0].id;
-    //       // this.getArticle();
-    //       this.onLoad()
-    //     })
-    //     .catch(error=> {
-    //       console.log(error);
-    //     });
-    // },
+    focusUser(id) {
+      this.$ajax
+        .post("api/front/member/follow.json", {
+          id: id
+        })
+        .then(res => {
+          this.$toast('关注成功')
+          this.getAll()
+        })
+        .catch(error=> {
+          this.$toast(error)
+        });
+    },
+    focusText(item) {
+      if(item) {
+        return item.name==='Fans'?'已关注':item.name==='Block'?'已拉黑':'关注' 
+      } else {
+        return '关注'
+      }
+      
+    },
     getHistoryList() {
         this.$ajax
         .post("api/front/articles/findHotSearch.json", {})
@@ -163,9 +356,7 @@ export default {
         this.$ajax
         .post("api/front/articles/findComprehensive.json", {queryValue: this.serchValue})
         .then(res => {
-          // this.articleList = res.data
           this.informationList = res.data.informationList
-          console.log(this.informationList)
           this.memberList = res.data.memberList
           this.topicList = res.data.topicList
           this.videoList = res.data.videoList
@@ -175,45 +366,9 @@ export default {
         });
     },
     checkNav(id) {
-      // this.navId=id;
-      // this.page=1;
-      // this.articleList=[];
-      // this.finished = false;
-      // this.loading = true;
-      // this.onLoad();
+      this.navId=id;
     },
-    // onLoad() {
-    //     if (this.refreshing) {
-    //       this.page = 1
-    //       this.articleList = [];
-    //       this.refreshing = false;
-    //       this.refreshMessage = true;
-    //       setTimeout(() => {
-    //         this.refreshMessage = false
-    //       }, 3000);
-    //     }
-    //     this.testPromise().then(res=>{
-    //       // console.log(res.data.content)
-    //       this.resultSize = res.data.number*res.data.size
-    //       this.articleList.push(...res.data.content);
-    //       this.loading = false;
-    //       if(this.page>=res.data.totalPages) {
-    //         this.finished = true;
-    //       }
-    //       this.page++
-    //     })
-    // },
-    // onRefresh() {
-    //   // 清空列表数据
-    //   this.finished = false;
-
-    //   // 重新加载数据
-    //   // 将 loading 设置为 true，表示处于加载状态
-    //   this.loading = true;
-    //   this.onLoad();
-    // },
     onSearch(val) {
-      console.log(val)
       if(val) {
         this.navShow = false
         let historyRecord = JSON.parse(localStorage.getItem('historyR'))?JSON.parse(localStorage.getItem('historyR')):[]
@@ -235,12 +390,19 @@ export default {
       localStorage.setItem('historyR',JSON.stringify(this.historyRecordL))
     },
     onCancel() {
-      this.$router.push('/home')
+      // this.$router.push('/home')
     }
   },
   computed: {
     userInfo() {
       return this.$store.state.userInfo;
+    }
+  },
+  watch: {
+    serchValue:function(val){
+      if(!val) {
+        this.navShow = true
+      }
     }
   }
 };
@@ -387,32 +549,114 @@ export default {
     line-height: 30px;
     text-align: center;
   }
+  .article-head {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 14px;
+    padding: 0 16px;
+    h3 {
+      font-size: 15px;
+      font-family: PingFang SC Bold, PingFang SC Bold-Bold;
+      font-weight: 700;
+      color: #333333;
+      line-height: 15px;
+    }
+    span {
+      font-size: 14px;
+      font-family: PingFang SC Medium, PingFang SC Medium-Medium;
+      font-weight: 500;
+      color: #999999;
+    }
+  }
   .article-item {
     margin-bottom: 17px;
     border-bottom: 1px solid #f0f0f0;
     padding: 0 16px;
-  }
-  h3 {
-    margin-bottom: 10px;
-    font-size: 16px;
-    font-family: PingFang SC Bold, PingFang SC Bold-Bold;
-    font-weight: 700;
-    color: #333333;
-    line-height: 22px;
-    letter-spacing: -1px;
-  }
-  .img-wrap {
-    display: flex;
-    img {
-      width: 110px;
-      height: 80px;
-      margin-right: 10px;
+    .content {
+      display: flex;
+      h3 {
+        margin-bottom: 10px;
+        font-size: 16px;
+        font-family: PingFang SC Bold, PingFang SC Bold-Bold;
+        font-weight: 700;
+        color: #333333;
+        line-height: 22px;
+        letter-spacing: -1px;
+      }
+      .img-wrap {
+        display: flex;
+        position: relative;
+        img {
+          width: 110px;
+          height: 80px;
+          margin-right: 10px;
+        }
+        .van-icon {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          color: rgba($color: #070707, $alpha: .4);
+          font-size: 22px;
+          transform: translate(-11px,-11px);
+        }
+      }
     }
   }
+  .member-item {
+    margin-bottom: 17px;
+    padding: 0 15px;
+    .content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .left {
+      display: flex;
+      align-items: center;
+      .name {
+        font-size: 15px;
+        font-family: PingFang SC Medium, PingFang SC Medium-Medium;
+        font-weight: 500;
+        color: #333333;
+        line-height: 15px;
+      }
+      .desc {
+          margin-top: 8px;
+          font-size: 0;
+        span {
+          margin-right: 4px;
+        font-size: 12px;
+        font-family: PingFang SC Medium, PingFang SC Medium-Medium;
+        font-weight: 500;
+        color: #838383;
+        line-height: 12px;
+        letter-spacing: 0px;
+        }
+        
+      }
+    }
+    .head-img {
+      position: relative;
+      margin-right: 10px;
+      width: 45px;
+      height: 45px;
+      .van-image--round {
+        width: 45px;
+        height: 45px;
+      }
+      img {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 14px;
+      }
+    }
+  }
+  
   .operat {
     display: flex;
     justify-content: space-between;
-    margin: 13px 0 15px;
+    margin: 12px 0;
     font-size: 10px;
     font-family: PingFang SC Medium, PingFang SC Medium-Medium;
     font-weight: 500;
@@ -420,9 +664,30 @@ export default {
     line-height: 20px;
     letter-spacing: 0px;
     .left {
+      display: flex;
+      align-items: center;
       span {
-        margin-right: 10px;
+        margin-right: 15px;
       }
+      .van-image--round {
+        margin-right: 5px;
+        width: 26px;
+        height: 26px;
+        vertical-align: middle;
+      }
+      .name {
+        margin-right: 5px;
+        font-size: 14px;
+        font-family: PingFang SC Bold, PingFang SC Bold-Bold;
+        font-weight: 700;
+        color: #333333;
+      }
+      .auth {
+        margin-right: 15px;
+        width: 12px;
+        height: 12px;
+      }
+      
     }
   }
   .no-login {
@@ -441,7 +706,4 @@ export default {
     }
   }
 }
-// .serch-container {
-//   padding-top:100px;
-// }
 </style>
