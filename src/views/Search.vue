@@ -28,7 +28,11 @@
           <span>热门搜索</span>
         </p>
         <ul>
-          <li v-for="(item,index) in historyList" :key="index" @click="serchValue=item;onSearch(item)">
+          <li
+            v-for="(item,index) in historyList"
+            :key="index"
+            @click="serchValue=item;onSearch(item)"
+          >
             <span>{{item}}</span>
           </li>
         </ul>
@@ -50,7 +54,7 @@
           <img src="../assets/img/home/logo@2x.png" alt="add" />
           <p v-if="!userInfo">您还没有登录，请前往登录</p>
           <p v-if="userInfo&&articleList.length===0">你还没有关注任何人，请前往关注</p>
-        </div> -->
+        </div>-->
         <!-- <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
           <transition name="fade">
             <p class="refresh-m" v-if="refreshMessage">柬中资讯成功为您推荐{{resultSize}}条内容</p>
@@ -58,12 +62,15 @@
           <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
             
           </van-list>
-        </van-pull-refresh> -->
+        </van-pull-refresh>-->
         <div class="wrap-b" v-if="navId===1">
           <div class="div1" v-if="videoList.length">
             <div class="article-head">
               <h3>视频</h3>
-              <span>查看更多<van-icon name="arrow" @click="$router.push('/video')" /></span>
+              <span>
+                查看更多
+                <van-icon name="arrow" @click="$router.push('/video')" />
+              </span>
             </div>
             <div v-for="(item,index) in videoList" :key="index" class="article-item">
               <div class="content">
@@ -75,13 +82,14 @@
               </div>
               <div class="operat">
                 <div class="left">
-                  <van-image
-                    round
-                    fit="cover"
-                    :src="item.author.headImgPath"
-                  />
+                  <van-image round fit="cover" :src="item.author.headImgPath" />
                   <span class="name">{{item.author.nickName}}</span>
-                  <img src="../assets/img/home/icon-auth@2x.png" alt="" v-if="item.author.memberStatus.name==='CertifyAdopt'" class="auth">
+                  <img
+                    src="../assets/img/home/icon-auth@2x.png"
+                    alt
+                    v-if="item.author.memberStatus.name==='CertifyAdopt'"
+                    class="auth"
+                  />
                   <span>{{item.commentCount}}评论</span>
                   <span>{{item.pubDate|changeTime}}</span>
                 </div>
@@ -91,7 +99,10 @@
           <div class="div2" v-if="informationList.length">
             <div class="article-head">
               <h3>资讯</h3>
-              <span>查看更多<van-icon name="arrow" @click="$router.push('/home')" /></span>
+              <span>
+                查看更多
+                <van-icon name="arrow" @click="$router.push('/home')" />
+              </span>
             </div>
             <div v-for="(item,index) in informationList" :key="index" class="article-item">
               <div class="content">
@@ -102,13 +113,14 @@
               </div>
               <div class="operat">
                 <div class="left">
-                  <van-image
-                    round
-                    fit="cover"
-                    :src="item.author.headImgPath"
-                  />
+                  <van-image round fit="cover" :src="item.author.headImgPath" />
                   <span class="name">{{item.author.nickName}}</span>
-                  <img src="../assets/img/home/icon-auth@2x.png" alt="" v-if="item.author.memberStatus.name==='CertifyAdopt'" class="auth">
+                  <img
+                    src="../assets/img/home/icon-auth@2x.png"
+                    alt
+                    v-if="item.author.memberStatus.name==='CertifyAdopt'"
+                    class="auth"
+                  />
                   <span>{{item.commentCount}}评论</span>
                   <span>{{item.pubDate|changeTime}}</span>
                 </div>
@@ -118,18 +130,22 @@
           <div class="div3" v-if="memberList.length">
             <div class="article-head">
               <h3>用户</h3>
-              <span>查看更多<van-icon name="arrow" /></span>
+              <span>
+                查看更多
+                <van-icon name="arrow" />
+              </span>
             </div>
             <div v-for="(item,index) in memberList" :key="index" class="member-item">
               <div class="content">
                 <div class="left">
                   <div class="head-img">
-                    <van-image
-                      round
-                      fit="cover"
-                      :src="item.headImgPath"
+                    <van-image round fit="cover" :src="item.headImgPath" />
+                    <img
+                      src="../assets/img/home/icon-auth-1@2x.png"
+                      alt
+                      v-if="item.memberStatus.name==='CertifyAdopt'"
+                      class="auth"
                     />
-                    <img src="../assets/img/home/icon-auth-1@2x.png" alt="" v-if="item.memberStatus.name==='CertifyAdopt'" class="auth">
                   </div>
                   <div>
                     <span class="name">{{item.nickName}}</span>
@@ -138,13 +154,16 @@
                       <span>{{item.synopsis}}</span>
                     </div>
                   </div>
-                  
                 </div>
                 <div class="right">
                   <!-- Fans 就是关注
                   Block 是拉黑
-                  null 就是没有关注也没有拉黑 -->
-                  <self-button round @click="focusUser(item.id)" :disabled="!item.followType?false:true">{{focusText(item.followType)}}</self-button>
+                  null 就是没有关注也没有拉黑-->
+                  <self-button
+                    round
+                    @click="focusUser(item.id)"
+                    :disabled="!item.followType?false:true"
+                  >{{focusText(item.followType)}}</self-button>
                 </div>
               </div>
             </div>
@@ -152,7 +171,10 @@
           <div class="div4" v-if="topicList.length">
             <div class="article-head">
               <h3>话题</h3>
-              <span>查看更多<van-icon name="arrow" @click="$router.push('/topic')" /></span>
+              <span>
+                查看更多
+                <van-icon name="arrow" @click="$router.push('/topic')" />
+              </span>
             </div>
             <div v-for="(item,index) in topicList" :key="index" class="article-item">
               <div class="content">
@@ -182,13 +204,14 @@
             </div>
             <div class="operat">
               <div class="left">
-                <van-image
-                  round
-                  fit="cover"
-                  :src="item.author.headImgPath"
-                />
+                <van-image round fit="cover" :src="item.author.headImgPath" />
                 <span class="name">{{item.author.nickName}}</span>
-                <img src="../assets/img/home/icon-auth@2x.png" alt="" v-if="item.author.memberStatus.name==='CertifyAdopt'" class="auth">
+                <img
+                  src="../assets/img/home/icon-auth@2x.png"
+                  alt
+                  v-if="item.author.memberStatus.name==='CertifyAdopt'"
+                  class="auth"
+                />
                 <span>{{item.commentCount}}评论</span>
                 <span>{{item.pubDate|changeTime}}</span>
               </div>
@@ -205,13 +228,14 @@
             </div>
             <div class="operat">
               <div class="left">
-                <van-image
-                  round
-                  fit="cover"
-                  :src="item.author.headImgPath"
-                />
+                <van-image round fit="cover" :src="item.author.headImgPath" />
                 <span class="name">{{item.author.nickName}}</span>
-                <img src="../assets/img/home/icon-auth@2x.png" alt="" v-if="item.author.memberStatus.name==='CertifyAdopt'" class="auth">
+                <img
+                  src="../assets/img/home/icon-auth@2x.png"
+                  alt
+                  v-if="item.author.memberStatus.name==='CertifyAdopt'"
+                  class="auth"
+                />
                 <span>{{item.commentCount}}评论</span>
                 <span>{{item.pubDate|changeTime}}</span>
               </div>
@@ -220,36 +244,40 @@
         </div>
         <div class="wrap-b" v-if="navId===4">
           <div v-for="(item,index) in memberList" :key="index" class="member-item">
-              <div class="content">
-                <div class="left">
-                  <div class="head-img">
-                    <van-image
-                      round
-                      fit="cover"
-                      :src="item.headImgPath"
-                    />
-                    <img src="../assets/img/home/icon-auth-1@2x.png" alt="" v-if="item.memberStatus.name==='CertifyAdopt'" class="auth">
-                  </div>
-                  <div>
-                    <span class="name">{{item.nickName}}</span>
-                    <div class="desc">
-                      <span>{{item.memberFansCountCount}}个粉丝</span>
-                      <span>{{item.synopsis}}</span>
-                    </div>
-                  </div>
-                  
+            <div class="content">
+              <div class="left">
+                <div class="head-img">
+                  <van-image round fit="cover" :src="item.headImgPath" />
+                  <img
+                    src="../assets/img/home/icon-auth-1@2x.png"
+                    alt
+                    v-if="item.memberStatus.name==='CertifyAdopt'"
+                    class="auth"
+                  />
                 </div>
-                <div class="right">
-                  <!-- Fans 就是关注
-                  Block 是拉黑
-                  null 就是没有关注也没有拉黑 -->
-                  <self-button round @click="focusUser(item.id)" :disabled="!item.followType?false:true">{{focusText(item.followType)}}</self-button>
+                <div>
+                  <span class="name">{{item.nickName}}</span>
+                  <div class="desc">
+                    <span>{{item.memberFansCountCount}}个粉丝</span>
+                    <span>{{item.synopsis}}</span>
+                  </div>
                 </div>
               </div>
+              <div class="right">
+                <!-- Fans 就是关注
+                  Block 是拉黑
+                null 就是没有关注也没有拉黑-->
+                <self-button
+                  round
+                  @click="focusUser(item.id)"
+                  :disabled="!item.followType?false:true"
+                >{{focusText(item.followType)}}</self-button>
+              </div>
             </div>
+          </div>
         </div>
         <div class="wrap-b" v-if="navId===5">
-           <div v-for="(item,index) in topicList" :key="index" class="article-item">
+          <div v-for="(item,index) in topicList" :key="index" class="article-item">
             <div class="content">
               <div class="img-wrap">
                 <img v-lazy="item.imagePathsStr" />
@@ -265,7 +293,6 @@
             </div>
           </div>
         </div>
-          
       </div>
     </div>
   </div>
@@ -326,7 +353,7 @@ export default {
         .post("api/front/member/follow.json", {
           id: id
         })
-        .then(res => {
+        .then(() => {
           this.$toast('关注成功')
           this.getAll()
         })
@@ -340,7 +367,6 @@ export default {
       } else {
         return '关注'
       }
-      
     },
     getHistoryList() {
         this.$ajax

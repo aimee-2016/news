@@ -17,7 +17,7 @@ Vue.filter('changeTime', function(dateStr) {
 })
 
 Vue.config.productionTip = false
-// axios.defaults.baseURL = 'http://47.56.186.16:8089's
+// axios.defaults.baseURL = 'http://47.56.186.16:8089'
 new Vue({
   router,
   store,
