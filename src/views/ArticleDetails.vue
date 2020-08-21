@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="detial">
     <div class="tp-head">
       <div @click="$router.push('/home/')">
         <img src="../assets/img/topic/back.png" />
@@ -55,6 +55,14 @@
         </p>
       </div>
     </div>
+    <div class="recommend-list">
+      <div class="content" v-for="(item, index) in recommendList" :key="index">
+        <h3>{{ item.title }}</h3>
+        <div class="img-wrap">
+          <img v-lazy="item.imagePaths[0]" />
+        </div>
+      </div>
+    </div>
     <div class="tp-ct-box">
       <p class="tp-ct-title">热门评论({{ commentList.totalElements || 0 }})</p>
       <div
@@ -106,11 +114,13 @@ export default {
     return {
       topicDetails: {},
       commentList: {},
+      recommendList: [],
     }
   },
   created() {
     this.queryTopicById()
     this.queryComment()
+    this.getRecommendList()
   },
   methods: {
     queryTopicById() {
@@ -129,6 +139,7 @@ export default {
           size: '5',
           EQ_articlesId: this.$route.query.id,
           EQ_type: 'Comment',
+          sort: 'commentDate'
         })
         .then((res) => {
           this.commentList = res.data
@@ -158,6 +169,21 @@ export default {
         return '关注'
       }
     },
+    getRecommendList() {
+      this.$ajax
+        .post('api/front/articles/findRecommendArticles.json', {
+          page: 1,
+          size: 5,
+          id: this.$route.query.id,
+        })
+        .then((res) => {
+          this.recommendList = res.data.content
+          console.log(this.recommendList)
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    },
   },
   components: {
     'van-icon': Icon,
@@ -168,17 +194,26 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+#detial {
+  background: #f8f8f8;
+}
 .tp-head {
+  position: fixed;
+  top: 0;
+  z-index: 10;
+  width: 100%;
+  background: #fff;
   display: flex;
   justify-content: space-between;
-  padding: 0 15px;
-  margin: 14px 0;
+  padding: 14px 15px;
+  // margin: 14px 0;
   color: #333333;
   font-size: 17px;
 }
 .tp-top-box {
+  background: #fff;
   .tp-top-content {
-    padding: 0 16px 0 19px;
+    padding: 60px 16px 0 19px;
     .title {
       font-size: 20px;
       font-family: PingFang SC Heavy, PingFang SC Heavy-Heavy;
@@ -187,6 +222,7 @@ export default {
     }
     .user-info {
       margin-top: 20px;
+      margin-bottom: 20px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -233,6 +269,7 @@ export default {
     }
     .tp-top-ed {
       margin-top: 20px;
+      padding-bottom: 20px;
       span {
         display: block;
         font-size: 12px;
@@ -274,9 +311,39 @@ export default {
     }
   }
 }
+.recommend-list {
+  margin-top: 10px;
+  padding: 20px 15px 1px;
+  background: #fff;
+  .content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    h3 {
+      margin-right: 20px;
+      font-size: 15px;
+      font-family: PingFang SC Bold, PingFang SC Bold-Bold;
+      font-weight: bold;
+      text-align: justifyLeft;
+      color: #333333;
+      line-height: 21px;
+      letter-spacing: 0px;
+    }
+    .img-wrap {
+      display: flex;
+      img {
+        width: 110px;
+        height: 80px;
+        border-radius: 5px;
+      }
+    }
+  }
+}
 .tp-ct-box {
-  margin-top: 51px;
-  padding: 0 15px;
+  background: #fff;
+  margin-top: 10px;
+  padding: 20px 15px 0;
   .tp-ct-title {
     font-size: 15px;
     color: #333333;
