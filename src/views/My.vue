@@ -125,7 +125,7 @@
           <span>反馈帮助</span>
         </template>
       </van-cell>
-      <van-cell is-link url="/vant/mobile.html">
+      <van-cell is-link url="/setup">
         <template #title>
           <span class="icon-setting"></span>
           <span>系统设置</span>

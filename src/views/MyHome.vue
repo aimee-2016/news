@@ -258,7 +258,7 @@ import {
   Tab,
   Popup,
   ActionSheet,
-  // Dialog,
+  Dialog,
   Field,
   Button
 } from "vant"; // Cell, CellGroup, Button,
