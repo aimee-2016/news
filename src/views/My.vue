@@ -103,7 +103,7 @@
       </li>
     </ul>
     <van-cell-group>
-      <van-cell is-link url="/vant/mobile.html">
+      <van-cell is-link url="/msgcenter/">
         <template #title>
           <span class="icon-news"></span>
           <span>消息中心</span>
@@ -125,7 +125,7 @@
           <span>反馈帮助</span>
         </template>
       </van-cell>
-      <van-cell is-link url="/setup">
+      <van-cell is-link url="/setup/">
         <template #title>
           <span class="icon-setting"></span>
           <span>系统设置</span>

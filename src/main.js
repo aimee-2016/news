@@ -7,6 +7,8 @@ import './assets/css/index.scss'
 import 'vant/lib/icon/local.css'
 import './assets/js/rem.js'
 import axios from '@/libs/axios.js'
+import selfHeader from '@/components/header'
+Vue.component('selfHeader',selfHeader);
 import { Toast,Lazyload } from 'vant';
 Vue.use(Toast);
 Vue.use(Lazyload);

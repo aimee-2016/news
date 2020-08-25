@@ -102,6 +102,21 @@ const routes = [
     component: () => import('../views/setup/Blacklist.vue')
   },
   {
+    path: '/msgcenter',
+    name: 'msgcenter',
+    component: () => import('../views/messagecenter/Msgcenter.vue')
+  },
+  {
+    path: '/msgdetail',
+    name: 'msgdetail',
+    component: () => import('../views/messagecenter/Msgdetail.vue')
+  },
+  {
+    path: '/chat',
+    name: 'chat',
+    component: () => import('../views/messagecenter/Chat.vue')
+  },
+  {
     path: '*',
     name: '404',
     component: () => import('../views/404.vue')

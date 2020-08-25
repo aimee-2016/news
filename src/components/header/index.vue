@@ -46,6 +46,7 @@ export default {
   text-align: center;
   color: #333334;
   line-height: 24px;
+  background: #fff;
   .van-icon {
     position: absolute;
     left: 15px;

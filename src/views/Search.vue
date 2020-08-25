@@ -17,8 +17,14 @@
           <van-icon name="delete" @click="delAll" />
         </p>
         <ul>
-          <li v-for="(item,index) in historyRecordL" :key="index">
-            <span @click="serchValue=item;onSearch(item)">{{item}}</span>
+          <li v-for="(item, index) in historyRecordL" :key="index">
+            <span
+              @click="
+                serchValue = item
+                onSearch(item)
+              "
+              >{{ item }}</span
+            >
             <van-icon name="cross" @click="delId(index)" />
           </li>
         </ul>
@@ -29,11 +35,14 @@
         </p>
         <ul>
           <li
-            v-for="(item,index) in historyList"
+            v-for="(item, index) in historyList"
             :key="index"
-            @click="serchValue=item;onSearch(item)"
+            @click="
+              serchValue = item
+              onSearch(item)
+            "
           >
-            <span>{{item}}</span>
+            <span>{{ item }}</span>
           </li>
         </ul>
       </div>
@@ -42,11 +51,13 @@
       <div class="nav">
         <ul>
           <li
-            v-for="(item,index) in navList"
+            v-for="(item, index) in navList"
             :key="index"
-            :class="{selected:navId===item.id}"
+            :class="{ selected: navId === item.id }"
             @click="checkNav(item.id)"
-          >{{item.name}}</li>
+          >
+            {{ item.name }}
+          </li>
         </ul>
       </div>
       <div class="article">
@@ -63,7 +74,7 @@
             
           </van-list>
         </van-pull-refresh>-->
-        <div class="wrap-b" v-if="navId===1">
+        <div class="wrap-b" v-if="navId === 1">
           <div class="div1" v-if="videoList.length">
             <div class="article-head">
               <h3>视频</h3>
@@ -72,26 +83,30 @@
                 <van-icon name="arrow" @click="$router.push('/video')" />
               </span>
             </div>
-            <div v-for="(item,index) in videoList" :key="index" class="article-item">
+            <div
+              v-for="(item, index) in videoList"
+              :key="index"
+              class="article-item"
+            >
               <div class="content">
                 <div class="img-wrap">
                   <img v-lazy="item.videoImagePath" alt />
                   <van-icon name="play-circle" />
                 </div>
-                <h3>{{item.title}}</h3>
+                <h3>{{ item.title }}</h3>
               </div>
               <div class="operat">
                 <div class="left">
                   <van-image round fit="cover" :src="item.author.headImgPath" />
-                  <span class="name">{{item.author.nickName}}</span>
+                  <span class="name">{{ item.author.nickName }}</span>
                   <img
                     src="../assets/img/home/icon-auth@2x.png"
                     alt
-                    v-if="item.author.memberStatus.name==='CertifyAdopt'"
+                    v-if="item.author.memberStatus.name === 'CertifyAdopt'"
                     class="auth"
                   />
-                  <span>{{item.commentCount}}评论</span>
-                  <span>{{item.pubDate|changeTime}}</span>
+                  <span>{{ item.commentCount }}评论</span>
+                  <span>{{ item.pubDate | changeTime }}</span>
                 </div>
               </div>
             </div>
@@ -104,25 +119,33 @@
                 <van-icon name="arrow" @click="$router.push('/home')" />
               </span>
             </div>
-            <div v-for="(item,index) in informationList" :key="index" class="article-item">
+            <div
+              v-for="(item, index) in informationList"
+              :key="index"
+              class="article-item"
+            >
               <div class="content">
                 <div class="img-wrap">
-                  <img v-for="(inner,index) in item.imagePaths" :key="index" v-lazy="inner" />
+                  <img
+                    v-for="(inner, index) in item.imagePaths"
+                    :key="index"
+                    v-lazy="inner"
+                  />
                 </div>
-                <h3>{{item.title}}</h3>
+                <h3>{{ item.title }}</h3>
               </div>
               <div class="operat">
                 <div class="left">
                   <van-image round fit="cover" :src="item.author.headImgPath" />
-                  <span class="name">{{item.author.nickName}}</span>
+                  <span class="name">{{ item.author.nickName }}</span>
                   <img
                     src="../assets/img/home/icon-auth@2x.png"
                     alt
-                    v-if="item.author.memberStatus.name==='CertifyAdopt'"
+                    v-if="item.author.memberStatus.name === 'CertifyAdopt'"
                     class="auth"
                   />
-                  <span>{{item.commentCount}}评论</span>
-                  <span>{{item.pubDate|changeTime}}</span>
+                  <span>{{ item.commentCount }}评论</span>
+                  <span>{{ item.pubDate | changeTime }}</span>
                 </div>
               </div>
             </div>
@@ -135,7 +158,11 @@
                 <van-icon name="arrow" />
               </span>
             </div>
-            <div v-for="(item,index) in memberList" :key="index" class="member-item">
+            <div
+              v-for="(item, index) in memberList"
+              :key="index"
+              class="member-item"
+            >
               <div class="content">
                 <div class="left">
                   <div class="head-img">
@@ -143,15 +170,15 @@
                     <img
                       src="../assets/img/home/icon-auth-1@2x.png"
                       alt
-                      v-if="item.memberStatus.name==='CertifyAdopt'"
+                      v-if="item.memberStatus.name === 'CertifyAdopt'"
                       class="auth"
                     />
                   </div>
                   <div>
-                    <span class="name">{{item.nickName}}</span>
+                    <span class="name">{{ item.nickName }}</span>
                     <div class="desc">
-                      <span>{{item.memberFansCountCount}}个粉丝</span>
-                      <span>{{item.synopsis}}</span>
+                      <span>{{ item.memberFansCountCount }}个粉丝</span>
+                      <span>{{ item.synopsis }}</span>
                     </div>
                   </div>
                 </div>
@@ -162,8 +189,9 @@
                   <self-button
                     round
                     @click="focusUser(item.id)"
-                    :disabled="!item.followType?false:true"
-                  >{{focusText(item.followType)}}</self-button>
+                    :disabled="!item.followType ? false : true"
+                    >{{ focusText(item.followType) }}</self-button
+                  >
                 </div>
               </div>
             </div>
@@ -176,74 +204,94 @@
                 <van-icon name="arrow" @click="$router.push('/topic')" />
               </span>
             </div>
-            <div v-for="(item,index) in topicList" :key="index" class="article-item">
+            <div
+              v-for="(item, index) in topicList"
+              :key="index"
+              class="article-item"
+            >
               <div class="content">
                 <div class="img-wrap">
                   <img v-lazy="item.imagePathsStr" />
                 </div>
-                <h3>{{item.title}}</h3>
+                <h3>{{ item.title }}</h3>
               </div>
               <div class="operat">
                 <div class="left">
-                  <span>{{item.viewCount}}围观</span>
-                  <span>{{item.commentCount}}人评论</span>
-                  <span>{{item.pubDate|changeTime}}</span>
+                  <span>{{ item.viewCount }}围观</span>
+                  <span>{{ item.commentCount }}人评论</span>
+                  <span>{{ item.pubDate | changeTime }}</span>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <div class="wrap-b" v-if="navId===2">
-          <div v-for="(item,index) in videoList" :key="index" class="article-item">
+        <div class="wrap-b" v-if="navId === 2">
+          <div
+            v-for="(item, index) in videoList"
+            :key="index"
+            class="article-item"
+          >
             <div class="content">
               <div class="img-wrap">
                 <img v-lazy="item.videoImagePath" alt />
                 <van-icon name="play-circle" />
               </div>
-              <h3>{{item.title}}</h3>
+              <h3>{{ item.title }}</h3>
             </div>
             <div class="operat">
               <div class="left">
                 <van-image round fit="cover" :src="item.author.headImgPath" />
-                <span class="name">{{item.author.nickName}}</span>
+                <span class="name">{{ item.author.nickName }}</span>
                 <img
                   src="../assets/img/home/icon-auth@2x.png"
                   alt
-                  v-if="item.author.memberStatus.name==='CertifyAdopt'"
+                  v-if="item.author.memberStatus.name === 'CertifyAdopt'"
                   class="auth"
                 />
-                <span>{{item.commentCount}}评论</span>
-                <span>{{item.pubDate|changeTime}}</span>
+                <span>{{ item.commentCount }}评论</span>
+                <span>{{ item.pubDate | changeTime }}</span>
               </div>
             </div>
           </div>
         </div>
-        <div class="wrap-b" v-if="navId===3">
-          <div v-for="(item,index) in informationList" :key="index" class="article-item">
+        <div class="wrap-b" v-if="navId === 3">
+          <div
+            v-for="(item, index) in informationList"
+            :key="index"
+            class="article-item"
+          >
             <div class="content">
               <div class="img-wrap">
-                <img v-for="(inner,index) in item.imagePaths" :key="index" v-lazy="inner" />
+                <img
+                  v-for="(inner, index) in item.imagePaths"
+                  :key="index"
+                  v-lazy="inner"
+                />
               </div>
-              <h3>{{item.title}}</h3>
+              <h3>{{ item.title }}</h3>
             </div>
             <div class="operat">
               <div class="left">
                 <van-image round fit="cover" :src="item.author.headImgPath" />
-                <span class="name">{{item.author.nickName}}</span>
+                <span class="name">{{ item.author.nickName }}</span>
                 <img
                   src="../assets/img/home/icon-auth@2x.png"
                   alt
-                  v-if="item.author.memberStatus.name==='CertifyAdopt'"
+                  v-if="item.author.memberStatus.name === 'CertifyAdopt'"
                   class="auth"
                 />
-                <span>{{item.commentCount}}评论</span>
-                <span>{{item.pubDate|changeTime}}</span>
+                <span>{{ item.commentCount }}评论</span>
+                <span>{{ item.pubDate | changeTime }}</span>
               </div>
             </div>
           </div>
         </div>
-        <div class="wrap-b" v-if="navId===4">
-          <div v-for="(item,index) in memberList" :key="index" class="member-item">
+        <div class="wrap-b" v-if="navId === 4">
+          <div
+            v-for="(item, index) in memberList"
+            :key="index"
+            class="member-item"
+          >
             <div class="content">
               <div class="left">
                 <div class="head-img">
@@ -251,15 +299,15 @@
                   <img
                     src="../assets/img/home/icon-auth-1@2x.png"
                     alt
-                    v-if="item.memberStatus.name==='CertifyAdopt'"
+                    v-if="item.memberStatus.name === 'CertifyAdopt'"
                     class="auth"
                   />
                 </div>
                 <div>
-                  <span class="name">{{item.nickName}}</span>
+                  <span class="name">{{ item.nickName }}</span>
                   <div class="desc">
-                    <span>{{item.memberFansCountCount}}个粉丝</span>
-                    <span>{{item.synopsis}}</span>
+                    <span>{{ item.memberFansCountCount }}个粉丝</span>
+                    <span>{{ item.synopsis }}</span>
                   </div>
                 </div>
               </div>
@@ -270,25 +318,30 @@
                 <self-button
                   round
                   @click="focusUser(item.id)"
-                  :disabled="!item.followType?false:true"
-                >{{focusText(item.followType)}}</self-button>
+                  :disabled="!item.followType ? false : true"
+                  >{{ focusText(item.followType) }}</self-button
+                >
               </div>
             </div>
           </div>
         </div>
-        <div class="wrap-b" v-if="navId===5">
-          <div v-for="(item,index) in topicList" :key="index" class="article-item">
+        <div class="wrap-b" v-if="navId === 5">
+          <div
+            v-for="(item, index) in topicList"
+            :key="index"
+            class="article-item"
+          >
             <div class="content">
               <div class="img-wrap">
                 <img v-lazy="item.imagePathsStr" />
               </div>
-              <h3>{{item.title}}</h3>
+              <h3>{{ item.title }}</h3>
             </div>
             <div class="operat">
               <div class="left">
-                <span>{{item.viewCount}}围观</span>
-                <span>{{item.commentCount}}人评论</span>
-                <span>{{item.pubDate|changeTime}}</span>
+                <span>{{ item.viewCount }}围观</span>
+                <span>{{ item.commentCount }}人评论</span>
+                <span>{{ item.pubDate | changeTime }}</span>
               </div>
             </div>
           </div>
@@ -300,23 +353,23 @@
 
 <script>
 // @ is an alias to /src
-import selfButton from '@/components/button';
-import { Icon, Search, Image} from "vant";
+import selfButton from '@/components/button'
+import { Icon, Search, Image } from 'vant'
 export default {
-  name: "Home",
+  name: 'Home',
   data() {
     return {
       navShow: true,
       navList: [
-        { name: "综合", id: 1 },
-        { name: "视频", id: 2 },
-        { name: "资讯", id: 3 },
-        { name: "用户", id: 4 },
-        { name: "话题", id: 5 }
+        { name: '综合', id: 1 },
+        { name: '视频', id: 2 },
+        { name: '资讯', id: 3 },
+        { name: '用户', id: 4 },
+        { name: '话题', id: 5 },
       ],
       navId: 1,
       firstId: 0,
-      serchValue: "",
+      serchValue: '',
       columnShow: false,
       isEdit: true,
       loading: false,
@@ -334,112 +387,127 @@ export default {
       informationList: [],
       memberList: [],
       topicList: [],
-      videoList: []
-    };
+      videoList: [],
+    }
   },
   components: {
-    "van-search": Search,
-    "van-icon": Icon,
-    "van-image": Image,
-    'self-button': selfButton
+    'van-search': Search,
+    'van-icon': Icon,
+    'van-image': Image,
+    'self-button': selfButton,
   },
   created() {
-    this.historyRecordL = JSON.parse(localStorage.getItem('historyR'))?JSON.parse(localStorage.getItem('historyR')):[]
-    this.getHistoryList();
+    this.historyRecordL = JSON.parse(localStorage.getItem('historyR'))
+      ? JSON.parse(localStorage.getItem('historyR'))
+      : []
+    this.getHistoryList()
   },
   methods: {
     focusUser(id) {
       this.$ajax
-        .post("api/front/member/follow.json", {
-          id: id
+        .post('api/front/member/follow.json', {
+          id: id,
         })
         .then(() => {
           this.$toast('关注成功')
           this.getAll()
         })
-        .catch(error=> {
+        .catch((error) => {
           this.$toast(error)
-        });
+        })
     },
     focusText(item) {
-      if(item) {
-        return item.name==='Fans'?'已关注':item.name==='Block'?'已拉黑':'关注' 
+      if (item) {
+        return item.name === 'Fans'
+          ? '已关注'
+          : item.name === 'Block'
+          ? '已拉黑'
+          : '关注'
       } else {
         return '关注'
       }
     },
     getHistoryList() {
-        this.$ajax
-        .post("api/front/articles/findHotSearch.json", {})
-        .then(res => {
+      this.$ajax
+        .post('api/front/articles/findHotSearch.json', {})
+        .then((res) => {
           this.historyList = res.data
         })
-        .catch(error=> {
-          console.log(error);
-        });
+        .catch((error) => {
+          console.log(error)
+        })
     },
     getAll() {
-        this.$ajax
-        .post("api/front/articles/findComprehensive.json", {queryValue: this.serchValue})
-        .then(res => {
+      this.$ajax
+        .post('api/front/articles/findComprehensive.json', {
+          queryValue: this.serchValue,
+        })
+        .then((res) => {
           this.informationList = res.data.informationList
           this.memberList = res.data.memberList
           this.topicList = res.data.topicList
           this.videoList = res.data.videoList
         })
-        .catch(error=> {
-          console.log(error);
-        });
+        .catch((error) => {
+          console.log(error)
+        })
     },
     checkNav(id) {
-      this.navId=id;
+      this.navId = id
     },
     onSearch(val) {
-      if(val) {
+      if (val) {
         this.navShow = false
-        let historyRecord = JSON.parse(localStorage.getItem('historyR'))?JSON.parse(localStorage.getItem('historyR')):[]
+        let historyRecord = JSON.parse(localStorage.getItem('historyR'))
+          ? JSON.parse(localStorage.getItem('historyR'))
+          : []
         historyRecord.push(val)
-        let historyRecordL = historyRecord.filter(function(element,index,self){
-              return self.indexOf(element) == index;
-            });
+        let historyRecordL = historyRecord.filter(function(
+          element,
+          index,
+          self,
+        ) {
+          return self.indexOf(element) == index
+        })
         this.historyRecordL = historyRecordL
-        localStorage.setItem('historyR',JSON.stringify(historyRecordL))
+        localStorage.setItem('historyR', JSON.stringify(historyRecordL))
         this.getAll()
       }
     },
     delId(index) {
-      this.historyRecordL.splice(index,1)
-      localStorage.setItem('historyR',JSON.stringify(this.historyRecordL))
+      this.historyRecordL.splice(index, 1)
+      localStorage.setItem('historyR', JSON.stringify(this.historyRecordL))
     },
     delAll() {
       this.historyRecordL = []
-      localStorage.setItem('historyR',JSON.stringify(this.historyRecordL))
+      localStorage.setItem('historyR', JSON.stringify(this.historyRecordL))
     },
     onCancel() {
       // this.$router.push('/home')
-    }
+    },
   },
   computed: {
     userInfo() {
-      return this.$store.state.userInfo;
-    }
+      return this.$store.state.userInfo
+    },
   },
   watch: {
-    serchValue:function(val){
-      if(!val) {
+    serchValue: function(val) {
+      if (!val) {
         this.navShow = true
       }
-    }
-  }
-};
+    },
+  },
+}
 </script>
 <style lang="scss" scoped>
 .fade-leave-active {
-  transition: height .5s ease;
+  transition: height 0.5s ease;
 }
-.fade-leave,.fade-enter-to {
- opacity: 1;
- height: 30px;
+.fade-leave,
+.fade-enter-to {
+  opacity: 1;
+  height: 30px;
 }
 .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
   height: 0;
@@ -462,7 +530,7 @@ export default {
   position: fixed;
   top: 0;
   z-index: 2;
-  background:#fff;
+  background: #fff;
   display: flex;
   align-items: center;
   padding: 10px 25px 20px 0;
@@ -480,9 +548,9 @@ export default {
   position: fixed;
   top: 60px;
   z-index: 2;
-  background:#fff;
+  background: #fff;
   padding: 20px;
-  >div {
+  > div {
     margin-bottom: 24px;
   }
   p {
@@ -525,7 +593,7 @@ export default {
   position: fixed;
   top: 60px;
   z-index: 2;
-  background:#fff;
+  background: #fff;
   padding: 0 16px;
   ul {
     display: flex;
@@ -546,7 +614,7 @@ export default {
         font-weight: 800;
         color: #333333;
         &::after {
-          content: "";
+          content: '';
           display: block;
           position: absolute;
           left: 50%;
@@ -562,7 +630,7 @@ export default {
 }
 .article {
   // min-height: 100%;
-  padding-top:100px;
+  padding-top: 100px;
   padding-bottom: 58px;
   text-align: left;
   .refresh-m {
@@ -621,9 +689,9 @@ export default {
           position: absolute;
           top: 50%;
           left: 50%;
-          color: rgba($color: #070707, $alpha: .4);
+          color: rgba($color: #070707, $alpha: 0.4);
           font-size: 22px;
-          transform: translate(-11px,-11px);
+          transform: translate(-11px, -11px);
         }
       }
     }
@@ -635,50 +703,49 @@ export default {
       display: flex;
       justify-content: space-between;
       align-items: center;
-    }
-    .left {
-      display: flex;
-      align-items: center;
-      .name {
-        font-size: 15px;
-        font-family: PingFang SC Medium, PingFang SC Medium-Medium;
-        font-weight: 500;
-        color: #333333;
-        line-height: 15px;
-      }
-      .desc {
+      .left {
+        display: flex;
+        align-items: center;
+        .name {
+          font-size: 15px;
+          font-family: PingFang SC Medium, PingFang SC Medium-Medium;
+          font-weight: 500;
+          color: #333333;
+          line-height: 15px;
+        }
+        .desc {
           margin-top: 8px;
           font-size: 0;
-        span {
-          margin-right: 4px;
-        font-size: 12px;
-        font-family: PingFang SC Medium, PingFang SC Medium-Medium;
-        font-weight: 500;
-        color: #838383;
-        line-height: 12px;
-        letter-spacing: 0px;
+          span {
+            margin-right: 4px;
+            font-size: 12px;
+            font-family: PingFang SC Medium, PingFang SC Medium-Medium;
+            font-weight: 500;
+            color: #838383;
+            line-height: 12px;
+            letter-spacing: 0px;
+          }
         }
-        
       }
-    }
-    .head-img {
-      position: relative;
-      margin-right: 10px;
-      width: 45px;
-      height: 45px;
-      .van-image--round {
+      .head-img {
+        position: relative;
+        margin-right: 10px;
         width: 45px;
         height: 45px;
-      }
-      img {
-        position: absolute;
-        bottom: 0;
-        right: 0;
-        width: 14px;
+        .van-image--round {
+          width: 45px;
+          height: 45px;
+        }
+        img {
+          position: absolute;
+          bottom: 0;
+          right: 0;
+          width: 14px;
+        }
       }
     }
   }
-  
+
   .operat {
     display: flex;
     justify-content: space-between;
@@ -713,7 +780,6 @@ export default {
         width: 12px;
         height: 12px;
       }
-      
     }
   }
   .no-login {
