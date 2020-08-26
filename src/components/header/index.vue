@@ -41,6 +41,7 @@ export default {
   position: fixed;
   top: 0;
   left: 0;
+  z-index: 10;
   width: 100%;
   padding: 14px 15px;
   font-size: 17px;

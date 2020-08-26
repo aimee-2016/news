@@ -113,7 +113,7 @@
           <van-icon name="arrow" style="line-height: inherit;font-size:16px;color:#969799;" />
         </template>
       </van-cell>
-      <van-cell is-link url="/vant/mobile.html">
+      <van-cell is-link url="/myexplosive/">
         <template #title>
           <span class="icon-broke"></span>
           <span>我的爆料</span>

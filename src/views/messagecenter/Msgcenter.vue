@@ -120,18 +120,12 @@
 
 <script type="text/ecmascript-6">
 import {
-  // Icon,
   Tabs,
   Tab,
   List,
   PullRefresh,
   Image
-  // Popup,
-  // ActionSheet,
-  // Dialog,
-  // Field,
-  // Button
-} from "vant"; // Cell, CellGroup, Button,
+} from "vant"; 
 export default {
   name: 'svb',
   data() {
@@ -268,7 +262,6 @@ export default {
   components: {
     "van-tabs": Tabs,
     "van-tab": Tab,
-    // "van-icon": Icon,
     "van-list": List,
     "van-pull-refresh": PullRefresh,
     'van-image': Image,
