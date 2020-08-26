@@ -89,16 +89,34 @@ const routes = [
         meta: { title: '消息中心' },
       },
       {
-        path: 'myexplosive',
+        path: '/myexplosive',
         name: 'myexplosive',
         component: () => import('../views/myexplosive/MyExplosive.vue'),
         meta: { title: '我的爆料' },
       },
       {
-        path: 'explosivedetail',
+        path: '/explosivedetail',
         name: 'explosivedetail',
         component: () => import('../views/myexplosive/ExplosiveDetail.vue'),
         meta: { title: '爆料详情' },
+      },
+      {
+        path: '/feedbackhelp',
+        name: 'feedbackhelp',
+        component: () => import('../views/feedback/FeedbackHelp.vue'),
+        meta: { title: '反馈与帮助' },
+      },
+      {
+        path: '/questiondetail',
+        name: 'questiondetail',
+        component: () => import('../views/feedback/QuestionDetail.vue'),
+        meta: { title: '问题详情' },
+      },
+      {
+        path: '/feedback',
+        name: 'feedback',
+        component: () => import('../views/feedback/Feedback.vue'),
+        meta: { title: '意见反馈' },
       },
     ],
   },
@@ -141,6 +159,11 @@ const routes = [
     path: '/chat',
     name: 'chat',
     component: () => import('../views/messagecenter/Chat.vue'),
+  },
+  {
+    path: '/questionlist',
+    name: 'questionlist',
+    component: () => import('../views/feedback/QuestionList.vue'),
   },
   {
     path: '*',

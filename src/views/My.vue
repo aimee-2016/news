@@ -119,7 +119,7 @@
           <span>我的爆料</span>
         </template>
       </van-cell>
-      <van-cell is-link url="/vant/mobile.html">
+      <van-cell is-link url="/feedbackhelp/">
         <template #title>
           <span class="icon-edit"></span>
           <span>反馈帮助</span>

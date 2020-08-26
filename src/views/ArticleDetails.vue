@@ -108,7 +108,7 @@
 
 <script>
 import selfButton from '@/components/button'
-import { Icon, Image } from 'vant'
+import {  Image } from 'vant'
 export default {
   data() {
     return {
@@ -186,7 +186,6 @@ export default {
     },
   },
   components: {
-    'van-icon': Icon,
     'van-image': Image,
     'self-button': selfButton,
   },

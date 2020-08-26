@@ -83,7 +83,6 @@
 import {
   List,
   PullRefresh,
-  Image
 } from "vant";
 export default {
   data() {
@@ -150,7 +149,7 @@ export default {
       this.onLoad();
     },
     toDetail(id) {
-      this.$router.push({path: '/explosivedetail',query: {id:item.id}})
+      this.$router.push({path: '/explosivedetail',query: {id:id}})
     }
   },
   computed: {
@@ -162,7 +161,6 @@ export default {
   components: {
     "van-list": List,
     "van-pull-refresh": PullRefresh,
-    'van-image': Image,
   }
 }
 </script>
