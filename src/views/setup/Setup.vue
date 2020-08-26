@@ -1,6 +1,5 @@
 <template>
   <div>
-    <self-header>设置</self-header>
     <van-cell title="编辑资料" is-link />
     <van-cell title="账号和隐私设置" is-link url="/accountprivacy/" />
     <van-cell title="黑名单" is-link url="/blacklist/" />
@@ -18,7 +17,6 @@
 </template>
 
 <script type="text/ecmascript-6">
-import selfHeader from '@/components/header'
 import {
   Cell,
   ActionSheet
@@ -61,7 +59,6 @@ export default {
   },
   components: {
     "van-cell": Cell,
-    'self-header': selfHeader,
     "van-action-sheet": ActionSheet
   }
 }

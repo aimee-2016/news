@@ -38,7 +38,10 @@ export default {
 
 <style lang="scss" scoped>
 #head {
-  position: relative;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
   padding: 14px 15px;
   font-size: 17px;
   font-family: PingFang SC Medium, PingFang SC Medium-Medium;

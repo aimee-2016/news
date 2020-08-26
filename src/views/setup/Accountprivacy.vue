@@ -1,6 +1,5 @@
 <template>
   <div>
-    <self-header>账号和隐私设置</self-header>
     <van-cell
       title="手机号"
       value="去绑定手机号"
@@ -25,7 +24,6 @@
 </template>
 
 <script type="text/ecmascript-6">
-import selfHeader from '@/components/header'
 import {
   Cell,
   CellGroup,
@@ -68,7 +66,6 @@ export default {
   },
   components: {
     "van-cell": Cell,
-    'self-header': selfHeader,
     "van-cell-group": CellGroup,
     "van-switch": Switch
   }

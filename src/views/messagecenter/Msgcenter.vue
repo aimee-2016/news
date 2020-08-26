@@ -1,6 +1,5 @@
 <template>
   <div>
-    <self-header>消息中心</self-header>
     <van-tabs
       v-model="active"
       line-width="33px"
@@ -121,7 +120,7 @@
 
 <script type="text/ecmascript-6">
 import {
-  Icon,
+  // Icon,
   Tabs,
   Tab,
   List,
@@ -269,7 +268,7 @@ export default {
   components: {
     "van-tabs": Tabs,
     "van-tab": Tab,
-    "van-icon": Icon,
+    // "van-icon": Icon,
     "van-list": List,
     "van-pull-refresh": PullRefresh,
     'van-image': Image,

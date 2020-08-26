@@ -22,113 +22,138 @@ const routes = [
       {
         path: 'video',
         name: 'video',
-        component: () => import('../views/Video.vue')
+        component: () => import('../views/Video.vue'),
       },
       {
         path: 'add',
         name: 'add',
-        component: () => import('../views/Add.vue')
+        component: () => import('../views/Add.vue'),
       },
       {
         path: 'topic',
         name: 'topic',
-        component: () => import('../views/Topic.vue')
+        component: () => import('../views/Topic.vue'),
       },
       {
         path: 'my',
         name: 'my',
-        component: () => import('../views/My.vue')
+        component: () => import('../views/My.vue'),
       },
-    ]
+    ],
+  },
+  {
+    path: '',
+    name: 'headmain',
+    component: () => import('../views/HeadMain.vue'),
+    children: [
+      {
+        path: '/setup',
+        name: 'setup',
+        component: () => import('../views/setup/Setup.vue'),
+        meta: { title: '设置' },
+      },
+      {
+        path: '/bindphone',
+        name: 'bindphone',
+        component: () => import('../views/setup/Bindphone.vue'),
+        meta: { title: '绑定手机号' },
+      },
+      {
+        path: '/changephone',
+        name: 'changephone',
+        component: () => import('../views/setup/Changephone.vue'),
+        meta: { title: '更改手机号' },
+      },
+      {
+        path: '/accountprivacy',
+        name: 'accountprivacy',
+        component: () => import('../views/setup/Accountprivacy.vue'),
+        meta: { title: '账号和隐私设置' },
+      },
+      {
+        path: '/changepassword',
+        name: 'changepassword',
+        component: () => import('../views/setup/Changepassword.vue'),
+        meta: { title: '修改密码' },
+      },
+      {
+        path: '/blacklist',
+        name: 'blacklist',
+        component: () => import('../views/setup/Blacklist.vue'),
+        meta: { title: '黑名单' },
+      },
+      {
+        path: '/msgcenter',
+        name: 'msgcenter',
+        component: () => import('../views/messagecenter/Msgcenter.vue'),
+        meta: { title: '消息中心' },
+      },
+      {
+        path: 'myexplosive',
+        name: 'myexplosive',
+        component: () => import('../views/myexplosive/MyExplosive.vue'),
+        meta: { title: '我的爆料' },
+      },
+      {
+        path: 'explosivedetail',
+        name: 'explosivedetail',
+        component: () => import('../views/myexplosive/ExplosiveDetail.vue'),
+        meta: { title: '爆料详情' },
+      },
+    ],
   },
   {
     path: '/articledetails',
     name: 'articledetails',
-    component: () => import('../views/ArticleDetails.vue')
+    component: () => import('../views/ArticleDetails.vue'),
   },
   {
     path: '/topicdetails',
     name: 'topicdetails',
-    component: () => import('../views/TopicDetails.vue')
+    component: () => import('../views/TopicDetails.vue'),
   },
   {
     path: '/myhome',
     name: 'myhome',
-    component: () => import('../views/MyHome.vue')
+    component: () => import('../views/MyHome.vue'),
   },
   {
     path: '/login',
     name: 'login',
-    component: () => import('../views/Login.vue')
+    component: () => import('../views/Login.vue'),
   },
   {
     path: '/search',
     name: 'search',
-    component: () => import('../views/Search.vue')
+    component: () => import('../views/Search.vue'),
   },
   {
     path: '/test',
     name: 'test',
-    component: () => import('../views/test.vue')
-  },
-  {
-    path: '/setup',
-    name: 'setup',
-    component: () => import('../views/setup/Setup.vue')
-  },
-  {
-    path: '/bindphone',
-    name: 'bindphone',
-    component: () => import('../views/setup/Bindphone.vue')
-  },
-  {
-    path: '/changephone',
-    name: 'changephone',
-    component: () => import('../views/setup/Changephone.vue')
-  },
-  {
-    path: '/accountprivacy',
-    name: 'accountprivacy',
-    component: () => import('../views/setup/Accountprivacy.vue')
-  },
-  {
-    path: '/changepassword',
-    name: 'changepassword',
-    component: () => import('../views/setup/Changepassword.vue')
-  },
-  {
-    path: '/blacklist',
-    name: 'blacklist',
-    component: () => import('../views/setup/Blacklist.vue')
-  },
-  {
-    path: '/msgcenter',
-    name: 'msgcenter',
-    component: () => import('../views/messagecenter/Msgcenter.vue')
+    component: () => import('../views/test.vue'),
   },
   {
     path: '/msgdetail',
     name: 'msgdetail',
-    component: () => import('../views/messagecenter/Msgdetail.vue')
+    component: () => import('../views/messagecenter/Msgdetail.vue'),
   },
   {
     path: '/chat',
     name: 'chat',
-    component: () => import('../views/messagecenter/Chat.vue')
+    component: () => import('../views/messagecenter/Chat.vue'),
   },
   {
     path: '*',
     name: '404',
-    component: () => import('../views/404.vue')
+    component: () => import('../views/404.vue'),
   },
 ]
 
 const router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
-  routes
+  routes,
 })
-
 
 const LOGIN_PAGE_NAME = 'login'
 

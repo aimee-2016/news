@@ -1,6 +1,5 @@
 <template>
   <div>
-    <self-header>绑定手机号</self-header>
     <div class="container">
       <div v-if="step === 1">
         <van-form @submit="onSubmit1">
@@ -79,7 +78,6 @@
 </template>
 
 <script type="text/ecmascript-6">
-import selfHeader from '@/components/header'
 import { Icon,Form,Field,Button,Picker,Popup,Toast,CellGroup } from "vant";
 export default {
   data() {
@@ -188,7 +186,6 @@ export default {
 
   },
   components: {
-    'self-header': selfHeader,
     "van-icon": Icon,
     "van-form": Form,
     "van-field": Field,

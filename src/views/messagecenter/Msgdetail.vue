@@ -60,6 +60,7 @@ export default {
 #detail {
   background: #f4f4f4;
   height: 100%;
+  padding-top: 52px;
 }
 .container {
   padding: 22px 15px 0;

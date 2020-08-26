@@ -1,6 +1,5 @@
 <template>
   <div>
-    <self-header>修改密码</self-header>
     <div class="container">
       <div>
         <van-form @submit="onSubmit5">
@@ -38,7 +37,6 @@
 </template>
 
 <script type="text/ecmascript-6">
-import selfHeader from '@/components/header'
 import { Form,Field,Button,Toast,CellGroup } from "vant";
 export default {
   data() {
@@ -126,7 +124,6 @@ export default {
 
   },
   components: {
-    'self-header': selfHeader,
     // "van-icon": Icon,
     "van-form": Form,
     "van-field": Field,

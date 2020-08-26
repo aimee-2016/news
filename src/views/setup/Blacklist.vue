@@ -1,6 +1,5 @@
 <template>
   <div>
-    <self-header>黑名单</self-header>
     <div v-for="(item, index) in blackList" :key="index" class="member-item">
       <div class="content">
         <div class="left">
@@ -20,7 +19,6 @@
 </template>
 
 <script type="text/ecmascript-6">
-import selfHeader from '@/components/header'
 import selfButton from '@/components/button';
 import {
   Image
@@ -69,7 +67,6 @@ export default {
 
   },
   components: {
-    'self-header': selfHeader,
     "van-image": Image,
     'self-button': selfButton
   }
