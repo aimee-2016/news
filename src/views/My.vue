@@ -131,7 +131,7 @@
           <span>系统设置</span>
         </template>
       </van-cell>
-      <van-cell is-link url="/vant/mobile.html">
+      <van-cell is-link url="/aboutus/">
         <template #title>
           <span class="icon-info"></span>
           <span>关于我们</span>

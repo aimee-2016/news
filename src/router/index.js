@@ -118,6 +118,18 @@ const routes = [
         component: () => import('../views/feedback/Feedback.vue'),
         meta: { title: '意见反馈' },
       },
+      {
+        path: '/aboutus',
+        name: 'aboutus',
+        component: () => import('../views/aboutus/Aboutus.vue'),
+        meta: { title: '关于我们' },
+      },
+      {
+        path: '/useragreement',
+        name: 'useragreement',
+        component: () => import('../views/aboutus/UserAgreement.vue'),
+        meta: { title: '柬中资讯用户协议' },
+      },
     ],
   },
   {
