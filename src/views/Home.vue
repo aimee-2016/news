@@ -353,7 +353,7 @@ export default {
           })
         .then(() => {
           this.modal.report = false
-          this.$toast("操作成功");
+          this.$toast("举报成功");
         })
         .catch(error=> {
           this.$toast(error.message);

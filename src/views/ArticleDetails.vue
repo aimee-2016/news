@@ -46,9 +46,7 @@
             >
           </div>
         </div>
-        <div v-html="topicDetails.content">
-          <!-- {{topicDetails.content}} -->
-        </div>
+        <div v-html="topicDetails.content" class="at-content"></div>
         <p class="tp-top-ed">
           <span>本文经授权发布，柬中资讯不代表立场如若转载请联系原作者</span>
           <span>{{ topicDetails.viewCount }}人阅读</span>
@@ -63,63 +61,214 @@
         </div>
       </div>
     </div>
-    <div class="tp-ct-box">
-      <p class="tp-ct-title">热门评论({{ commentList.totalElements || 0 }})</p>
-      <div
-        class="tp-ct-list"
-        v-for="item in commentList.content"
-        :key="item.id"
+    <van-pull-refresh
+      v-model="refreshing"
+      success-text="刷新成功"
+      @refresh="onRefresh"
+    >
+      <van-list
+        v-model="loading"
+        :finished="finished"
+        finished-text="没有更多了"
+        @load="onLoad"
       >
-        <div class="tp-ct-item">
-          <div class="tp-ct-head">
-            <img :src="item.memberDto.headImgPath" />
-          </div>
-          <div class="tp-ct-rt">
-            <div class="tp-ct-info">
-              <div class="tp-ct-nm">
-                <span>{{ item.memberDto.nickName }}</span>
+        <div class="tp-ct-box">
+          <p class="tp-ct-title">热门评论({{ totalElements || 0 }})</p>
+          <div class="tp-ct-list" v-for="item in list" :key="item.id">
+            <div class="tp-ct-item">
+              <div class="tp-ct-head">
+                <img :src="item.memberDto.headImgPath" />
               </div>
-              <div class="tp-ct-jb">
-                <span
-                  v-if="item.whetherDelete"
-                  style="color:#333333;font-size:14px;"
-                  >删除</span
-                >
-                <span v-else>举报</span>
-              </div>
-            </div>
-            <div class="tp-ct-lt">{{ item.content }}</div>
-            <div class="tp-ct-time">
-              <div>
-                <span>{{ item.commentDate }} 05:12</span>
-              </div>
-              <div>
-                <img src="../assets/img/topic/icon5.png" />
-                <img src="../assets/img/topic/icon6.png" />
+              <div class="tp-ct-rt">
+                <div class="tp-ct-info">
+                  <div class="tp-ct-nm">
+                    <span>{{ item.memberDto.nickName }}</span>
+                  </div>
+                  <div class="tp-ct-jb">
+                    <span
+                      v-if="item.whetherDelete"
+                      style="color:#333333;font-size:14px;"
+                      @click="onSelect(item.id)"
+                      >删除</span
+                    >
+                    <span
+                      v-else
+                      @click="
+                        selectedItem = item
+                        modal.complaint = true
+                      "
+                      >举报</span
+                    >
+                  </div>
+                </div>
+                <div class="tp-ct-lt">{{ item.content }}</div>
+                <div class="tp-ct-time">
+                  <div>
+                    <span>{{ item.commentDate }}</span>
+                  </div>
+                  <div class="operate">
+                    <div class="message">
+                      <img src="../assets/img/home/information.png" />
+                      <span>{{ item.replyCount }}</span>
+                    </div>
+                    <div class="support">
+                      <img
+                        src="../assets/img/home/icon-support1-hover@2x.png"
+                        @click="unSupport(item)"
+                        v-if="item.whetherLikes"
+                      />
+                      <img
+                        src="../assets/img/home/icon-support1@2x.png"
+                        @click="support(item)"
+                        v-else
+                      />
+                      <span>{{ item.likesCount }}</span>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
-        <div></div>
+      </van-list>
+    </van-pull-refresh>
+    <div class="at-bottom">
+      <input type="text" placeholder="写评论" />
+      <div class="operate">
+        <div class="icon-support">
+          <img
+            src="../assets/img/home/icon-support-hover@2x.png"
+            @click="articleunSupport()"
+            v-if="topicDetails.whetherLikeArticles"
+          />
+          <img
+            src="../assets/img/home/icon-support@2x.png"
+            @click="articleSupport()"
+            v-else
+          />
+        </div>
+        <div class="icon-collection">
+          <img
+            src="../assets/img/home/icon-collection-hover.png"
+            @click="articleunCollection()"
+            v-if="topicDetails.whetherCollection"
+          />
+          <img
+            src="../assets/img/home/icon-collection.png"
+            @click="articleCollection()"
+            v-else
+          />
+        </div>
+        <div class="icon-share">
+          <img src="../assets/img/home/icon-share.png" alt="" />
+        </div>
       </div>
     </div>
+    <van-popup v-model="modal.complaint" closeable class="modal-complaint">
+      <div class="container">
+        <div class="title">举报评论</div>
+        <van-cell-group>
+          <van-cell
+            :value="item.name"
+            v-for="(item, index) in articleReportList"
+            :key="index"
+            :class="{ selected: selectedType === item.val }"
+            @click="typeSelect(item.val)"
+          />
+        </van-cell-group>
+        <div class="center">
+          <div class="text"><span>#</span>我有话要说:</div>
+          <van-field
+            v-model="message"
+            rows="6"
+            autosize
+            type="textarea"
+            placeholder="请具体说明问题，我们将尽快处理"
+            style="background: #f0f0f0;"
+          />
+        </div>
+        <div class="footer">
+          <van-button
+            type="primary"
+            round
+            class="btn-yellow"
+            @click="reportArticle()"
+            >确定</van-button
+          >
+        </div>
+      </div>
+    </van-popup>
+    <van-share-sheet v-model="showShare" :options="options" />
   </div>
 </template>
 
 <script>
 import selfButton from '@/components/button'
-import {  Image } from 'vant'
+import {
+  Image,
+  List,
+  PullRefresh,
+  Popup,
+  Dialog,
+  ShareSheet,
+  Cell,
+  CellGroup,
+  Button,
+  Field,
+} from 'vant'
 export default {
   data() {
     return {
+      modal: {
+        complaint: false,
+      },
+      articleReportList: [
+        { name: '淫秽色情', val: 'Pornographic' },
+        { name: '违法信息', val: 'IllegalInformation' },
+        { name: '营销广告', val: 'Advertisement' },
+        { name: '暴力血腥', val: 'ViolentBloody' },
+        { name: '恶心攻击谩骂', val: 'MaliciousAttack' },
+      ],
+      selectedType: '',
+      message: '',
+      selectedItem: null,
       topicDetails: {},
       commentList: {},
       recommendList: [],
+      page: 1,
+      size: 5,
+      list: [],
+      totalElements: 0,
+      loading: false,
+      finished: false,
+      refreshing: false,
+      showShare: false,
+      options: [
+        [
+          { name: '微信好友', icon: 'wechat' },
+          {
+            name: '微信朋友圈',
+            icon: require('../assets/img/home/friendscircle@2x.png'),
+          },
+          { name: 'QQ', icon: 'qq' },
+          {
+            name: 'QQ空间',
+            icon: require('../assets/img/home/qqzone@2x.png'),
+          },
+        ],
+        [
+          { name: '微博', icon: 'weibo' },
+          {
+            name: '系统分享',
+            icon: require('../assets/img/home/love@2x.png'),
+          },
+          { name: '复制链接', icon: 'link' },
+        ],
+      ],
     }
   },
   created() {
     this.queryTopicById()
-    this.queryComment()
     this.getRecommendList()
   },
   methods: {
@@ -132,18 +281,44 @@ export default {
           this.topicDetails = res.data
         })
     },
-    queryComment() {
-      this.$ajax
-        .post('/api/front/articles/findCommentPageByCondition.json', {
-          page: '1',
-          size: '5',
-          EQ_articlesId: this.$route.query.id,
-          EQ_type: 'Comment',
-          sort: 'commentDate'
-        })
-        .then((res) => {
-          this.commentList = res.data
-        })
+    getData() {
+      return new Promise((resolve, reject) => {
+        this.$ajax
+          .post('api/front/articles/findCommentPageByCondition.json', {
+            page: this.page,
+            size: this.size,
+            EQ_articlesId: this.$route.query.id,
+            EQ_type: 'Comment',
+            sort: 'asc',
+          })
+          .then((response) => {
+            resolve(response)
+          })
+          .catch((error) => {
+            reject(error)
+          })
+      })
+    },
+    onLoad() {
+      if (this.refreshing) {
+        this.page = 1
+        this.list = []
+        this.refreshing = false
+      }
+      this.getData().then((res) => {
+        this.totalElements = res.data.totalElements
+        this.list.push(...res.data.content)
+        this.loading = false
+        if (this.page >= res.data.totalPages) {
+          this.finished = true
+        }
+        this.page++
+      })
+    },
+    onRefresh() {
+      this.finished = false
+      this.loading = true
+      this.onLoad()
     },
     focusUser(id) {
       this.$ajax
@@ -178,23 +353,185 @@ export default {
         })
         .then((res) => {
           this.recommendList = res.data.content
-          console.log(this.recommendList)
+          // console.log(this.recommendList)
         })
         .catch((error) => {
           console.log(error)
+        })
+    },
+    typeSelect(val) {
+      this.selectedType = val
+    },
+    reportArticle() {
+      if (!this.selectedType) {
+        this.$toast('请选择举报类型')
+        return false
+      }
+      this.modal.complaint = false
+      this.$ajax
+        .post('api/front/articles/report.json', {
+          type: 'Comment',
+          commentId: this.selectedItem.id,
+          commentReportType: this.selectedType,
+          content: this.message,
+        })
+        .then(() => {
+          this.modal.report = false
+          this.$toast('举报成功')
+        })
+        .catch((error) => {
+          this.$toast(error.message)
+        })
+    },
+    onSelect(id) {
+      Dialog.confirm({
+        title: '确定删除此评论？',
+        confirmButtonColor: '#f99307',
+        theme: 'round-button',
+      })
+        .then(() => {
+          this.delComment(id)
+        })
+        .catch(() => {})
+    },
+    delComment(id) {
+      this.$ajax
+        .post('api/front/articles/deleteComment.json', {
+          id: id,
+        })
+        .then(() => {
+          this.$toast('删除成功')
+        })
+        .catch((error) => {
+          this.$toast(error.message)
+        })
+    },
+    support(item) {
+      this.$ajax
+        .post('api/front/articles/likeComment.json', {
+          id: item.id,
+        })
+        .then(() => {
+          item.whetherLikes = true
+          item.likesCount++
+          this.$toast('点赞成功')
+        })
+        .catch((error) => {
+          this.$toast(error.message)
+        })
+    },
+    unSupport(item) {
+      this.$ajax
+        .post('api/front/articles/unLikeComment.json', {
+          id: item.id,
+        })
+        .then(() => {
+          item.whetherLikes = false
+          item.likesCount--
+          this.$toast('取消点赞')
+        })
+        .catch((error) => {
+          this.$toast(error.message)
+        })
+    },
+    articleSupport() {
+      this.$ajax
+        .post('api/front/articles/likeArticles.json', {
+          id: this.$route.query.id,
+        })
+        .then(() => {
+          this.topicDetails.whetherLikeArticles = true
+          // likeCount
+          this.$toast('点赞成功')
+        })
+        .catch((error) => {
+          this.$toast(error.message)
+        })
+    },
+    articleunSupport() {
+      this.$ajax
+        .post('api/front/articles/unLikeArticles.json', {
+          id: this.$route.query.id,
+        })
+        .then(() => {
+          this.topicDetails.whetherLikeArticles = false
+          this.$toast('取消点赞')
+        })
+        .catch((error) => {
+          this.$toast(error.message)
+        })
+    },
+    articleCollection() {
+      this.$ajax
+        .post('api/front/articles/articlesCollection.json', {
+          id: this.$route.query.id,
+        })
+        .then(() => {
+          this.topicDetails.whetherCollection = true
+          this.$toast('收藏成功')
+        })
+        .catch((error) => {
+          this.$toast(error.message)
+        })
+    },
+    articleunCollection() {
+      this.$ajax
+        .post('api/front/articles/unArticlesCollection.json', {
+          ids: [this.$route.query.id],
+        })
+        .then(() => {
+          this.topicDetails.whetherCollection = false
+          this.$toast('取消收藏')
+        })
+        .catch((error) => {
+          this.$toast(error.message)
+        })
+    },
+    articleComment() {
+      this.$ajax
+        .post('api/front/articles/articlesCommentOrReplay.json', {
+          ids: [this.$route.query.id],
+          articlesId: this.$route.query.id,
+          content: '',
+          type: 'Comment'
+        })
+        .then(() => {
+          // this.topicDetails.whetherCollection = false
+          this.$toast('评论成功')
+        })
+        .catch((error) => {
+          this.$toast(error.message)
         })
     },
   },
   components: {
     'van-image': Image,
     'self-button': selfButton,
+    'van-list': List,
+    'van-pull-refresh': PullRefresh,
+    'van-share-sheet': ShareSheet,
+    'van-popup': Popup,
+    'van-cell-group': CellGroup,
+    'van-cell': Cell,
+    'van-button': Button,
+    'van-field': Field,
   },
 }
 </script>
 
 <style lang="scss" scoped>
 #detial {
+  padding-bottom: 50px;
   background: #f8f8f8;
+}
+.btn-yellow.van-button--primary {
+  display: block;
+  margin: 20px auto 0;
+  width: 95px;
+  height: 39px;
+  background: #ffdd00;
+  color: #333334;
+  border-color: #ffdd00;
 }
 .tp-head {
   position: fixed;
@@ -266,6 +603,11 @@ export default {
         }
       }
     }
+    // .at-content {
+    //   img {
+    //     width: 100% !important;
+    //   }
+    // }
     .tp-top-ed {
       margin-top: 20px;
       padding-bottom: 20px;
@@ -389,12 +731,92 @@ export default {
         .tp-ct-time {
           display: flex;
           justify-content: space-between;
+          align-items: center;
           font-size: 11px;
           color: #999999;
-          img:first-child {
-            margin-right: 31px;
+          .operate {
+            display: flex;
+            align-items: center;
+            .message {
+              margin-right: 30px;
+              img {
+                width: 17px;
+                margin-right: 4px;
+                vertical-align: -2px;
+              }
+            }
+            .support {
+              img {
+                width: 15px;
+                margin-right: 4px;
+                vertical-align: -2px;
+              }
+            }
           }
         }
+      }
+    }
+  }
+}
+.at-bottom {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 15px;
+  background: #fff;
+  box-shadow: 0px 1px 5px 0px rgba(0, 0, 0, 0.2);
+  input {
+    width: 195px;
+    height: 34px;
+    padding-left: 16px;
+    background: #f4f4f4;
+    border-radius: 17px;
+  }
+  .operate {
+    display: flex;
+    img {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+    }
+    .icon-collection {
+      margin: 0 30px;
+    }
+  }
+}
+.modal-complaint {
+  width: 320px;
+  border-radius: 5px;
+  padding: 17px;
+  .title {
+    font-size: 16px;
+    font-family: PingFang SC Medium, PingFang SC Medium-Medium;
+    font-weight: bold;
+    color: #333333;
+    line-height: 24px;
+    letter-spacing: 0px;
+    text-align: center;
+  }
+  .selected {
+    .van-cell__value--alone {
+      color: #f99307;
+    }
+  }
+  .center {
+    margin-top: 14px;
+    .text {
+      margin-bottom: 12px;
+      font-size: 15px;
+      font-family: PingFang SC Medium, PingFang SC Medium-Medium;
+      font-weight: 500;
+      text-align: justifyLeft;
+      color: #333333;
+      span {
+        color: #f99307;
       }
     }
   }

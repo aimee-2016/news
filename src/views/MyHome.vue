@@ -250,7 +250,6 @@
     </van-popup>
   </div>
 </template>
-btn-yellow
 <script type="text/ecmascript-6">
 import {
   Icon,
