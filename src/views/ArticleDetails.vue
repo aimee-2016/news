@@ -61,72 +61,81 @@
         </div>
       </div>
     </div>
-      <van-list
-        v-model="loading"
-        :finished="finished"
-        finished-text="没有更多了"
-        @load="onLoad"
-      >
-        <div class="tp-ct-box">
-          <p class="tp-ct-title" id="topAnchor">热门评论({{ totalElements || 0 }})</p>
-          <div class="tp-ct-list" v-for="item in list" :key="item.id">
-            <div class="tp-ct-item">
-              <div class="tp-ct-head">
-                <img :src="item.memberDto.headImgPath" />
-              </div>
-              <div class="tp-ct-rt">
-                <div class="tp-ct-info">
-                  <div class="tp-ct-nm">
-                    <span>{{ item.memberDto.nickName }}</span>
-                  </div>
-                  <div class="tp-ct-jb">
-                    <span
-                      v-if="item.whetherDelete"
-                      style="color:#333333;font-size:14px;"
-                      @click="onSelect(item.id)"
-                      >删除</span
-                    >
-                    <span
-                      v-else
-                      @click="
-                        selectedItem = item
-                        modal.complaint = true
-                      "
-                      >举报</span
-                    >
-                  </div>
+    <van-list
+      v-model="loading"
+      :finished="finished"
+      finished-text="没有更多了"
+      @load="onLoad"
+    >
+      <div class="tp-ct-box">
+        <p class="tp-ct-title" id="topAnchor">
+          热门评论({{ totalElements || 0 }})
+        </p>
+        <div class="tp-ct-list" v-for="item in list" :key="item.id">
+          <div class="tp-ct-item">
+            <div class="tp-ct-head">
+              <img :src="item.memberDto.headImgPath" />
+            </div>
+            <div class="tp-ct-rt">
+              <div class="tp-ct-info">
+                <div class="tp-ct-nm">
+                  <span>{{ item.memberDto.nickName }}</span>
                 </div>
-                <div class="tp-ct-lt">{{ item.content }}</div>
-                <div class="tp-ct-time">
-                  <div>
-                    <span>{{ item.commentDate }}</span>
+                <div class="tp-ct-jb">
+                  <span
+                    v-if="item.whetherDelete"
+                    style="color:#333333;font-size:14px;"
+                    @click="onSelect(item.id)"
+                    >删除</span
+                  >
+                  <span
+                    v-else
+                    @click="
+                      selectedItem = item
+                      modal.complaint = true
+                    "
+                    >举报</span
+                  >
+                </div>
+              </div>
+              <div class="tp-ct-lt">{{ item.content }}</div>
+              <div class="tp-ct-time">
+                <div>
+                  <span>{{ item.commentDate }}</span>
+                </div>
+                <div class="operate">
+                  <div class="message">
+                    <img
+                      src="../assets/img/home/information.png"
+                      @click="
+                        commemtType = 2
+                        selectedItem = item
+                        commentShow = true
+                      "
+                    />
+                    <span>{{ item.replyCount }}</span>
                   </div>
-                  <div class="operate">
-                    <div class="message">
-                      <img src="../assets/img/home/information.png" />
-                      <span>{{ item.replyCount }}</span>
-                    </div>
-                    <div class="support">
-                      <img
-                        src="../assets/img/home/icon-support1-hover@2x.png"
-                        @click="unSupport(item)"
-                        v-if="item.whetherLikes"
-                      />
-                      <img
-                        src="../assets/img/home/icon-support1@2x.png"
-                        @click="support(item)"
-                        v-else
-                      />
-                      <span>{{ item.likesCount }}</span>
-                    </div>
+                  <div class="support">
+                    <img
+                      src="../assets/img/home/icon-support1-hover@2x.png"
+                      @click="unSupport(item)"
+                      v-if="item.whetherLikes"
+                    />
+                    <img
+                      src="../assets/img/home/icon-support1@2x.png"
+                      @click="support(item)"
+                      v-else
+                    />
+                    <span>{{ item.likesCount }}</span>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </van-list>
-    
+      </div>
+    </van-list>
+
     <van-popup v-model="modal.complaint" closeable class="modal-complaint">
       <div class="container">
         <div class="title">举报评论</div>
@@ -164,7 +173,7 @@
     <van-share-sheet v-model="showShare" :options="options" />
     <div class="at-bottom">
       <!-- <input type="text" placeholder="写评论" /> -->
-      <span class="comment" @click="commentShow=true">写评价</span>
+      <span class="comment" @click="commemtType = 1;commentShow = true;">写评价</span>
       <div class="operate">
         <div class="icon-support">
           <img
@@ -195,18 +204,19 @@
         </div>
       </div>
     </div>
-    <div class="comment-textarea" :class="{'layer-zi':commentShow}">
-      <van-field
-        v-model="comment"
-        rows="2"
-        autosize
-        label=""
-        type="textarea"
-        placeholder="写评价"
-      />
-      <span @click="articleComment">发布</span>
-    </div>
-    
+    <van-popup v-model="commentShow" position="bottom">
+      <div class="comment-textarea">
+        <van-field
+          v-model="comment"
+          rows="2"
+          autosize
+          label=""
+          type="textarea"
+          placeholder="写评价"
+        />
+        <span @click="articleCommentBefore">发送</span>
+      </div>
+    </van-popup>
   </div>
 </template>
 
@@ -275,6 +285,7 @@ export default {
       comment: '',
       commentShow: false,
       delAddnum: 0,
+      commemtType: 1,
     }
   },
   created() {
@@ -291,7 +302,7 @@ export default {
           this.topicDetails = res.data
         })
     },
-    getData(pageType,num) {
+    getData(pageType, num) {
       // let endSize = ''
       // switch (pageType) {
       //   case 'normal':
@@ -307,7 +318,7 @@ export default {
       return new Promise((resolve, reject) => {
         this.$ajax
           .post('api/front/articles/findCommentPageByCondition.json', {
-            page: pageType===2?this.page:1,
+            page: pageType === 2 ? this.page : 1,
             size: this.size,
             EQ_articlesId: this.$route.query.id,
             EQ_type: 'Comment',
@@ -338,11 +349,11 @@ export default {
       })
     },
     commentInit() {
-      this.page=1;
-      this.list=[];
-      this.finished = false;
-      this.loading = true;
-      this.onLoad();
+      this.page = 1
+      this.list = []
+      this.finished = false
+      this.loading = true
+      this.onLoad()
     },
     onRefresh() {
       this.finished = false
@@ -430,9 +441,9 @@ export default {
         })
         .then(() => {
           // this.commentInit()
-          const isLargeNumber = (element) => element.id === id;
+          const isLargeNumber = (element) => element.id === id
           const index = this.list.findIndex(isLargeNumber)
-          this.list.splice(index,1)
+          this.list.splice(index, 1)
           this.$toast('删除成功')
         })
         .catch((error) => {
@@ -520,8 +531,14 @@ export default {
           this.$toast(error.message)
         })
     },
+    articleCommentBefore() {
+      if (this.commemtType === 1) {
+        this.articleComment()
+      } else {
+        this.relayComent()
+      }
+    },
     articleComment() {
-      // console.log(1)
       // let anchor = document.createElement('a')
       // anchor.setAttribute('id', 'topAnchor')
       // document.body.appendChild(anchor);
@@ -529,37 +546,46 @@ export default {
       // document.body.removeChild(anchor);
       this.$ajax
         .post('api/front/articles/articlesCommentOrReplay.json', {
-          // commentId: '',
+          // commentId: commentId,
           articlesId: this.$route.query.id,
           content: this.comment,
-          type: 'Comment'
+          type: 'Comment',
         })
         .then(() => {
           this.commentShow = false
           // this.page = 1
-          this.getData(1).then((res) => {
-            // this.totalElements = res.data.totalElements
-            // this.list.push(...res.data.content)
-            // this.loading = false
-            // if (this.page >= res.data.totalPages) {
-            //   this.finished = true
-            // }
-            // this.page++
-            console.log(this.list)
-            console.log(res.data.content[0])
-            this.list.unshift(res.data.content[0])
-            console.log(this.list)
-          })
+          // this.getData(1).then((res) => {
+          //   console.log(this.list)
+          //   console.log(res.data.content[0])
+          //   this.list.unshift(res.data.content[0])
+          //   console.log(this.list)
+          // })
           // <a href="#topAnchor">回到顶部</a>
-          // this.commentInit()
-          
+          this.commentInit()
+
           this.$toast('评论成功')
         })
         .catch((error) => {
           this.$toast(error.message)
         })
     },
-    
+    relayComent() {
+      this.$ajax
+        .post('api/front/articles/articlesCommentOrReplay.json', {
+          commentId: this.selectedItem.id,
+          articlesId: this.$route.query.id,
+          content: this.comment,
+          type: 'Reply'
+        })
+        .then(() => {
+          this.commentShow = false
+          this.commentInit()
+          this.$toast('评论成功')
+        })
+        .catch((error) => {
+          this.$toast(error.message)
+        })
+    },
   },
   components: {
     'van-image': Image,
@@ -880,26 +906,18 @@ export default {
   }
 }
 .comment-textarea {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  z-index: -100;
-  width: 100%;
   padding: 15px;
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
   background: #fff;
-  
+
   .van-cell {
     width: 300px;
-    background: #F4F4F4;
+    background: #f4f4f4;
   }
-  >span {
+  > span {
     color: #999;
   }
 }
-.layer-zi {
-   z-index: 100;
-  }
 </style>
