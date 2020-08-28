@@ -61,11 +61,6 @@
         </div>
       </div>
     </div>
-    <van-pull-refresh
-      v-model="refreshing"
-      success-text="刷新成功"
-      @refresh="onRefresh"
-    >
       <van-list
         v-model="loading"
         :finished="finished"
@@ -73,7 +68,7 @@
         @load="onLoad"
       >
         <div class="tp-ct-box">
-          <p class="tp-ct-title">热门评论({{ totalElements || 0 }})</p>
+          <p class="tp-ct-title" id="topAnchor">热门评论({{ totalElements || 0 }})</p>
           <div class="tp-ct-list" v-for="item in list" :key="item.id">
             <div class="tp-ct-item">
               <div class="tp-ct-head">
@@ -131,39 +126,7 @@
           </div>
         </div>
       </van-list>
-    </van-pull-refresh>
-    <div class="at-bottom">
-      <input type="text" placeholder="写评论" />
-      <div class="operate">
-        <div class="icon-support">
-          <img
-            src="../assets/img/home/icon-support-hover@2x.png"
-            @click="articleunSupport()"
-            v-if="topicDetails.whetherLikeArticles"
-          />
-          <img
-            src="../assets/img/home/icon-support@2x.png"
-            @click="articleSupport()"
-            v-else
-          />
-        </div>
-        <div class="icon-collection">
-          <img
-            src="../assets/img/home/icon-collection-hover.png"
-            @click="articleunCollection()"
-            v-if="topicDetails.whetherCollection"
-          />
-          <img
-            src="../assets/img/home/icon-collection.png"
-            @click="articleCollection()"
-            v-else
-          />
-        </div>
-        <div class="icon-share">
-          <img src="../assets/img/home/icon-share.png" alt="" />
-        </div>
-      </div>
-    </div>
+    
     <van-popup v-model="modal.complaint" closeable class="modal-complaint">
       <div class="container">
         <div class="title">举报评论</div>
@@ -199,6 +162,51 @@
       </div>
     </van-popup>
     <van-share-sheet v-model="showShare" :options="options" />
+    <div class="at-bottom">
+      <!-- <input type="text" placeholder="写评论" /> -->
+      <span class="comment" @click="commentShow=true">写评价</span>
+      <div class="operate">
+        <div class="icon-support">
+          <img
+            src="../assets/img/home/icon-support-hover@2x.png"
+            @click="articleunSupport()"
+            v-if="topicDetails.whetherLikeArticles"
+          />
+          <img
+            src="../assets/img/home/icon-support@2x.png"
+            @click="articleSupport()"
+            v-else
+          />
+        </div>
+        <div class="icon-collection">
+          <img
+            src="../assets/img/home/icon-collection-hover.png"
+            @click="articleunCollection()"
+            v-if="topicDetails.whetherCollection"
+          />
+          <img
+            src="../assets/img/home/icon-collection.png"
+            @click="articleCollection()"
+            v-else
+          />
+        </div>
+        <div class="icon-share">
+          <img src="../assets/img/home/icon-share.png" alt="" />
+        </div>
+      </div>
+    </div>
+    <div class="comment-textarea" :class="{'layer-zi':commentShow}">
+      <van-field
+        v-model="comment"
+        rows="2"
+        autosize
+        label=""
+        type="textarea"
+        placeholder="写评价"
+      />
+      <span @click="articleComment">发布</span>
+    </div>
+    
   </div>
 </template>
 
@@ -241,7 +249,6 @@ export default {
       totalElements: 0,
       loading: false,
       finished: false,
-      refreshing: false,
       showShare: false,
       options: [
         [
@@ -265,6 +272,9 @@ export default {
           { name: '复制链接', icon: 'link' },
         ],
       ],
+      comment: '',
+      commentShow: false,
+      delAddnum: 0,
     }
   },
   created() {
@@ -281,11 +291,23 @@ export default {
           this.topicDetails = res.data
         })
     },
-    getData() {
+    getData(pageType,num) {
+      // let endSize = ''
+      // switch (pageType) {
+      //   case 'normal':
+      //     endSize = this.size
+      //     break;
+      //   case 'del':
+      //     endSize = this.size-1
+      //     break;
+      //   case 'add':
+      //     endSize = this.size
+      //     break;
+      // }
       return new Promise((resolve, reject) => {
         this.$ajax
           .post('api/front/articles/findCommentPageByCondition.json', {
-            page: this.page,
+            page: pageType===2?this.page:1,
             size: this.size,
             EQ_articlesId: this.$route.query.id,
             EQ_type: 'Comment',
@@ -300,12 +322,12 @@ export default {
       })
     },
     onLoad() {
-      if (this.refreshing) {
-        this.page = 1
-        this.list = []
-        this.refreshing = false
-      }
-      this.getData().then((res) => {
+      // if (this.refreshing) {
+      //   this.page = 1
+      //   this.list = []
+      //   this.refreshing = false
+      // }
+      this.getData(2).then((res) => {
         this.totalElements = res.data.totalElements
         this.list.push(...res.data.content)
         this.loading = false
@@ -314,6 +336,13 @@ export default {
         }
         this.page++
       })
+    },
+    commentInit() {
+      this.page=1;
+      this.list=[];
+      this.finished = false;
+      this.loading = true;
+      this.onLoad();
     },
     onRefresh() {
       this.finished = false
@@ -400,6 +429,10 @@ export default {
           id: id,
         })
         .then(() => {
+          // this.commentInit()
+          const isLargeNumber = (element) => element.id === id;
+          const index = this.list.findIndex(isLargeNumber)
+          this.list.splice(index,1)
           this.$toast('删除成功')
         })
         .catch((error) => {
@@ -488,21 +521,45 @@ export default {
         })
     },
     articleComment() {
+      // console.log(1)
+      // let anchor = document.createElement('a')
+      // anchor.setAttribute('id', 'topAnchor')
+      // document.body.appendChild(anchor);
+      // anchor.click()
+      // document.body.removeChild(anchor);
       this.$ajax
         .post('api/front/articles/articlesCommentOrReplay.json', {
-          ids: [this.$route.query.id],
+          // commentId: '',
           articlesId: this.$route.query.id,
-          content: '',
+          content: this.comment,
           type: 'Comment'
         })
         .then(() => {
-          // this.topicDetails.whetherCollection = false
+          this.commentShow = false
+          // this.page = 1
+          this.getData(1).then((res) => {
+            // this.totalElements = res.data.totalElements
+            // this.list.push(...res.data.content)
+            // this.loading = false
+            // if (this.page >= res.data.totalPages) {
+            //   this.finished = true
+            // }
+            // this.page++
+            console.log(this.list)
+            console.log(res.data.content[0])
+            this.list.unshift(res.data.content[0])
+            console.log(this.list)
+          })
+          // <a href="#topAnchor">回到顶部</a>
+          // this.commentInit()
+          
           this.$toast('评论成功')
         })
         .catch((error) => {
           this.$toast(error.message)
         })
     },
+    
   },
   components: {
     'van-image': Image,
@@ -769,12 +826,13 @@ export default {
   padding: 8px 15px;
   background: #fff;
   box-shadow: 0px 1px 5px 0px rgba(0, 0, 0, 0.2);
-  input {
+  .comment {
     width: 195px;
     height: 34px;
     padding-left: 16px;
     background: #f4f4f4;
     border-radius: 17px;
+    line-height: 34px;
   }
   .operate {
     display: flex;
@@ -821,4 +879,27 @@ export default {
     }
   }
 }
+.comment-textarea {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  z-index: -100;
+  width: 100%;
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  background: #fff;
+  
+  .van-cell {
+    width: 300px;
+    background: #F4F4F4;
+  }
+  >span {
+    color: #999;
+  }
+}
+.layer-zi {
+   z-index: 100;
+  }
 </style>

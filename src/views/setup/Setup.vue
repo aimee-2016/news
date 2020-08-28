@@ -1,6 +1,6 @@
 <template>
   <div>
-    <van-cell title="编辑资料" is-link />
+    <van-cell title="编辑资料" is-link url="/editmaterials/"/>
     <van-cell title="账号和隐私设置" is-link url="/accountprivacy/" />
     <van-cell title="黑名单" is-link url="/blacklist/" />
     <van-cell title="清理缓存" value="200MB" @click="show = true" />
@@ -17,6 +17,7 @@
 </template>
 
 <script type="text/ecmascript-6">
+import { setToken } from '@/libs/util'
 import {
   Cell,
   ActionSheet
@@ -44,6 +45,7 @@ export default {
       this.$ajax
         .post("api/front/member/loginOut.json", {})
         .then(() => {
+          setToken('')
           this.$toast('退出成功')
         })
         .catch(error=> {

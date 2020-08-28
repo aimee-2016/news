@@ -53,6 +53,12 @@ const routes = [
         meta: { title: '设置' },
       },
       {
+        path: '/editmaterials',
+        name: 'editmaterials',
+        component: () => import('../views/setup/EditMaterials.vue'),
+        meta: { title: '编辑资料' },
+      },
+      {
         path: '/bindphone',
         name: 'bindphone',
         component: () => import('../views/setup/Bindphone.vue'),
