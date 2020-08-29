@@ -42,7 +42,7 @@
                         modal.complaint = true
                       "
                 >举报</span>
-                <div class="message">
+                <div class="message" @click="selectedItem = authorData;commemtType = 1;commentShow = true;">
                   <img src="../assets/img/home/information.png" />
                   <span>{{ authorData.replyCount }}</span>
                 </div>
@@ -135,12 +135,12 @@
         <div class="icon-support">
           <img
             src="../assets/img/home/icon-support-hover@2x.png"
-            @click="articleunSupport()"
-            v-if="authorData.whetherLikeArticles"
+            @click="unSupport(authorData)"
+            v-if="authorData.whetherLikes"
           />
           <img
             src="../assets/img/home/icon-support@2x.png"
-            @click="articleSupport()"
+            @click="support(authorData)"
             v-else
           />
         </div>
@@ -409,43 +409,16 @@ export default {
           id: id
         })
         .then(() => {
-          // this.commentInit()
-          const isLargeNumber = element => element.id === id;
-          const index = this.list.findIndex(isLargeNumber);
-          this.list.splice(index, 1);
+          this.commentInit()
           this.$toast("删除成功");
+          // const isLargeNumber = element => element.id === id;
+          // const index = this.list.findIndex(isLargeNumber);
+          // this.list.splice(index, 1);
         })
         .catch(error => {
           this.$toast(error.message);
         });
-    },
-    articleSupport() {
-      this.$ajax
-        .post("api/front/articles/likeArticles.json", {
-          id: this.$route.query.id
-        })
-        .then(() => {
-          this.topicDetails.whetherLikeArticles = true;
-          // likeCount
-          this.$toast("点赞成功");
-        })
-        .catch(error => {
-          this.$toast(error.message);
-        });
-    },
-    articleunSupport() {
-      this.$ajax
-        .post("api/front/articles/unLikeArticles.json", {
-          id: this.$route.query.id
-        })
-        .then(() => {
-          this.topicDetails.whetherLikeArticles = false;
-          this.$toast("取消点赞");
-        })
-        .catch(error => {
-          this.$toast(error.message);
-        });
-    },
+    }
   },
   computed: {},
   watch: {},

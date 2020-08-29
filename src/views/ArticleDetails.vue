@@ -265,23 +265,11 @@ export default {
           this.topicDetails = res.data;
         });
     },
-    getData(pageType, num) {
-      // let endSize = ''
-      // switch (pageType) {
-      //   case 'normal':
-      //     endSize = this.size
-      //     break;
-      //   case 'del':
-      //     endSize = this.size-1
-      //     break;
-      //   case 'add':
-      //     endSize = this.size
-      //     break;
-      // }
+    getData() {
       return new Promise((resolve, reject) => {
         this.$ajax
           .post("api/front/articles/findCommentPageByCondition.json", {
-            page: pageType === 2 ? this.page : 1,
+            page: this.page,
             size: this.size,
             EQ_articlesId: this.$route.query.id,
             EQ_type: "Comment",
@@ -296,7 +284,7 @@ export default {
       });
     },
     onLoad() {
-      this.getData(2).then(res => {
+      this.getData().then(res => {
         this.totalElements = res.data.totalElements;
         this.list.push(...res.data.content);
         this.loading = false;
@@ -393,11 +381,11 @@ export default {
           id: id
         })
         .then(() => {
-          // this.commentInit()
-          const isLargeNumber = element => element.id === id;
-          const index = this.list.findIndex(isLargeNumber);
-          this.list.splice(index, 1);
+          this.commentInit()
           this.$toast("删除成功");
+          // const isLargeNumber = element => element.id === id;
+          // const index = this.list.findIndex(isLargeNumber);
+          // this.list.splice(index, 1);
         })
         .catch(error => {
           this.$toast(error.message);
@@ -498,16 +486,7 @@ export default {
         })
         .then(() => {
           this.commentShow = false;
-          // this.page = 1
-          // this.getData(1).then((res) => {
-          //   console.log(this.list)
-          //   console.log(res.data.content[0])
-          //   this.list.unshift(res.data.content[0])
-          //   console.log(this.list)
-          // })
-          // <a href="#topAnchor">回到顶部</a>
           this.commentInit();
-
           this.$toast("评论成功");
         })
         .catch(error => {
