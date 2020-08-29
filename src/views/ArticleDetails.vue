@@ -17,11 +17,7 @@
         <div class="user-info" v-if="topicDetails.title">
           <div class="left">
             <div class="head-img">
-              <van-image
-                round
-                fit="cover"
-                :src="topicDetails.author.headImgPath"
-              />
+              <van-image round fit="cover" :src="topicDetails.author.headImgPath" />
               <img
                 src="../assets/img/home/icon-auth-1@2x.png"
                 alt
@@ -40,10 +36,9 @@
           <div class="right">
             <self-button
               round
-              @click="focusUser(topicDetails.id)"
+              @click="focusUser(topicDetails.author)"
               :disabled="!topicDetails.author.followType ? false : true"
-              >{{ focusText(topicDetails.author.followType) }}</self-button
-            >
+            >{{ focusText(topicDetails.author.followType) }}</self-button>
           </div>
         </div>
         <div v-html="topicDetails.content" class="at-content"></div>
@@ -61,16 +56,9 @@
         </div>
       </div>
     </div>
-    <van-list
-      v-model="loading"
-      :finished="finished"
-      finished-text="没有更多了"
-      @load="onLoad"
-    >
+    <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad" style="background:#fff">
       <div class="tp-ct-box">
-        <p class="tp-ct-title" id="topAnchor">
-          热门评论({{ totalElements || 0 }})
-        </p>
+        <p class="tp-ct-title" id="topAnchor">热门评论({{ totalElements || 0 }})</p>
         <div class="tp-ct-list" v-for="item in list" :key="item.id">
           <div class="tp-ct-item">
             <div class="tp-ct-head">
@@ -86,16 +74,14 @@
                     v-if="item.whetherDelete"
                     style="color:#333333;font-size:14px;"
                     @click="onSelect(item.id)"
-                    >删除</span
-                  >
+                  >删除</span>
                   <span
                     v-else
                     @click="
                       selectedItem = item
                       modal.complaint = true
                     "
-                    >举报</span
-                  >
+                  >举报</span>
                 </div>
               </div>
               <div class="tp-ct-lt">{{ item.content }}</div>
@@ -104,14 +90,9 @@
                   <span>{{ item.commentDate }}</span>
                 </div>
                 <div class="operate">
-                  <div class="message">
+                  <div class="message" @click="toCommentDetail(item.id)">
                     <img
                       src="../assets/img/home/information.png"
-                      @click="
-                        commemtType = 2
-                        selectedItem = item
-                        commentShow = true
-                      "
                     />
                     <span>{{ item.replyCount }}</span>
                   </div>
@@ -129,6 +110,9 @@
                     <span>{{ item.likesCount }}</span>
                   </div>
                 </div>
+              </div>
+              <div class="child-item" @click="toCommentDetail(item.id)" v-if="item.commentTopDtos.length">
+                <div v-for="inner in item.commentTopDtos" :key="inner.id">{{inner.content}}</div>
               </div>
             </div>
           </div>
@@ -149,7 +133,9 @@
           />
         </van-cell-group>
         <div class="center">
-          <div class="text"><span>#</span>我有话要说:</div>
+          <div class="text">
+            <span>#</span>我有话要说:
+          </div>
           <van-field
             v-model="message"
             rows="6"
@@ -160,20 +146,14 @@
           />
         </div>
         <div class="footer">
-          <van-button
-            type="primary"
-            round
-            class="btn-yellow"
-            @click="reportArticle()"
-            >确定</van-button
-          >
+          <van-button type="primary" round class="btn-yellow" @click="reportArticle()">确定</van-button>
         </div>
       </div>
     </van-popup>
     <van-share-sheet v-model="showShare" :options="options" />
     <div class="at-bottom">
       <!-- <input type="text" placeholder="写评论" /> -->
-      <span class="comment" @click="commemtType = 1;commentShow = true;">写评价</span>
+      <span class="comment" @click="commentShow = true;">写评价</span>
       <div class="operate">
         <div class="icon-support">
           <img
@@ -181,11 +161,7 @@
             @click="articleunSupport()"
             v-if="topicDetails.whetherLikeArticles"
           />
-          <img
-            src="../assets/img/home/icon-support@2x.png"
-            @click="articleSupport()"
-            v-else
-          />
+          <img src="../assets/img/home/icon-support@2x.png" @click="articleSupport()" v-else />
         </div>
         <div class="icon-collection">
           <img
@@ -193,62 +169,50 @@
             @click="articleunCollection()"
             v-if="topicDetails.whetherCollection"
           />
-          <img
-            src="../assets/img/home/icon-collection.png"
-            @click="articleCollection()"
-            v-else
-          />
+          <img src="../assets/img/home/icon-collection.png" @click="articleCollection()" v-else />
         </div>
         <div class="icon-share">
-          <img src="../assets/img/home/icon-share.png" alt="" />
+          <img src="../assets/img/home/icon-share.png" alt />
         </div>
       </div>
     </div>
     <van-popup v-model="commentShow" position="bottom">
       <div class="comment-textarea">
-        <van-field
-          v-model="comment"
-          rows="2"
-          autosize
-          label=""
-          type="textarea"
-          placeholder="写评价"
-        />
-        <span @click="articleCommentBefore">发送</span>
+        <van-field v-model="comment" rows="2" autosize label type="textarea" placeholder="写评价" />
+        <span @click="articleComment">发送</span>
       </div>
     </van-popup>
   </div>
 </template>
 
 <script>
-import selfButton from '@/components/button'
+import selfButton from "@/components/button";
 import {
   Image,
   List,
-  PullRefresh,
   Popup,
   Dialog,
   ShareSheet,
   Cell,
   CellGroup,
   Button,
-  Field,
-} from 'vant'
+  Field
+} from "vant";
 export default {
   data() {
     return {
       modal: {
-        complaint: false,
+        complaint: false
       },
       articleReportList: [
-        { name: '淫秽色情', val: 'Pornographic' },
-        { name: '违法信息', val: 'IllegalInformation' },
-        { name: '营销广告', val: 'Advertisement' },
-        { name: '暴力血腥', val: 'ViolentBloody' },
-        { name: '恶心攻击谩骂', val: 'MaliciousAttack' },
+        { name: "淫秽色情", val: "Pornographic" },
+        { name: "违法信息", val: "IllegalInformation" },
+        { name: "营销广告", val: "Advertisement" },
+        { name: "暴力血腥", val: "ViolentBloody" },
+        { name: "恶心攻击谩骂", val: "MaliciousAttack" }
       ],
-      selectedType: '',
-      message: '',
+      selectedType: "",
+      message: "",
       selectedItem: null,
       topicDetails: {},
       commentList: {},
@@ -262,45 +226,44 @@ export default {
       showShare: false,
       options: [
         [
-          { name: '微信好友', icon: 'wechat' },
+          { name: "微信好友", icon: "wechat" },
           {
-            name: '微信朋友圈',
-            icon: require('../assets/img/home/friendscircle@2x.png'),
+            name: "微信朋友圈",
+            icon: require("../assets/img/home/friendscircle@2x.png")
           },
-          { name: 'QQ', icon: 'qq' },
+          { name: "QQ", icon: "qq" },
           {
-            name: 'QQ空间',
-            icon: require('../assets/img/home/qqzone@2x.png'),
-          },
+            name: "QQ空间",
+            icon: require("../assets/img/home/qqzone@2x.png")
+          }
         ],
         [
-          { name: '微博', icon: 'weibo' },
+          { name: "微博", icon: "weibo" },
           {
-            name: '系统分享',
-            icon: require('../assets/img/home/love@2x.png'),
+            name: "系统分享",
+            icon: require("../assets/img/home/love@2x.png")
           },
-          { name: '复制链接', icon: 'link' },
-        ],
+          { name: "复制链接", icon: "link" }
+        ]
       ],
-      comment: '',
+      comment: "",
       commentShow: false,
       delAddnum: 0,
-      commemtType: 1,
-    }
+    };
   },
   created() {
-    this.queryTopicById()
-    this.getRecommendList()
+    this.queryTopicById();
+    this.getRecommendList();
   },
   methods: {
     queryTopicById() {
       this.$ajax
-        .post('api/front/articles/findArticlesById.json', {
-          id: this.$route.query.id,
+        .post("api/front/articles/findArticlesById.json", {
+          id: this.$route.query.id
         })
-        .then((res) => {
-          this.topicDetails = res.data
-        })
+        .then(res => {
+          this.topicDetails = res.data;
+        });
     },
     getData(pageType, num) {
       // let endSize = ''
@@ -317,226 +280,209 @@ export default {
       // }
       return new Promise((resolve, reject) => {
         this.$ajax
-          .post('api/front/articles/findCommentPageByCondition.json', {
+          .post("api/front/articles/findCommentPageByCondition.json", {
             page: pageType === 2 ? this.page : 1,
             size: this.size,
             EQ_articlesId: this.$route.query.id,
-            EQ_type: 'Comment',
-            sort: 'asc',
+            EQ_type: "Comment",
+            sort: "asc"
           })
-          .then((response) => {
-            resolve(response)
+          .then(response => {
+            resolve(response);
           })
-          .catch((error) => {
-            reject(error)
-          })
-      })
+          .catch(error => {
+            reject(error);
+          });
+      });
     },
     onLoad() {
-      // if (this.refreshing) {
-      //   this.page = 1
-      //   this.list = []
-      //   this.refreshing = false
-      // }
-      this.getData(2).then((res) => {
-        this.totalElements = res.data.totalElements
-        this.list.push(...res.data.content)
-        this.loading = false
+      this.getData(2).then(res => {
+        this.totalElements = res.data.totalElements;
+        this.list.push(...res.data.content);
+        this.loading = false;
         if (this.page >= res.data.totalPages) {
-          this.finished = true
+          this.finished = true;
         }
-        this.page++
-      })
+        this.page++;
+      });
     },
     commentInit() {
-      this.page = 1
-      this.list = []
-      this.finished = false
-      this.loading = true
-      this.onLoad()
+      this.page = 1;
+      this.list = [];
+      this.finished = false;
+      this.loading = true;
+      this.onLoad();
     },
-    onRefresh() {
-      this.finished = false
-      this.loading = true
-      this.onLoad()
-    },
-    focusUser(id) {
+    focusUser(item) {
       this.$ajax
-        .post('api/front/member/follow.json', {
-          id: id,
+        .post("api/front/member/follow.json", {
+          id: item.id
         })
         .then(() => {
-          this.$toast('关注成功')
-          this.getAll()
+          item.followType = 'Fans'
+          this.$toast("关注成功");
         })
-        .catch((error) => {
-          this.$toast(error)
-        })
+        .catch(error => {
+          this.$toast(error);
+        });
     },
     focusText(item) {
       if (item) {
-        return item.name === 'Fans'
-          ? '已关注'
-          : item.name === 'Block'
-          ? '已拉黑'
-          : '关注'
+        return item.name === "Fans"
+          ? "已关注"
+          : item.name === "Block"
+          ? "已拉黑"
+          : "关注";
       } else {
-        return '关注'
+        return "关注";
       }
     },
     getRecommendList() {
       this.$ajax
-        .post('api/front/articles/findRecommendArticles.json', {
+        .post("api/front/articles/findRecommendArticles.json", {
           page: 1,
           size: 5,
-          id: this.$route.query.id,
+          id: this.$route.query.id
         })
-        .then((res) => {
-          this.recommendList = res.data.content
+        .then(res => {
+          this.recommendList = res.data.content;
           // console.log(this.recommendList)
         })
-        .catch((error) => {
-          console.log(error)
-        })
+        .catch(error => {
+          console.log(error);
+        });
     },
     typeSelect(val) {
-      this.selectedType = val
+      this.selectedType = val;
     },
     reportArticle() {
       if (!this.selectedType) {
-        this.$toast('请选择举报类型')
-        return false
+        this.$toast("请选择举报类型");
+        return false;
       }
-      this.modal.complaint = false
+      this.modal.complaint = false;
       this.$ajax
-        .post('api/front/articles/report.json', {
-          type: 'Comment',
+        .post("api/front/articles/report.json", {
+          type: "Comment",
           commentId: this.selectedItem.id,
           commentReportType: this.selectedType,
-          content: this.message,
+          content: this.message
         })
         .then(() => {
-          this.modal.report = false
-          this.$toast('举报成功')
+          this.modal.report = false;
+          this.$toast("举报成功");
         })
-        .catch((error) => {
-          this.$toast(error.message)
-        })
+        .catch(error => {
+          this.$toast(error.message);
+        });
     },
     onSelect(id) {
       Dialog.confirm({
-        title: '确定删除此评论？',
-        confirmButtonColor: '#f99307',
-        theme: 'round-button',
+        title: "确定删除此评论？",
+        confirmButtonColor: "#f99307",
+        theme: "round-button"
       })
         .then(() => {
-          this.delComment(id)
+          this.delComment(id);
         })
-        .catch(() => {})
+        .catch(() => {});
     },
     delComment(id) {
       this.$ajax
-        .post('api/front/articles/deleteComment.json', {
-          id: id,
+        .post("api/front/articles/deleteComment.json", {
+          id: id
         })
         .then(() => {
           // this.commentInit()
-          const isLargeNumber = (element) => element.id === id
-          const index = this.list.findIndex(isLargeNumber)
-          this.list.splice(index, 1)
-          this.$toast('删除成功')
+          const isLargeNumber = element => element.id === id;
+          const index = this.list.findIndex(isLargeNumber);
+          this.list.splice(index, 1);
+          this.$toast("删除成功");
         })
-        .catch((error) => {
-          this.$toast(error.message)
-        })
+        .catch(error => {
+          this.$toast(error.message);
+        });
     },
     support(item) {
       this.$ajax
-        .post('api/front/articles/likeComment.json', {
-          id: item.id,
+        .post("api/front/articles/likeComment.json", {
+          id: item.id
         })
         .then(() => {
-          item.whetherLikes = true
-          item.likesCount++
-          this.$toast('点赞成功')
+          item.whetherLikes = true;
+          item.likesCount++;
+          this.$toast("点赞成功");
         })
-        .catch((error) => {
-          this.$toast(error.message)
-        })
+        .catch(error => {
+          this.$toast(error.message);
+        });
     },
     unSupport(item) {
       this.$ajax
-        .post('api/front/articles/unLikeComment.json', {
-          id: item.id,
+        .post("api/front/articles/unLikeComment.json", {
+          id: item.id
         })
         .then(() => {
-          item.whetherLikes = false
-          item.likesCount--
-          this.$toast('取消点赞')
+          item.whetherLikes = false;
+          item.likesCount--;
+          this.$toast("取消点赞");
         })
-        .catch((error) => {
-          this.$toast(error.message)
-        })
+        .catch(error => {
+          this.$toast(error.message);
+        });
     },
     articleSupport() {
       this.$ajax
-        .post('api/front/articles/likeArticles.json', {
-          id: this.$route.query.id,
+        .post("api/front/articles/likeArticles.json", {
+          id: this.$route.query.id
         })
         .then(() => {
-          this.topicDetails.whetherLikeArticles = true
+          this.topicDetails.whetherLikeArticles = true;
           // likeCount
-          this.$toast('点赞成功')
+          this.$toast("点赞成功");
         })
-        .catch((error) => {
-          this.$toast(error.message)
-        })
+        .catch(error => {
+          this.$toast(error.message);
+        });
     },
     articleunSupport() {
       this.$ajax
-        .post('api/front/articles/unLikeArticles.json', {
-          id: this.$route.query.id,
+        .post("api/front/articles/unLikeArticles.json", {
+          id: this.$route.query.id
         })
         .then(() => {
-          this.topicDetails.whetherLikeArticles = false
-          this.$toast('取消点赞')
+          this.topicDetails.whetherLikeArticles = false;
+          this.$toast("取消点赞");
         })
-        .catch((error) => {
-          this.$toast(error.message)
-        })
+        .catch(error => {
+          this.$toast(error.message);
+        });
     },
     articleCollection() {
       this.$ajax
-        .post('api/front/articles/articlesCollection.json', {
-          id: this.$route.query.id,
+        .post("api/front/articles/articlesCollection.json", {
+          id: this.$route.query.id
         })
         .then(() => {
-          this.topicDetails.whetherCollection = true
-          this.$toast('收藏成功')
+          this.topicDetails.whetherCollection = true;
+          this.$toast("收藏成功");
         })
-        .catch((error) => {
-          this.$toast(error.message)
-        })
+        .catch(error => {
+          this.$toast(error.message);
+        });
     },
     articleunCollection() {
       this.$ajax
-        .post('api/front/articles/unArticlesCollection.json', {
-          ids: [this.$route.query.id],
+        .post("api/front/articles/unArticlesCollection.json", {
+          ids: [this.$route.query.id]
         })
         .then(() => {
-          this.topicDetails.whetherCollection = false
-          this.$toast('取消收藏')
+          this.topicDetails.whetherCollection = false;
+          this.$toast("取消收藏");
         })
-        .catch((error) => {
-          this.$toast(error.message)
-        })
-    },
-    articleCommentBefore() {
-      if (this.commemtType === 1) {
-        this.articleComment()
-      } else {
-        this.relayComent()
-      }
+        .catch(error => {
+          this.$toast(error.message);
+        });
     },
     articleComment() {
       // let anchor = document.createElement('a')
@@ -545,14 +491,13 @@ export default {
       // anchor.click()
       // document.body.removeChild(anchor);
       this.$ajax
-        .post('api/front/articles/articlesCommentOrReplay.json', {
-          // commentId: commentId,
+        .post("api/front/articles/articlesCommentOrReplay.json", {
           articlesId: this.$route.query.id,
           content: this.comment,
-          type: 'Comment',
+          type: "Comment"
         })
         .then(() => {
-          this.commentShow = false
+          this.commentShow = false;
           // this.page = 1
           // this.getData(1).then((res) => {
           //   console.log(this.list)
@@ -561,45 +506,30 @@ export default {
           //   console.log(this.list)
           // })
           // <a href="#topAnchor">回到顶部</a>
-          this.commentInit()
+          this.commentInit();
 
-          this.$toast('评论成功')
+          this.$toast("评论成功");
         })
-        .catch((error) => {
-          this.$toast(error.message)
-        })
+        .catch(error => {
+          this.$toast(error.message);
+        });
     },
-    relayComent() {
-      this.$ajax
-        .post('api/front/articles/articlesCommentOrReplay.json', {
-          commentId: this.selectedItem.id,
-          articlesId: this.$route.query.id,
-          content: this.comment,
-          type: 'Reply'
-        })
-        .then(() => {
-          this.commentShow = false
-          this.commentInit()
-          this.$toast('评论成功')
-        })
-        .catch((error) => {
-          this.$toast(error.message)
-        })
-    },
+    toCommentDetail(id) {
+      this.$router.push({path: '/articlecommentdetails/', query: {articleId:this.$route.query.id,id: id}})
+    }
   },
   components: {
-    'van-image': Image,
-    'self-button': selfButton,
-    'van-list': List,
-    'van-pull-refresh': PullRefresh,
-    'van-share-sheet': ShareSheet,
-    'van-popup': Popup,
-    'van-cell-group': CellGroup,
-    'van-cell': Cell,
-    'van-button': Button,
-    'van-field': Field,
-  },
-}
+    "van-image": Image,
+    "self-button": selfButton,
+    "van-list": List,
+    "van-share-sheet": ShareSheet,
+    "van-popup": Popup,
+    "van-cell-group": CellGroup,
+    "van-cell": Cell,
+    "van-button": Button,
+    "van-field": Field
+  }
+};
 </script>
 
 <style lang="scss" scoped>
@@ -838,6 +768,13 @@ export default {
           }
         }
       }
+    }
+    .child-item {
+      margin-top: 13px;
+      padding: 8px 15px;
+      background: #F8f8f8;
+      font-size: 14px;
+      line-height: 1.5;
     }
   }
 }

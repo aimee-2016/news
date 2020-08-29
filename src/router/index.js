@@ -144,6 +144,11 @@ const routes = [
     component: () => import('../views/ArticleDetails.vue'),
   },
   {
+    path: '/articlecommentdetails',
+    name: '/articlecommentdetails',
+    component: () => import('../views/ArticleCommentDetails.vue'),
+  },
+  {
     path: '/topicdetails',
     name: 'topicdetails',
     component: () => import('../views/TopicDetails.vue'),
