@@ -189,6 +189,16 @@ const routes = [
     component: () => import('../views/feedback/QuestionList.vue'),
   },
   {
+    path: '/focus',
+    name: 'focus',
+    component: () => import('../views/my/Focus.vue'),
+  },
+  {
+    path: '/collection',
+    name: 'collection',
+    component: () => import('../views/my/Collection.vue'),
+  },
+  {
     path: '*',
     name: '404',
     component: () => import('../views/404.vue'),

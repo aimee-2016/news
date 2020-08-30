@@ -6,7 +6,7 @@
       </div>
 
       <div>
-        <img src="../assets/img/topic/icon1.png" />
+        <img src="../assets/img/topic/icon1.png" @click="showShare=true" />
       </div>
     </div>
     <div class="tp-top-box">
@@ -119,7 +119,31 @@
         </div>
       </div>
     </van-list>
-
+    <div class="at-bottom">
+      <!-- <input type="text" placeholder="写评论" /> -->
+      <span class="comment" @click="commentShow = true;">写评价</span>
+      <div class="operate">
+        <div class="icon-support">
+          <img
+            src="../assets/img/home/icon-support-hover@2x.png"
+            @click="articleunSupport()"
+            v-if="topicDetails.whetherLikeArticles"
+          />
+          <img src="../assets/img/home/icon-support@2x.png" @click="articleSupport()" v-else />
+        </div>
+        <div class="icon-collection">
+          <img
+            src="../assets/img/home/icon-collection-hover.png"
+            @click="articleunCollection()"
+            v-if="topicDetails.whetherCollection"
+          />
+          <img src="../assets/img/home/icon-collection.png" @click="articleCollection()" v-else />
+        </div>
+        <div class="icon-share" @click="showShare1=true">
+          <img src="../assets/img/home/icon-share.png" alt />
+        </div>
+      </div>
+    </div>
     <van-popup v-model="modal.complaint" closeable class="modal-complaint">
       <div class="container">
         <div class="title">举报评论</div>
@@ -150,32 +174,8 @@
         </div>
       </div>
     </van-popup>
-    <van-share-sheet v-model="showShare" :options="options" />
-    <div class="at-bottom">
-      <!-- <input type="text" placeholder="写评论" /> -->
-      <span class="comment" @click="commentShow = true;">写评价</span>
-      <div class="operate">
-        <div class="icon-support">
-          <img
-            src="../assets/img/home/icon-support-hover@2x.png"
-            @click="articleunSupport()"
-            v-if="topicDetails.whetherLikeArticles"
-          />
-          <img src="../assets/img/home/icon-support@2x.png" @click="articleSupport()" v-else />
-        </div>
-        <div class="icon-collection">
-          <img
-            src="../assets/img/home/icon-collection-hover.png"
-            @click="articleunCollection()"
-            v-if="topicDetails.whetherCollection"
-          />
-          <img src="../assets/img/home/icon-collection.png" @click="articleCollection()" v-else />
-        </div>
-        <div class="icon-share">
-          <img src="../assets/img/home/icon-share.png" alt />
-        </div>
-      </div>
-    </div>
+    <van-share-sheet v-model="showShare" :options="options" title="分享到" />
+    <van-share-sheet v-model="showShare1" :options="options1" title="分享到" />
     <van-popup v-model="commentShow" position="bottom">
       <div class="comment-textarea">
         <van-field v-model="comment" rows="2" autosize label type="textarea" placeholder="写评价" />
@@ -224,6 +224,7 @@ export default {
       loading: false,
       finished: false,
       showShare: false,
+      showShare1: false,
       options: [
         [
           { name: "微信好友", icon: "wechat" },
@@ -244,6 +245,23 @@ export default {
             icon: require("../assets/img/home/love@2x.png")
           },
           { name: "复制链接", icon: "link" }
+        ]
+      ],
+      options1: [
+        [
+          { name: "微信好友", icon: "wechat" },
+          {
+            name: "微信朋友圈",
+            icon: require("../assets/img/home/friendscircle@2x.png")
+          },
+          { name: "QQ", icon: "qq" },
+          {
+            name: "QQ空间",
+            icon: require("../assets/img/home/qqzone@2x.png")
+          }
+        ],
+        [
+          { name: "微博", icon: "weibo" }
         ]
       ],
       comment: "",

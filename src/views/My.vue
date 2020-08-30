@@ -27,15 +27,15 @@
       </div>
       <div class="follow">
         <ul>
-          <li>
+          <li @click="$router.push({path:'/focus/',query:{active:0}})">
             <span class="num">{{userInfo.followCount}}</span>
             <span class="text">关注</span>
           </li>
-          <li>
+          <li @click="$router.push({path:'/focus/',query:{active:1}})">
             <span class="num">{{userInfo.fansCount}}</span>
             <span class="text">粉丝</span>
           </li>
-          <li>
+          <li @click="modalSupport=true">
             <span class="num">{{userInfo.fabulousCount}}</span>
             <span class="text">获赞</span>
           </li>
@@ -46,59 +46,43 @@
       <div class="date">
         <div class="day-box">
           <ul>
-            <li>
-              <i>10</i>
-              <span>1天</span>
-            </li>
-            <li>
-              <i>10</i>
-              <span>2天</span>
-            </li>
-            <li>
-              <i>10</i>
-              <span>3天</span>
-            </li>
-            <li>
-              <i>10</i>
-              <span>4天</span>
-            </li>
-            <li>
-              <i>10</i>
-              <span>5天</span>
-            </li>
-            <li>
-              <i>10</i>
-              <span>6天</span>
-            </li>
-            <li>
-              <i>10</i>
-              <span>7天</span>
+            <li v-for="(item,index) in signList" :key="index">
+              <i>{{item.whetherSign?'√':item.integral}}</i>
+              <span>{{item.day}}天</span>
             </li>
           </ul>
         </div>
-
-        <van-button class="btn-sign" size="small" round>已签到</van-button>
+        <van-button plain color="#999999" size="small" round v-if="todaySign" disabled="">已签到</van-button>
+        <van-button plain color="#fcbe64" size="small" round v-else @click="signIn()">打卡赚积分</van-button>
       </div>
       <div class="desc">
         <i class="icon"></i>
-        <span>10万人已打卡</span>
+        <span>{{totalSignCount}}人已打卡</span>
       </div>
     </div>
     <ul class="handle">
-      <li>
-        <i class="collection"></i>
+      <li @click="$router.push({path:'/collection/',query:{active:0}})">
+        <div class="img-wrap">
+          <img src="../assets/img/my/icon-collection@2x.png" alt="">
+        </div>
         <span>收藏</span>
       </li>
-      <li>
-        <i class="history"></i>
+      <li @click="$router.push({path:'/collection/',query:{active:1}})">
+        <div class="img-wrap">
+          <img src="../assets/img/my/icon-history@2x.png" alt="">
+        </div>
         <span>历史</span>
       </li>
-      <li>
-        <i class="comment"></i>
+      <li @click="$router.push({path:'/collection/',query:{active:2}})">
+        <div class="img-wrap">
+          <img src="../assets/img/my/icon-comment@2x.png" alt="">
+        </div>
         <span>评论</span>
       </li>
-      <li>
-        <i class="support"></i>
+      <li @click="$router.push({path:'/collection/',query:{active:3}})">
+        <div class="img-wrap">
+          <img src="../assets/img/my/icon-support@2x.png" alt="">
+        </div>
         <span>点赞</span>
       </li>
     </ul>
@@ -109,7 +93,7 @@
           <span>消息中心</span>
         </template>
         <template #right-icon>
-          <span class="badge">2</span>
+          <span class="badge">{{msgNum}}</span>
           <van-icon name="arrow" style="line-height: inherit;font-size:16px;color:#969799;" />
         </template>
       </van-cell>
@@ -138,18 +122,37 @@
         </template>
       </van-cell>
     </van-cell-group>
+    <van-popup v-model="modalSupport" class="modal-support">
+      <div class="container">
+        <div class="name">{{userInfo.nickName}}</div>
+        <div class="text">
+          共获得
+          <span>{{userInfo.fabulousCount}}</span>个赞
+        </div>
+        <img src="../assets/img/myhome/icon-44@2x.png" alt />
+        <van-button type="primary" round class="btn-yellow" @click="modalSupport=false">好的</van-button>
+      </div>
+    </van-popup>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
 import { mapActions } from "vuex";
-import { Cell, CellGroup, Button, Icon } from "vant";
+import { Cell, CellGroup, Button, Icon, Popup, } from "vant";
 export default {
   data() {
-    return {};
+    return {
+      signList: [],
+      todaySign: false,
+      msgNum: 0,
+      totalSignCount: 0,
+      modalSupport: false
+    };
   },
   created() {
     this.init();
+    this.getSignList()
+    this.unreadData()
   },
   mounted() {},
   methods: {
@@ -158,7 +161,30 @@ export default {
       if (this.$store.state.token && !this.userInfo) {
         this.getUserInfo();
       }
-    }
+    },
+    getSignList() {
+      this.$ajax
+        .post("api/front/member/findMemberSignList.json", {})
+        .then(res => {
+          this.signList = res.data.signDtoList;
+          this.todaySign = res.data.todaySign
+          this.totalSignCount = res.data.totalSignCount
+        });
+    },
+    signIn() {
+      this.$ajax
+        .post("api/front/member/signIn.json", {})
+        .then(res => {
+          this.getSignList()
+        });
+    },
+    unreadData() {
+      this.$ajax
+        .post('api/front/message/findMessageUnRead.json', {})
+        .then((res) => {
+          this.msgNum = res.data.systemMessageCount+res.data.replyCount+res.data.privateLetterCount
+        })
+    },
   },
   computed: {
     userInfo() {
@@ -170,12 +196,22 @@ export default {
     "van-cell-group": CellGroup,
     "van-cell": Cell,
     "van-button": Button,
-    "van-icon": Icon
+    "van-icon": Icon,
+    "van-popup": Popup
   }
 };
 </script>
 
 <style lang="scss" scoped>
+.btn-yellow.van-button--primary {
+  display: block;
+  margin: 20px auto 0;
+  width: 95px;
+  height: 39px;
+  background: #ffdd00;
+  color: #333334;
+  border-color: #ffdd00;
+}
 .no-login {
   padding-bottom: 18px;
   text-align: center;
@@ -317,12 +353,13 @@ export default {
 }
 .signin {
   margin: 20px 14px 10px;
-  padding: 16px 12px 16px 14px;
+  padding: 16px 10px 16px 12px;
   background: #ffffff;
   box-shadow: 0px 1px 10px 0px rgba(4, 0, 0, 0.1);
   .date {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     .day-box {
       position: relative;
       &::after {
@@ -400,38 +437,15 @@ export default {
   background: #ffffff;
   box-shadow: 0px 1px 10px 0px rgba(4, 0, 0, 0.1);
   text-align: center;
-  i {
-    display: inline-block;
-    &.collection {
-      width: 26px;
-      height: 25px;
-      background-size: 26px 25px;
-      background-repeat: no-repeat;
-      @include bg-image("../assets/img/my/icon-collection");
-    }
-    &.history {
-      width: 25px;
-      height: 25px;
-      background-size: 25px 25px;
-      background-repeat: no-repeat;
-      @include bg-image("../assets/img/my/icon-history");
-    }
-    &.comment {
-      width: 29px;
-      height: 21px;
-      background-size: 29px 21px;
-      background-repeat: no-repeat;
-      @include bg-image("../assets/img/my/icon-comment");
-    }
-    &.support {
-      width: 24px;
-      height: 24px;
-      background-size: 24px 24px;
-      background-repeat: no-repeat;
-      @include bg-image("../assets/img/my/icon-support");
+  .img-wrap {
+    height: 25px;
+    width: 25px;
+    display: flex;
+    align-items: center;
+    img {
+      width: 100%;
     }
   }
-
   span {
     display: block;
     margin-top: 10px;
@@ -500,5 +514,35 @@ export default {
   background-repeat: no-repeat;
   @include bg-image("../assets/img/my/info");
   vertical-align: middle;
+}
+.modal-support {
+  padding: 36px 0;
+  width: 250px;
+  border-radius: 5px;
+  text-align: center;
+  .name {
+    font-size: 15px;
+    font-family: PingFang SC Bold, PingFang SC Bold-Bold;
+    font-weight: 700;
+    color: #333333;
+  }
+  .text {
+    margin-top: 13px;
+    font-size: 13px;
+    font-family: PingFang SC Medium, PingFang SC Medium-Medium;
+    font-weight: 500;
+    color: #333333;
+    span {
+      color: #f7962a;
+    }
+  }
+  img {
+    margin-top: 23px;
+    width: 92px;
+    height: 41px;
+  }
+  button {
+    margin-top: 22px;
+  }
 }
 </style>
