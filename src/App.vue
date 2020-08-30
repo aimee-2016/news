@@ -4,7 +4,27 @@
   </div>
 </template>
 
-<style>
+<script>
+import { mapActions } from "vuex";
+export default {
+  data () {
+    return {
+    };
+  },
+  created() {
+    this.init();
+  },
+  methods: {
+    ...mapActions(["getUserInfo"]),
+    init() {
+      if (this.$store.state.token && !this.userInfo) {
+        this.getUserInfo();
+      }
+    },
+  }
+}
+</script>
+<style lang='scss' scoped>
 /* #app {
   position:absolute;
   width: 100%;

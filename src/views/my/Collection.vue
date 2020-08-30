@@ -1,21 +1,112 @@
 <template>
-  <div>
-    <span class="return-icon" @click="$router.go(-1)">
-      <van-icon name="arrow-left" />
-    </span>
+  <div id="collection">
+    <div id="head">
+      <van-icon name="arrow-left" @click="$router.go(-1)" />
+      <span class="title">编辑</span>
+    </div>
     <van-tabs
       v-model="active"
-      line-width="20px"
+      line-width="15px"
       line-heigth="2px"
       title-active-color=" #333333"
       color="#ffcb00"
       sticky
     >
-      <van-tab title="关注">
+      <van-tab title="收藏">
         <van-pull-refresh v-model="refreshing" success-text="刷新成功" @refresh="onRefresh">
           <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
+            <ul class="all">
+              <li v-for="(item, index) in list" :key="index">
+                <div v-if="item.articlesQueryResultDto.type.name=='PublishVideo'">
+                  <div>
+                    <van-checkbox v-model="checked" checked-color="#ffcb00" />
+                  </div>
+                  <div class="box-content">
+                    <div class="info">
+                      <div class="left">
+                        <img :src="userInfo.headImgPath" alt class="avatar" />
+                        <div class="text">
+                          <span class="name">大马哈</span>
+                          <span class="time">5分钟前</span>
+                        </div>
+                      </div>
+                      <div class="right">
+                        <span class="icon-top"></span>
+                        <van-icon name="ellipsis" @click="modal.article = true" />
+                      </div>
+                    </div>
+                    <div class="content"></div>
+                    <div class="opreate">
+                      <span>
+                        <img src="../../assets/img/myhome/icon-share@2x.png" alt />
+                      </span>
+                      <span>
+                        <img
+                          src="../../assets/img/myhome/icon-50@2x.png"
+                          @click="modal.support=true"
+                          alt
+                        />
+                        <i class="num">12</i>
+                      </span>
+                      <span>
+                        <img src="../../assets/img/myhome/icon-49@2x.png" alt />
+                        <i class="num">355</i>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div v-if="item.articlesQueryResultDto.type.name=='PublishArticle'">
+                  <div>
+                    <van-checkbox v-model="checked" checked-color="#ffcb00" />
+                  </div>
+                  <div box-content>
+                    <div class="info">
+                      <div class="left">
+                        <img :src="userInfo.headImgPath" alt class="avatar" />
+                        <div class="text">
+                          <span class="name">大马哈</span>
+                          <span class="time">5分钟前</span>
+                        </div>
+                      </div>
+                      <div class="right">
+                        <span class="icon-top"></span>
+                        <van-icon name="ellipsis" />
+                      </div>
+                    </div>
+                    <div class="content1">
+                      <div class="article">三里屯街拍：身材这么好的妹子难遇到，网友：回家去三里屯街拍：身材这么好的妹子回家去三里屯街拍：身材这么好的妹子.</div>
+                      <div class="picture"></div>
+                    </div>
+                    <div class="opreate">
+                      <span>
+                        <img src="../../assets/img/myhome/icon-share@2x.png" alt />
+                      </span>
+                      <span>
+                        <img
+                          src="../../assets/img/myhome/icon-50@2x.png"
+                          @click="modal.support=true"
+                          alt
+                        />
+                        <i class="num">12</i>
+                      </span>
+                      <span>
+                        <img src="../../assets/img/myhome/icon-49@2x.png" alt />
+                        <i class="num">355</i>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </li>
+              <li></li>
+            </ul>
+          </van-list>
+        </van-pull-refresh>
+      </van-tab>
+      <van-tab title="评论">
+        <van-pull-refresh v-model="refreshing1" success-text="刷新成功" @refresh="onRefresh1">
+          <van-list v-model="loading1" :finished="finished1" finished-text="没有更多了" @load="onLoad1">
             <div class="msg-container">
-              <div v-for="(item, index) in list" :key="index" class="msg-item">
+              <div v-for="(item, index) in list1" :key="index" class="msg-item">
                 <div class="content">
                   <div class="left">
                     <div class="head-img">
@@ -44,7 +135,40 @@
           </van-list>
         </van-pull-refresh>
       </van-tab>
-      <van-tab title="粉丝">
+      <van-tab title="点赞">
+        <van-pull-refresh v-model="refreshing1" success-text="刷新成功" @refresh="onRefresh1">
+          <van-list v-model="loading1" :finished="finished1" finished-text="没有更多了" @load="onLoad1">
+            <div class="msg-container">
+              <div v-for="(item, index) in list1" :key="index" class="msg-item">
+                <div class="content">
+                  <div class="left">
+                    <div class="head-img">
+                      <van-image round fit="cover" :src="item.headImgPath" />
+                    </div>
+                    <div class="text">
+                      <div class="name">{{ item.nickName }}</div>
+                      <div class="desc">
+                        {{
+                        item.synopsis
+                        }}
+                      </div>
+                      <div class="fans-count">粉丝数:{{item.fansCount}}</div>
+                    </div>
+                  </div>
+                  <div class="right">
+                    <self-button
+                      round
+                      @click="focusUser(item.id)"
+                      :disabled="!item.followType ? false : true"
+                    >{{ focusText(item.followType) }}</self-button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </van-list>
+        </van-pull-refresh>
+      </van-tab>
+      <van-tab title="历史">
         <van-pull-refresh v-model="refreshing1" success-text="刷新成功" @refresh="onRefresh1">
           <van-list v-model="loading1" :finished="finished1" finished-text="没有更多了" @load="onLoad1">
             <div class="msg-container">
@@ -83,7 +207,7 @@
 
 <script type="text/ecmascript-6">
 import selfButton from "@/components/button";
-import { Tabs, Tab, List, PullRefresh, Image, Icon } from "vant";
+import { Tabs, Tab, List, PullRefresh, Image, Icon, Checkbox } from "vant";
 export default {
   name: "svb",
   data() {
@@ -100,22 +224,25 @@ export default {
       list1: [],
       loading1: false,
       finished1: false,
-      refreshing1: false
+      refreshing1: false,
+      checked: true
     };
   },
   created() {
-    this.active = this.$route.query.active
+    this.active = this.$route.query.active;
   },
   mounted() {},
   methods: {
     getData() {
       return new Promise((resolve, reject) => {
         this.$ajax
-          .post("api/front/member/findMyConcernsPageByCondition.json", {
-            page: this.page,
-            size: this.size,
-            id: this.userInfo.id
-          })
+          .post(
+            "api/front/articles/findArticlesCollectionPageByCondition.json",
+            {
+              page: this.page,
+              size: this.size
+            }
+          )
           .then(response => {
             resolve(response);
           })
@@ -147,10 +274,9 @@ export default {
     getData1() {
       return new Promise((resolve, reject) => {
         this.$ajax
-          .post("api/front/member/findMyFansPageByCondition.json", {
+          .post("api/front/articles/findMyCommentPageByMemberId.json", {
             page: this.page1,
-            size: this.size1,
-            id: this.userInfo.id
+            size: this.size1
           })
           .then(response => {
             resolve(response);
@@ -224,12 +350,38 @@ export default {
     "van-pull-refresh": PullRefresh,
     "van-image": Image,
     "van-icon": Icon,
-    "self-button": selfButton
+    "self-button": selfButton,
+    "van-checkbox": Checkbox
   }
 };
 </script>
 
 <style lang="scss" scoped>
+#collection {
+  padding-top: 58px;
+}
+#head {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  width: 100%;
+  padding: 14px 15px;
+  font-size: 17px;
+  font-family: PingFang SC Medium, PingFang SC Medium-Medium;
+  font-weight: 500;
+  text-align: center;
+  color: #333334;
+  line-height: 24px;
+  background: #fff;
+  box-shadow: 0px 1px 7px 0px rgba(0, 0, 0, 0.08);
+  .van-icon {
+    position: absolute;
+    left: 15px;
+    top: 18px;
+    font-size: 17px;
+  }
+}
 .msg-container {
   padding: 10px 15px 0;
   .msg-item {
@@ -284,11 +436,115 @@ export default {
     }
   }
 }
-.return-icon {
-  position: fixed;
-  top: 12px;
-  left: 15px;
-  z-index: 100;
-  font-size: 18px;
+.all {
+  padding: 22px 15px;
+  li {
+    > div {
+      display: flex;
+      align-items: center;
+      .box-content {
+          margin-left: 10px;
+      }
+    }
+  }
+  .info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    .left {
+      display: flex;
+      align-items: center;
+    }
+    .avatar {
+      margin-right: 10px;
+      width: 43px;
+      height: 43px;
+      border-radius: 50%;
+      vertical-align: middle;
+    }
+    .text {
+      font-size: 0;
+      span {
+        display: block;
+      }
+      .name {
+        font-size: 15px;
+        font-family: PingFang SC Medium, PingFang SC Medium-Medium;
+        font-weight: bold;
+        color: #333333;
+      }
+      .time {
+        margin-top: 10px;
+        font-size: 11px;
+        font-family: PingFang SC Medium, PingFang SC Medium-Medium;
+        font-weight: 500;
+        color: #999999;
+      }
+    }
+    .right {
+      .icon-top {
+        display: inline-block;
+        width: 43px;
+        height: 36px;
+        margin-right: 29px;
+        background-size: 43px 36px;
+        background-repeat: no-repeat;
+        @include bg-image("../../assets/img/myhome/icon-top");
+      }
+      .van-icon-ellipsis {
+        font-size: 20px;
+        vertical-align: super;
+      }
+    }
+  }
+  .content {
+    margin-top: 18px;
+    width: 100%;
+    height: 180px;
+    border: #333333 solid 1px;
+  }
+  .content1 {
+    display: flex;
+    margin-top: 18px;
+    .article {
+      margin-top: 10px;
+      width: 65%;
+      margin-right: 5%;
+      height: 58px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      font-size: 16px;
+      font-family: PingFang SC Bold, PingFang SC Bold-Bold;
+      font-weight: 700;
+      line-height: 20px;
+      color: #333333;
+    }
+    .picture {
+      width: 30%;
+      height: 81px;
+      background: pink;
+    }
+  }
+  .opreate {
+    margin-top: 18px;
+    > span {
+      margin-right: 27px;
+      .num {
+        margin-left: 4px;
+        font-size: 13px;
+        font-family: PingFang SC Medium, PingFang SC Medium-Medium;
+        font-weight: 500;
+        color: #666666;
+        font-style: normal;
+      }
+      img {
+        width: 16px;
+        vertical-align: text-top;
+      }
+    }
+  }
 }
 </style>

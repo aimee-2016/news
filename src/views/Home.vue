@@ -28,10 +28,12 @@
           <p class="refresh-m" v-if="refreshMessage">柬中资讯成功为您推荐{{resultSize}}条内容</p>
         </transition>
         <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
-          <div v-for="(item,index) in articleList" :key="index" class="article-item" @click="$router.push({path: '/articledetails/', query: {id: item.id}})">
-            <h3>{{item.title}}</h3>
-            <div class="img-wrap">
-              <img :src="inner" alt v-for="(inner,index) in item.imagePaths" :key="index" />
+          <div v-for="(item,index) in articleList" :key="index" class="article-item" >
+            <div @click="$router.push({path: '/articledetails/', query: {id: item.id}})">
+              <h3>{{item.title}}</h3>
+              <div class="img-wrap">
+                <img :src="inner" alt v-for="(inner,index) in item.imagePaths" :key="index" />
+              </div>
             </div>
             <div class="operat">
               <div class="left">
@@ -198,7 +200,8 @@ export default {
         {name:'低俗',val:'Vulgar'},
         {name:'暴力血腥',val:'ViolentBloody'},
         {name:'恶心',val:'Nausea'},
-      ]
+      ],
+      topList: []
     };
   },
   components: {
@@ -265,6 +268,11 @@ export default {
           // console.log(res.data.content)
           this.resultSize = res.data.number*res.data.size
           this.articleList.push(...res.data.content);
+          // let topList = res.data.content.filter(element => {
+          //   return element.whetherTop === true
+          // });
+          // this.topList.push(...topList)
+          // console.log(topList)
           this.loading = false;
           if(this.page>=res.data.totalPages) {
             this.finished = true;
