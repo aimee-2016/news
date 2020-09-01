@@ -1,7 +1,7 @@
 <template>
   <div id="detial">
     <div class="tp-head">
-      <div @click="$router.push('/home/')">
+      <div @click="$router.go(-1)">
         <img src="../assets/img/topic/back.png" />
       </div>
 
