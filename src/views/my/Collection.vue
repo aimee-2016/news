@@ -2,7 +2,7 @@
   <div id="collection">
     <div id="head">
       <van-icon name="arrow-left" @click="$router.go(-1)" />
-      <span class="title">编辑</span>
+      <span class="title" style="float:right" @click="editStatus=!editStatus">{{editStatus?'取消':'编辑'}}</span>
     </div>
     <van-tabs
       v-model="active"
@@ -14,72 +14,38 @@
     >
       <van-tab title="收藏">
         <van-pull-refresh v-model="refreshing" success-text="刷新成功" @refresh="onRefresh">
-          <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
+          <van-list v-model="loading" :finished="finished" finished-text="我是有底线的" @load="onLoad">
             <ul class="all">
               <li v-for="(item, index) in list" :key="index">
-                <div v-if="item.articlesQueryResultDto.type.name=='PublishVideo'">
-                  <div>
-                    <van-checkbox v-model="checked" checked-color="#ffcb00" />
-                  </div>
-                  <div class="box-content">
-                    <div class="info">
-                      <div class="left">
-                        <img :src="userInfo.headImgPath" alt class="avatar" />
-                        <div class="text">
-                          <span class="name">大马哈</span>
-                          <span class="time">5分钟前</span>
-                        </div>
-                      </div>
-                      <div class="right">
-                        <span class="icon-top"></span>
-                        <van-icon name="ellipsis" @click="modal.article = true" />
-                      </div>
-                    </div>
-                    <div class="content"></div>
-                    <div class="opreate">
-                      <span>
-                        <img src="../../assets/img/myhome/icon-share@2x.png" alt />
-                      </span>
-                      <span>
-                        <img
-                          src="../../assets/img/myhome/icon-50@2x.png"
-                          @click="modal.support=true"
-                          alt
-                        />
-                        <i class="num">12</i>
-                      </span>
-                      <span>
-                        <img src="../../assets/img/myhome/icon-49@2x.png" alt />
-                        <i class="num">355</i>
-                      </span>
-                    </div>
-                  </div>
-                </div>
                 <div v-if="item.articlesQueryResultDto.type.name=='PublishArticle'">
-                  <div>
+                  <div v-if="editStatus">
                     <van-checkbox v-model="checked" checked-color="#ffcb00" />
                   </div>
                   <div box-content>
                     <div class="info">
                       <div class="left">
-                        <img :src="userInfo.headImgPath" alt class="avatar" />
+                        <van-image fit="cover" round lazy-load :src="item.articlesQueryResultDto.author.headImgPath"/>
                         <div class="text">
-                          <span class="name">大马哈</span>
-                          <span class="time">5分钟前</span>
+                          <span class="name">{{item.articlesQueryResultDto.nickName}}</span>
+                          <span class="time">{{item.articlesQueryResultDto.pubDate | changeTime}}</span>
                         </div>
                       </div>
                       <div class="right">
-                        <span class="icon-top"></span>
+                        <span class="icon-top" v-if="item.articlesQueryResultDto.whetherTop"></span>
                         <van-icon name="ellipsis" />
                       </div>
                     </div>
                     <div class="content1">
-                      <div class="article">三里屯街拍：身材这么好的妹子难遇到，网友：回家去三里屯街拍：身材这么好的妹子回家去三里屯街拍：身材这么好的妹子.</div>
-                      <div class="picture"></div>
+                      <div class="article">{{item.articlesQueryResultDto.title}}</div>
+                      <van-image fit="cover" lazy-load :src="item.articlesQueryResultDto.imagePaths[0]"/>
                     </div>
                     <div class="opreate">
                       <span>
                         <img src="../../assets/img/myhome/icon-share@2x.png" alt />
+                      </span>
+                      <span>
+                        <img src="../../assets/img/myhome/icon-49@2x.png" alt />
+                        <i class="num">{{item.articlesQueryResultDto.commentCount}}</i>
                       </span>
                       <span>
                         <img
@@ -87,17 +53,84 @@
                           @click="modal.support=true"
                           alt
                         />
-                        <i class="num">12</i>
+                        <i class="num">{{item.articlesQueryResultDto.likeCount}}</i>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div v-if="item.articlesQueryResultDto.type.name=='PublishVideo'">
+                  <div v-if="editStatus">
+                    <van-checkbox v-model="checked" checked-color="#ffcb00" />
+                  </div>
+                  <div class="box-content">
+                    <div class="info">
+                      <div class="left">
+                        <van-image fit="cover" round lazy-load :src="item.articlesQueryResultDto.author.headImgPath"/>
+                        <div class="text">
+                          <span class="name">{{item.articlesQueryResultDto.nickName}}</span>
+                          <span class="time">{{item.articlesQueryResultDto.pubDate | changeTime}}</span>
+                        </div>
+                      </div>
+                      <div class="right">
+                        <span class="icon-top" v-if="item.articlesQueryResultDto.whetherTop"></span>
+                        <van-icon name="ellipsis" @click="modal.article = true" />
+                      </div>
+                    </div>
+                    <div class="content2">
+                    <van-image fit="cover" lazy-load :src="item.articlesQueryResultDto.videoImagePath"/>
+                    </div>
+                    <div class="opreate">
+                      <span>
+                        <img src="../../assets/img/myhome/icon-share@2x.png" alt />
                       </span>
                       <span>
                         <img src="../../assets/img/myhome/icon-49@2x.png" alt />
-                        <i class="num">355</i>
+                        <i class="num">{{item.articlesQueryResultDto.commentCount}}</i>
+                      </span>
+                      <span>
+                        <img
+                          src="../../assets/img/myhome/icon-50@2x.png"
+                          @click="modal.support=true"
+                          alt
+                        />
+                        <i class="num">{{item.articlesQueryResultDto.likeCount}}</i>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div v-if="item.articlesQueryResultDto.type.name=='Topic'">
+                  <div v-if="editStatus">
+                    <van-checkbox v-model="checked" checked-color="#ffcb00" />
+                  </div>
+                  <div class="box-content">
+                    <div class="info">
+                      <div class="left">
+                        <van-image fit="cover" round lazy-load :src="item.articlesQueryResultDto.author.headImgPath"/>
+                        <div class="text">
+                          <span class="name">{{item.articlesQueryResultDto.nickName}}</span>
+                          <span class="time">{{item.articlesQueryResultDto.pubDate | changeTime}}</span>
+                        </div>
+                      </div>
+                      <div class="right">
+                        <span class="icon-top" v-if="item.articlesQueryResultDto.whetherTop"></span>
+                        <van-icon name="ellipsis" @click="modal.article = true" />
+                      </div>
+                    </div>
+                    <div class="content2">
+                    <van-image fit="cover" lazy-load :src="item.articlesQueryResultDto.imagePaths[0]"/>
+                    </div>
+                    <div class="content2-title">{{item.articlesQueryResultDto.title}}</div>
+                    <div class="opreate1">
+                      <span>
+                        {{item.articlesQueryResultDto.viewCount}}人围观
+                      </span>
+                      <span>
+                        {{item.articlesQueryResultDto.commentCount}}评论
                       </span>
                     </div>
                   </div>
                 </div>
               </li>
-              <li></li>
             </ul>
           </van-list>
         </van-pull-refresh>
@@ -225,7 +258,8 @@ export default {
       loading1: false,
       finished1: false,
       refreshing1: false,
-      checked: true
+      checked: true,
+      editStatus: false,
     };
   },
   created() {
@@ -437,15 +471,21 @@ export default {
   }
 }
 .all {
-  padding: 22px 15px;
+  background: #f8f8f8;
   li {
+    margin-bottom: 10px;
+    background: #fff;
     > div {
       display: flex;
       align-items: center;
+      padding: 20px 15px 13px;
       .box-content {
           margin-left: 10px;
       }
     }
+  }
+  .box-content {
+    width: 100%;
   }
   .info {
     display: flex;
@@ -455,12 +495,10 @@ export default {
       display: flex;
       align-items: center;
     }
-    .avatar {
+    .van-image--round {
       margin-right: 10px;
       width: 43px;
       height: 43px;
-      border-radius: 50%;
-      vertical-align: middle;
     }
     .text {
       font-size: 0;
@@ -497,19 +535,27 @@ export default {
       }
     }
   }
-  .content {
+  .content2 {
     margin-top: 18px;
-    width: 100%;
-    height: 180px;
-    border: #333333 solid 1px;
+    .van-image {
+      width: 100%;
+      height: 180px;
+    }
   }
+  .content2-title {
+    margin-top: 17px;
+      font-size: 16px;
+      font-family: PingFang SC Bold, PingFang SC Bold-Bold;
+      font-weight: 700;
+      color: #333333;
+    }
   .content1 {
     display: flex;
     margin-top: 18px;
     .article {
       margin-top: 10px;
-      width: 65%;
-      margin-right: 5%;
+      width: 200px;
+      margin-right: 30px;
       height: 58px;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -522,10 +568,19 @@ export default {
       line-height: 20px;
       color: #333333;
     }
-    .picture {
-      width: 30%;
+    .van-image {
+      width: 109px;
       height: 81px;
-      background: pink;
+    }
+  }
+  .opreate1 {
+    margin-top: 11px;
+    span {
+      margin-right: 9px;
+      font-size: 12px;
+      font-family: PingFang SC Medium, PingFang SC Medium-Medium;
+      font-weight: 500;
+      color: #999999;
     }
   }
   .opreate {
