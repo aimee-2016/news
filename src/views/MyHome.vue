@@ -3,7 +3,7 @@
     <div class="top-info" :style="{background:  '#2e2840 url('+userInfo.headImgPath+')'}">
       <div class="bg">
         <div class="return">
-          <van-icon name="arrow-left" />
+          <van-icon name="arrow-left" @click="$router.go(-1)"/>
           <van-icon name="ellipsis" style="float:right;font-size:24px" @click="modal.user = true" />
         </div>
         <div class="row-1">
@@ -12,8 +12,11 @@
           <span class="btn-auth">我的认证</span>
         </div>
         <div class="row-2">
-          <span class="name">卡卡</span>
-          <span class="age">女 18</span>
+          <span class="name">{{userInfo.nickName}}</span>
+          <span class="age" v-if="userInfo.sex||userInfo.age">
+            <span v-if="userInfo.sex">{{userInfo.sex.name}}</span>
+            <span v-if="userInfo.age"> {{userInfo.age}}</span>
+          </span>
         </div>
         <ul class="row-3">
           <li>
@@ -32,15 +35,15 @@
         <ul class="row-4">
           <li>
             <span class="icon-auth icon"></span>
-            <span class="text">认证：美食文章创作者、美食视频创作者</span>
+            <span class="text">认证：{{userInfo.memberStatus.message}}</span>
           </li>
           <li>
             <span class="icon-location icon"></span>
-            <span class="text">位置：海外</span>
+            <span class="text">位置：{{userInfo.regionDtos?userInfo.regionDtos.cnName:'---'}}</span>
           </li>
           <li>
             <span class="icon-desc icon"></span>
-            <span class="text">简介：喜爱美食所以旅行，感受不同国家的美食</span>
+            <span class="text">简介：{{userInfo.synopsis||'---'}}</span>
           </li>
         </ul>
       </div>
@@ -276,9 +279,25 @@ export default {
       message: ""
     };
   },
-  created() {},
+  created() {
+    // this.getData()
+  },
   mounted() {},
   methods: {
+    getData() {
+      this.$ajax
+        .post("api/front/articles/findArticlesPageByCondition.json", {
+          EQ_memberId: this.userInfo.id,
+          EQ_type: 'PublishVideo',
+          sort: 'pubDate'
+        })
+        .then(() => {
+          // this.$toast('修改成功')
+        })
+        .catch(error=> {
+          this.$toast(error)
+        });
+    },
     onSelect(item) {
       this.modal.user = false;
       if (item.name === "举报用户") {

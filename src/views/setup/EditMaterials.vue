@@ -10,26 +10,26 @@
       <van-cell
         title="用户名"
         is-link
-        value="待完善"
+        :value="userInfo.nickName||'待完善'"
         @click="modal.user = true"
       />
       <van-cell
         title="介绍"
         is-link
-        value="待完善"
+        :value="userInfo.synopsis||'待完善'"
         @click="modal.introduce = true"
       />
-      <van-cell title="性别" is-link value="待完善" @click="modal.sex = true" />
+      <van-cell title="性别" is-link :value="userInfo.sex?userInfo.sex.message:'待完善'" @click="modal.sex = true" />
       <van-cell
         title="生日"
         is-link
-        value="待完善"
+        :value="userInfo.birthday||'待完善'"
         @click="modal.birthday = true"
       />
       <van-cell
         title="地区"
         is-link
-        value="待完善"
+        :value="userInfo.regionDtos?userInfo.regionDtos.cnName:'待完善'"
         @click="modal.zone = true"
       />
     </div>
@@ -54,7 +54,7 @@
         />
         <div class="operate">
           <span>支持中英文、数字</span>
-          <self-button class="btn">确定</self-button>
+          <self-button class="btn" @click="modifyUserName(user)">确定</self-button>
         </div>
       </div>
     </van-action-sheet>
@@ -72,7 +72,7 @@
         />
         <div class="operate">
           <span>支持中英文、数字</span>
-          <self-button class="btn">确定</self-button>
+          <self-button class="btn" @click="modifySynopsis(introduce)">确定</self-button>
         </div>
       </div>
     </van-action-sheet>
@@ -81,16 +81,15 @@
       :actions="actionssex"
       cancel-text="取消"
       close-on-click-action
-      @select="onSelectSex"
+      @select="modifySex"
     />
     <van-action-sheet v-model="modal.birthday">
       <van-datetime-picker
         v-model="currentDate"
         type="date"
         confirm-button-text="完成"
-        :min-date="minDate"
-        :max-date="maxDate"
         :formatter="formatter"
+        @confirm="modifyBirthday"
       />
     </van-action-sheet>
     <van-action-sheet v-model="modal.zone">
@@ -126,7 +125,7 @@ export default {
       },
       user: '',
       introduce: '',
-      actionssex: [{ name: "男" }, { name: "女" }],
+      actionssex: [{ name: "男",val: 'Man' }, { name: "女",val: 'WoMan' }],
       areaList: {
         province_list: {
           110000: '北京市',
@@ -150,8 +149,8 @@ export default {
           120105: '河北区',
         }
       },
-      minDate: new Date(2020, 0, 1),
-      maxDate: new Date(2025, 10, 1),
+      // minDate: new Date(2020, 0, 1),
+      // maxDate: new Date(2025, 10, 1),
       currentDate: new Date(),
     }
   },
@@ -189,9 +188,7 @@ export default {
           .catch(() => {});
       }
     },
-    onSelectSex(item) {
-      console.log(item)
-    },
+    
     formatter(type, val) {
       if (type === 'year') {
         return `${val}年`;
@@ -202,10 +199,76 @@ export default {
       }
       return val;
     },
-    
+    modifyUserName(user) {
+      if(!user) {
+        this.$toast('请输入用户名')
+        return false
+      }
+      this.modal.user = false
+        this.$ajax
+        .post("api/front/member/update.json", {
+          nickName: user
+        })
+        .then(() => {
+          this.$toast('修改成功')
+        })
+        .catch(error=> {
+          this.$toast(error)
+        });
+    },
+    modifySynopsis(val) {
+      if(!val) {
+        this.$toast('请输入简介')
+        return false
+      }
+      this.modal.introduce = false
+        this.$ajax
+        .post("api/front/member/update.json", {
+          synopsis: val
+        })
+        .then(() => {
+          this.$toast('修改成功')
+        })
+        .catch(error=> {
+          this.$toast(error)
+        });
+    },
+    modifySex(item) {
+      this.$ajax
+        .post("api/front/member/update.json", {
+          sex: item.val
+        })
+        .then(() => {
+          this.$toast('修改成功')
+        })
+        .catch(error=> {
+          this.$toast(error)
+        });
+    },
+    modifyBirthday(val) {
+      console.log(val)
+    }
+    // modifySynopsis(val) {
+    //   if(!val) {
+    //     this.$toast('请输入简介')
+    //     return false
+    //   }
+    //     this.$ajax
+    //     .post("api/front/member/update.json", {
+    //       synopsis: val
+    //     })
+    //     .then(() => {
+    //       this.$toast('修改成功')
+    //     })
+    //     .catch(error=> {
+    //       this.$toast(error)
+    //     });
+    // }
   },
   computed: {
-
+    userInfo() {
+      return this.$store.state.userInfo;
+    }
   },
   watch: {
 
