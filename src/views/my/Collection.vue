@@ -18,10 +18,10 @@
             <ul class="all">
               <li v-for="(item, index) in list" :key="index">
                 <div v-if="item.articlesQueryResultDto.type.name=='PublishArticle'">
-                  <div v-if="editStatus">
-                    <van-checkbox v-model="checked" checked-color="#ffcb00" />
+                  <div v-if="editStatus" class="checkbox-wrap">
+                    <van-checkbox v-model="item.checked" checked-color="#ffcb00" @click="changeNum(item.checked)"/>
                   </div>
-                  <div box-content>
+                  <div class="box-content">
                     <div class="info">
                       <div class="left">
                         <van-image fit="cover" round lazy-load :src="item.articlesQueryResultDto.author.headImgPath"/>
@@ -35,8 +35,8 @@
                         <van-icon name="ellipsis" />
                       </div> -->
                     </div>
-                    <div class="content1" @click="toDetail(item.articlesQueryResultDto.type.name,item.articlesQueryResultDto.id)">
-                      <div class="article">{{item.articlesQueryResultDto.title}}</div>
+                    <div class="content1" :class="{changew:editStatus}" @click="toDetail(item.articlesQueryResultDto.type.name,item.articlesQueryResultDto.id)">
+                      <div class="article van-multi-ellipsis--l3">{{item.articlesQueryResultDto.title}}</div>
                       <van-image fit="cover" lazy-load :src="item.articlesQueryResultDto.imagePaths[0]"/>
                     </div>
                     <div class="opreate">
@@ -65,7 +65,7 @@
                 </div>
                 <div v-if="item.articlesQueryResultDto.type.name=='PublishVideo'">
                   <div v-if="editStatus">
-                    <van-checkbox v-model="checked" checked-color="#ffcb00" />
+                    <van-checkbox v-model="item.checked" checked-color="#ffcb00" @click="changeNum(item.checked)"/>
                   </div>
                   <div class="box-content">
                     <div class="info">
@@ -77,7 +77,7 @@
                         </div>
                       </div>
                     </div>
-                    <div class="content2" @click="toDetail(item.articlesQueryResultDto.type.name,item.articlesQueryResultDto.id)">
+                    <div class="content2" :class="{changew1:editStatus}" @click="toDetail(item.articlesQueryResultDto.type.name,item.articlesQueryResultDto.id)">
                       <van-image fit="cover" lazy-load :src="item.articlesQueryResultDto.videoImagePath"/>
                       <van-icon name="play-circle" />
                     </div>
@@ -107,7 +107,7 @@
                 </div>
                 <div v-if="item.articlesQueryResultDto.type.name=='Topic'">
                   <div v-if="editStatus">
-                    <van-checkbox v-model="checked" checked-color="#ffcb00" />
+                    <van-checkbox v-model="item.checked" checked-color="#ffcb00" @click="changeNum(item.checked)"/>
                   </div>
                   <div class="box-content">
                     <div class="info">
@@ -119,7 +119,7 @@
                         </div>
                       </div>
                     </div>
-                    <div class="content2" @click="toDetail(item.articlesQueryResultDto.type.name,item.articlesQueryResultDto.id)">
+                    <div class="content2" :class="{changew1:editStatus}" @click="toDetail(item.articlesQueryResultDto.type.name,item.articlesQueryResultDto.id)">
                     <van-image fit="cover" lazy-load :src="item.articlesQueryResultDto.imagePaths[0]"/>
                     </div>
                     <div class="content2-title">{{item.articlesQueryResultDto.title}}</div>
@@ -141,22 +141,31 @@
       <van-tab title="评论">
         <van-pull-refresh v-model="refreshing1" success-text="刷新成功" @refresh="onRefresh1">
           <van-list v-model="loading1" :finished="finished1" finished-text="没有更多了" @load="onLoad1">
-            <ul class="all">
+            <ul class="all comment-all">
               <li v-for="(item, index) in list1" :key="index">
                 <div>
-                  <div box-content>
+                  <div class="box-content comment-box">
                     <div class="info">
                       <div class="left">
-                        <van-image fit="cover" round lazy-load :src="item.articlesDto.author.headImgPath"/>
+                        <van-image fit="cover" round lazy-load :src="userInfo.headImgPath"/>
                         <div class="text">
-                          <span class="name">{{item.articlesDto.nickName}}</span>
+                          <span class="name">{{userInfo.nickName}}</span>
                           <span class="time">{{item.articlesDto.pubDate | changeTime}}</span>
                         </div>
                       </div>
                     </div>
                     <div class="comment">{{item.content}}</div>
-                    <div class="content1" @click="toDetail(item.articlesDto.type.name,item.articlesDto.id)">
-                      <div class="article">{{item.articlesDto.title}}</div>
+                    <div class="commment-row">
+                      <div class="content-comment" @click="toDetail(item.articlesDto.type.name,item.articlesDto.id)">
+                        <div class="van-ellipsis">{{item.articlesDto.title}}</div>
+                        <div class="van-multi-ellipsis--l3" v-if="item.type.name==='Comment'">
+                          {{item.articlesDto.contentView}}
+                        </div>
+                        <div class="van-multi-ellipsis--l3" v-else>
+                          <span>@{{item.commentSingleDto.memberDto.nickName}}</span>
+                          {{item.commentSingleDto.content}}
+                        </div>
+                      </div>
                       <van-image fit="cover" lazy-load :src="item.articlesDto.imagePaths[0]"/>
                     </div>
                     <div class="opreate">
@@ -194,7 +203,7 @@
             <ul class="all">
               <li v-for="(item, index) in list2" :key="index">
                 <div v-if="item.articlesDto.type.name=='PublishArticle'">
-                  <div box-content>
+                  <div class="box-content">
                     <div class="info">
                       <div class="left">
                         <van-image fit="cover" round lazy-load :src="item.articlesDto.author.headImgPath"/>
@@ -205,7 +214,7 @@
                       </div>
                     </div>
                     <div class="content1" @click="toDetail(item.articlesDto.type.name,item.articlesDto.id)">
-                      <div class="article">{{item.articlesDto.title}}</div>
+                      <div class="article van-multi-ellipsis--l3">{{item.articlesDto.title}}</div>
                       <van-image fit="cover" lazy-load :src="item.articlesDto.imagePaths[0]"/>
                     </div>
                     <div class="opreate">
@@ -307,7 +316,7 @@
             <ul class="all">
               <li v-for="(item, index) in list3" :key="index">
                 <div v-if="item.articlesDto.type.name=='PublishArticle'">
-                  <div box-content>
+                  <div class="box-content">
                     <div class="info">
                       <div class="left">
                         <van-image fit="cover" round lazy-load :src="item.articlesDto.author.headImgPath"/>
@@ -318,7 +327,7 @@
                       </div>
                     </div>
                     <div class="content1" @click="toDetail(item.articlesDto.type.name,item.articlesDto.id)">
-                      <div class="article">{{item.articlesDto.title}}</div>
+                      <div class="article van-multi-ellipsis--l3">{{item.articlesDto.title}}</div>
                       <van-image fit="cover" lazy-load :src="item.articlesDto.imagePaths[0]"/>
                     </div>
                     <div class="opreate">
@@ -415,12 +424,16 @@
         </van-pull-refresh>
       </van-tab>
     </van-tabs>
+    <div id="footer-operate" v-if="editStatus&&active===0">
+      <span @click="emptyCollection()">一键清空</span>
+      <span class="del" @click="delCollection()">删除(<i>{{checkNum}}</i>)</span>
+    </div>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
 import selfButton from "@/components/button";
-import { Tabs, Tab, List, PullRefresh, Image, Icon, Checkbox } from "vant";
+import { Tabs, Tab, List, PullRefresh, Image, Icon, Checkbox, Dialog } from "vant";
 export default {
   name: "svb",
   data() {
@@ -450,8 +463,8 @@ export default {
       loading3: false,
       finished3: false,
       refreshing3: false,
-      checked: true,
       editStatus: false,
+      checkNum: 0
     };
   },
   created() {
@@ -477,6 +490,13 @@ export default {
           });
       });
     },
+    onLoadInit(id) {
+      this.page=1;
+      this.list=[];
+      this.finished = false;
+      this.loading = true;
+      this.onLoad();
+    },
     onLoad() {
       if (this.refreshing) {
         this.page = 1;
@@ -484,6 +504,9 @@ export default {
         this.refreshing = false;
       }
       this.getData().then(res => {
+        res.data.content.forEach(element => {
+          this.$set(element,'checked',false)
+        });
         this.list.push(...res.data.content);
         this.loading = false;
         if (this.page >= res.data.totalPages) {
@@ -696,6 +719,67 @@ export default {
           this.$toast(error.message);
         });
     },
+    changeNum(val) {
+      if(val) {
+        this.checkNum++
+      } else {
+        this.checkNum--
+      }
+    },
+    emptyCollection() {
+      if(!this.list.length) {
+        return false
+      }
+      Dialog.confirm({
+        title: "确定清空收藏？",
+        confirmButtonColor: "#f99307",
+        theme: "round-button"
+      })
+        .then(() => {
+          this.emptyCollection1();
+        })
+    },
+    emptyCollection1() {
+      this.$ajax
+        .post("api/front/articles/deleteAllOperation.json", {
+          operationType: 'Collection'
+        })
+        .then(() => {
+          this.onLoadInit()
+          this.$toast("清空成功");
+        })
+        .catch(error => {
+          this.$toast(error.message);
+        });
+    },
+    delCollection() {
+      if(!this.list.length) {
+        return false
+      }
+      Dialog.confirm({
+        title: "确定删除收藏？",
+        confirmButtonColor: "#f99307",
+        theme: "round-button"
+      })
+        .then(() => {
+          this.delCollection1();
+        })
+    },
+    delCollection1() {
+      let resultList = this.list.filter(item=>item.checked).map(item=>item.id)
+      this.$ajax
+        .post("api/front/articles/deleteBatchOperation.json", {
+          operationType: 'Collection',
+          ids: resultList
+        })
+        .then(() => {
+          this.onLoadInit()
+          this.$toast("删除成功");
+        })
+        .catch(error => {
+          this.$toast(error.message);
+        });
+    }
   },
   computed: {
     userInfo() {
@@ -718,7 +802,7 @@ export default {
 
 <style lang="scss" scoped>
 #collection {
-  padding-top: 58px;
+  padding: 58px 0 50px;
 }
 #head {
   position: fixed;
@@ -748,12 +832,13 @@ export default {
   li {
     margin-bottom: 10px;
     background: #fff;
+    border-bottom: 1px solid #f0f0f0;
     > div {
       display: flex;
       align-items: center;
       padding: 20px 15px 13px;
-      .box-content {
-          margin-left: 10px;
+      .checkbox-wrap {
+        margin-right: 15px;
       }
     }
   }
@@ -809,6 +894,8 @@ export default {
     }
   }
   .content2 {
+    display: flex;
+    justify-content: flex-end;
     position: relative;
     margin-top: 18px;
     .van-image {
@@ -824,20 +911,18 @@ export default {
       transform: translate(-19px, -19px);
     }
   }
+  .changew1 {
+    .van-image {
+      width: 95%;
+    }
+  }
   .content2-title {
     margin-top: 17px;
-      font-size: 16px;
-      font-family: PingFang SC Bold, PingFang SC Bold-Bold;
-      font-weight: 700;
-      color: #333333;
-    }
-    .comment {
-      margin-top: 24px;
-      font-size: 16px;
-      font-family: PingFang SC Bold, PingFang SC Bold-Bold;
-      font-weight: 700;
-      color: #333333;
-    }
+    font-size: 16px;
+    font-family: PingFang SC Bold, PingFang SC Bold-Bold;
+    font-weight: 700;
+    color: #333333;
+  }
   .content1 {
     display: flex;
     margin-top: 18px;
@@ -860,6 +945,11 @@ export default {
     .van-image {
       width: 109px;
       height: 81px;
+    }
+  }
+  .changew {
+    .article {
+      width: 165px;
     }
   }
   .opreate1 {
@@ -888,6 +978,91 @@ export default {
         width: 16px;
         vertical-align: text-top;
       }
+    }
+  }
+}
+.comment-all {
+  li {
+    >div {
+      padding-left: 0;
+      padding-right: 0;
+      .comment-box {
+        margin-left: 0;
+      }
+    }
+  }
+  .info {
+    padding: 0 15px;
+  }
+  .opreate {
+    padding-left: 15px;
+  }
+  .comment-box {
+    .comment {
+      padding: 22px 15px 12px 15px;
+      font-size: 16px;
+      font-family: PingFang SC Bold, PingFang SC Bold-Bold;
+      font-weight: 700;
+      color: #333333;
+    }
+    .commment-row {
+      display: flex;
+      align-items: center;
+      background: #f8f8f8;
+      padding: 16px 15px;
+      .content-comment {
+        margin-right: 18px;
+        width: 188px;
+        flex-grow:1;
+        .van-ellipsis {
+          font-size: 16px;
+          font-family: PingFang SC Bold, PingFang SC Bold-Bold;
+          font-weight: 700;
+          color: #4e627a;
+        }
+        .van-multi-ellipsis--l3 {
+          margin-top: 12px;
+          font-size: 14px;
+          font-family: PingFang SC Medium, PingFang SC Medium-Medium;
+          font-weight: 500;
+          color: #333333;
+          line-height: 22px;
+          span {
+            color: #4e627a;
+            font-size: 14px;
+          }
+        }
+      }
+      .van-image {
+        width: 140px;
+        height: 105px;
+        border-radius: 5px;
+        overflow: hidden;
+      }
+    }
+  }
+}
+#footer-operate {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  height: 50px;
+  padding: 0 15px;
+  border-top: 1px solid #e6e6e6;
+  font-size: 16px;
+  font-family: PingFang SC Medium, PingFang SC Medium-Medium;
+  font-weight: bold;
+  color: #333333;
+  line-height: 50px;
+  background: #fff;
+  .del {
+    color: #f99307;
+    i {
+      font-style: normal;
     }
   }
 }

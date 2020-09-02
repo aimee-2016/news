@@ -67,19 +67,19 @@
         </div>
         <span>收藏</span>
       </li>
-      <li @click="$router.push({path:'/collection/',query:{active:1}})">
+      <li @click="$router.push({path:'/collection/',query:{active:3}})">
         <div class="img-wrap">
           <img src="../assets/img/my/icon-history@2x.png" alt="">
         </div>
         <span>历史</span>
       </li>
-      <li @click="$router.push({path:'/collection/',query:{active:2}})">
+      <li @click="$router.push({path:'/collection/',query:{active:1}})">
         <div class="img-wrap">
           <img src="../assets/img/my/icon-comment@2x.png" alt="">
         </div>
         <span>评论</span>
       </li>
-      <li @click="$router.push({path:'/collection/',query:{active:3}})">
+      <li @click="$router.push({path:'/collection/',query:{active:2}})">
         <div class="img-wrap">
           <img src="../assets/img/my/icon-support@2x.png" alt="">
         </div>
