@@ -25,19 +25,14 @@ export default {
 }
 </script>
 <style lang='scss' scoped>
-/* #app {
-  position:absolute;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  top: 0;
-  left: 0;
+ #app {
+  background: #fff;
 }
-#main {
-  height: inherit;
-} */
-/* #app::-webkit-scrollbar {
-    display: none;
-} */
+// #main {
+//   height: inherit;
+// } 
+//  #app::-webkit-scrollbar {
+//     display: none;
+// } 
 </style>
 
