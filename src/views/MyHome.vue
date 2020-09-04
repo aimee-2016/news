@@ -4,7 +4,7 @@
       <div class="bg">
         <div class="return">
           <van-icon name="arrow-left" @click="$router.go(-1)"/>
-          <van-icon name="ellipsis" style="float:right;font-size:24px" @click="modal.user = true" />
+          <van-icon name="ellipsis" @click="modal.user = true" />
         </div>
         <div class="row-1">
           <img :src="userInfo.headImgPath" alt class="avatar" />
@@ -358,6 +358,10 @@ export default {
   .return {
     margin-bottom: 23px;
     font-size: 15px;
+    .van-icon-ellipsis {
+      float: right;
+      font-size: 24px;
+    }
   }
   .row-1 {
     .avatar {
