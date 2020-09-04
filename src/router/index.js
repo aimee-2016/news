@@ -199,6 +199,61 @@ const routes = [
     component: () => import('../views/my/Collection.vue'),
   },
   {
+    path: '/authapply',
+    name: 'authapply',
+    component: () => import('../views/MyAuth/Apply.vue'),
+  },
+  {
+    path: '/createfiled',
+    name: 'createfiled',
+    component: () => import('../views/MyAuth/CreateFiled.vue'),
+  },
+  {
+    path: '/integralcenter',
+    name: 'integralcenter',
+    component: () => import('../views/Integral/IntegralCenter.vue'),
+  },
+  {
+    path: '/integraldetails',
+    name: 'integraldetails',
+    component: () => import('../views/Integral/IntegralDetails.vue'),
+  },
+  {
+    path: '/integralexplain',
+    name: 'integralexplain',
+    component: () => import('../views/Integral/IntegralExplain.vue'),
+  },
+  {
+    path: '/integralrecord',
+    name: 'integralrecord',
+    component: () => import('../views/Integral/IntegralRecord.vue'),
+  },
+  {
+    path: '/exchangerecord',
+    name: 'exchangerecord',
+    component: () => import('../views/Integral/ExchangeRecord.vue'),
+  },
+  {
+    path: '/exchangedetails',
+    name: 'exchangedetails',
+    component: () => import('../views/Integral/ExchangeDetails.vue'),
+  },
+  {
+    path: '/order',
+    name: 'order',
+    component: () => import('../views/Integral/Order.vue'),
+  },
+  {
+    path: '/myaddress',
+    name: 'myaddress',
+    component: () => import('../views/Integral/MyAddress.vue'),
+  },
+  {
+    path: '/addaddress',
+    name: 'addaddress',
+    component: () => import('../views/Integral/AddAddress.vue'),
+  },
+  {
     path: '*',
     name: '404',
     component: () => import('../views/404.vue'),

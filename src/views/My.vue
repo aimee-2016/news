@@ -19,7 +19,7 @@
           <div class="obtain">
             <!-- <span class="icon-tech tech-video"></span>
             <span class="icon-tech tech-article"></span>-->
-            <span class="icon-auth noauth" v-if="userInfo.memberStatus.name==='NotApplied'"></span>
+            <span class="icon-auth noauth" v-if="userInfo.memberStatus.name==='NotApplied'" @click="$router.push('/authapply/')"></span>
             <span class="icon-auth authing" v-if="userInfo.memberStatus.name==='AssessmentPeriod'"></span>
             <span class="icon-auth authed" v-if="userInfo.memberStatus.name==='CertifyAdopt'"></span>
           </div>
@@ -47,7 +47,7 @@
         <div class="day-box">
           <ul>
             <li v-for="(item,index) in signList" :key="index">
-              <i>{{item.whetherSign?'√':item.integral}}</i>
+              <i @click="$router.push('/integralcenter/')">{{item.whetherSign?'√':item.integral}}</i>
               <span>{{item.day}}天</span>
             </li>
           </ul>
@@ -55,7 +55,7 @@
         <van-button plain color="#999999" size="small" round v-if="todaySign" disabled="">已签到</van-button>
         <van-button plain color="#fcbe64" size="small" round v-else @click="signIn()">打卡赚积分</van-button>
       </div>
-      <div class="desc">
+      <div class="desc" @click="$router.push('/integralcenter/')">
         <i class="icon"></i>
         <span>{{totalSignCount}}人已打卡</span>
       </div>
@@ -407,6 +407,7 @@ export default {
     }
   }
   .desc {
+    display: inline-block;
     margin-top: 16px;
     .icon {
       display: inline-block;

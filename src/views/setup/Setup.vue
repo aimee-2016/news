@@ -3,16 +3,16 @@
     <van-cell title="编辑资料" is-link url="/editmaterials/"/>
     <van-cell title="账号和隐私设置" is-link url="/accountprivacy/" />
     <van-cell title="黑名单" is-link url="/blacklist/" />
-    <van-cell title="清理缓存" value="200MB" @click="show = true" />
+    <!-- <van-cell title="清理缓存" value="200MB" @click="show = true" /> -->
     <div @click="loginout" class="login-out">退出登录</div>
-    <van-action-sheet
+    <!-- <van-action-sheet
       v-model="show"
       :actions="actions"
       cancel-text="取消"
       description="确定删除所有缓存？离线内容及图片均会被清除"
       close-on-click-action
       @select="select"
-    />
+    /> -->
   </div>
 </template>
 

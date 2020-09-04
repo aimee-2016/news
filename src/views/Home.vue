@@ -343,7 +343,7 @@ export default {
     },
     blockAuthor() {
       this.$ajax
-        .post("api/front/member/block.json", { id: this.selectedItem.id })
+        .post("api/front/member/block.json", { id: this.selectedItem.author.id })
         .then(() => {
           // this.checkNav(this.navId)
           this.$toast("操作成功");

@@ -34,13 +34,7 @@
       <van-cell
         title="地区"
         is-link
-        :value="
-          userInfo.regionDtos
-            ? userInfo.regionDtos[0].cnName +
-              '-' +
-              userInfo.regionDtos[1].cnName
-            : '待完善'
-        "
+        :value="userInfo.address || '待完善'"
         @click="modal.zone = true"
       />
     </div>

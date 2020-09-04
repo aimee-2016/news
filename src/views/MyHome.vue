@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="top-info" :style="{background:  '#2e2840 url('+userInfo.headImgPath+')'}">
+    <div class="top-info" :style="{background: '#2e2840 url('+userInfo.headImgPath+') no-repeat center',backgroundSize:'cover'}">
       <div class="bg">
         <div class="return">
           <van-icon name="arrow-left" @click="$router.go(-1)"/>
@@ -8,13 +8,13 @@
         </div>
         <div class="row-1">
           <img :src="userInfo.headImgPath" alt class="avatar" />
-          <span class="btn-edit">编辑资料</span>
-          <span class="btn-auth">我的认证</span>
+          <span class="btn-edit" @click="$router.push('/editmaterials/')">编辑资料</span>
+          <span class="btn-auth" @click="$router.push('/authapply/')">我的认证</span>
         </div>
         <div class="row-2">
           <span class="name">{{userInfo.nickName}}</span>
           <span class="age" v-if="userInfo.sex||userInfo.age">
-            <span v-if="userInfo.sex">{{userInfo.sex.name}}</span>
+            <span v-if="userInfo.sex">{{userInfo.sex.message}}</span>
             <span v-if="userInfo.age"> {{userInfo.age}}</span>
           </span>
         </div>
@@ -39,7 +39,7 @@
           </li>
           <li>
             <span class="icon-location icon"></span>
-            <span class="text">位置：{{userInfo.regionDtos?userInfo.regionDtos.cnName:'---'}}</span>
+            <span class="text">位置：{{userInfo.address||'---'}}</span>
           </li>
           <li>
             <span class="icon-desc icon"></span>

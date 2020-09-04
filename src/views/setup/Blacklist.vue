@@ -1,50 +1,95 @@
 <template>
   <div>
-    <div v-for="(item, index) in blackList" :key="index" class="member-item">
-      <div class="content">
-        <div class="left">
-          <div class="head-img">
-            <van-image round fit="cover" :src="item.headImgPath" />
-          </div>
-          <div>
-            <span class="name">{{ item.nickName }}</span>
+    <van-pull-refresh
+      v-model="refreshing"
+      success-text="刷新成功"
+      @refresh="onRefresh"
+    >
+      <van-list
+        v-model="loading"
+        :finished="finished"
+        @load="onLoad"
+      >
+        <div
+          v-for="(item, index) in list"
+          :key="index"
+          class="member-item"
+        >
+          <div class="content">
+            <div class="left">
+              <div class="head-img">
+                <van-image round fit="cover" :src="item.headImgPath" />
+              </div>
+              <div>
+                <span class="name">{{ item.nickName }}</span>
+              </div>
+            </div>
+            <div class="right">
+              <self-button round @click="focusUser(item.id)">移除</self-button>
+            </div>
           </div>
         </div>
-        <div class="right">
-          <self-button round @click="focusUser(item.id)">移除</self-button>
-        </div>
-      </div>
-    </div>
+      </van-list>
+    </van-pull-refresh>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
 import selfButton from '@/components/button';
 import {
+  List,
+  PullRefresh,
   Image
 } from "vant";
 export default {
   data() {
     return {
-      blackList: []
+      list: [],
+      page: 1,
+      size: 20,
+      loading: false,
+      finished: false,
+      refreshing: false,
     }
   },
   created() {
-    this.getAll()
   },
   mounted() {
 
   },
   methods: {
-    getAll() {
-        this.$ajax
-        .post("api/front/member/findBlackListPageByCondition.json", {page: 10,size:20})
-        .then(res => {
-          this.blackList = res.data.content
+    getData() {
+      return new Promise((resolve, reject) => {
+          this.$ajax
+            .post("api/front/member/findBlackListPageByCondition.json", {
+              page: this.page,
+              size: this.size
+            }).then(response=>{
+              resolve(response)
+            }).catch(error=>{
+              reject(error)
+            })
         })
-        .catch(error=> {
-          console.log(error);
-        });
+    },
+    onLoad() {
+        if (this.refreshing) {
+          this.page = 1
+          this.list = [];
+          this.refreshing = false;
+        }
+        this.getData().then(res=>{
+          this.list.push(...res.data.content);
+          this.loading = false;
+          if(this.page>=res.data.totalPages) {
+            this.finished = true;
+          }
+          this.page++
+        })
+    },
+    onRefresh() {
+      this.finished = false;
+      this.loading = true;
+      this.onLoad();
     },
     focusUser(id) {
       this.$ajax
@@ -53,12 +98,19 @@ export default {
         })
         .then(() => {
           this.$toast('移除成功')
-          this.getAll()
+          this.initOnload()
         })
         .catch(error=> {
           this.$toast(error)
         });
     },
+    initOnload() {
+      this.page=1;
+      this.list=[];
+      this.finished = false;
+      this.loading = true;
+      this.onLoad()
+    }
   },
   computed: {
 
@@ -68,16 +120,23 @@ export default {
   },
   components: {
     "van-image": Image,
-    'self-button': selfButton
+    'self-button': selfButton,
+    "van-list": List,
+    "van-pull-refresh": PullRefresh,
   }
 }
 </script>
 
 <style lang="scss" scoped>
+.member-item {
+  padding: 0 15px;
+}
 .content {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 10px 0;
+  border-bottom: solid 1px #f0f0f0;
   .left {
     display: flex;
     align-items: center;

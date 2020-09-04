@@ -2,7 +2,7 @@
   <div>
     <van-cell
       title="手机号"
-      value="去绑定手机号"
+      :value="userInfo.whetherBindPhone?'更改手机号':'去绑定手机号'"
       is-link
       url="/bindphone/"
       class="modify-tel"
@@ -11,12 +11,12 @@
     <van-cell-group title="社交平台账号绑定">
       <van-cell title="微信">
         <template #right-icon>
-          <van-switch v-model="checked" size="24px" active-color="#FDD004"/>
+          <van-switch v-model="userInfo.whetherBindWeChat" size="24px" active-color="#FDD004"/>
         </template>
       </van-cell>
       <van-cell title="腾讯QQ">
         <template #right-icon>
-          <van-switch v-model="checked1" size="24px" active-color="#FDD004"/>
+          <van-switch v-model="userInfo.whetherBindQQ" size="24px" active-color="#FDD004"/>
         </template>
       </van-cell>
     </van-cell-group>
@@ -33,8 +33,6 @@ import {
 export default {
   data() {
     return {
-      checked: true,
-      checked1: false
     }
   },
   created() {
@@ -59,7 +57,9 @@ export default {
     }
   },
   computed: {
-
+    userInfo() {
+      return this.$store.state.userInfo;
+    }
   },
   watch: {
 
