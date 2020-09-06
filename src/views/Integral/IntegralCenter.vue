@@ -23,28 +23,59 @@
           <van-cell title="兑换记录" url="/exchangerecord/" />
         </div>
       </div>
-      <div class="sign-in"></div>
+      <div class="signin">
+        <div class="row-1">
+          <h3>签到进度<span>1</span>/7</h3>
+          <div>
+            <span>签到提醒</span><van-switch v-model="checked" /></div>
+        </div>
+      <div class="date">
+        <div class="day-box">
+          <ul>
+            <li v-for="(item,index) in signList" :key="index">
+              <i @click="$router.push('/integralcenter/')">{{item.whetherSign?'√':item.integral}}</i>
+              <span>{{item.day}}天</span>
+            </li>
+          </ul>
+        </div>
+        <van-button plain color="#999999" size="small" round v-if="todaySign" disabled="">已签到</van-button>
+        <van-button plain color="#fcbe64" size="small" round v-else @click="signIn()">打卡赚积分</van-button>
+      </div>
+      <div class="desc" @click="$router.push('/integralcenter/')">
+        <i class="icon"></i>
+        <span>{{totalSignCount}}人已打卡</span>
+      </div>
+    </div>
       <div class="goods-list"></div>
     </div>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
-import { Cell, CellGroup, Button, Icon, Popup, Image } from "vant";
+import { Cell, CellGroup, Button, Icon, Popup, Image, Switch } from "vant";
 export default {
   data() {
     return {
-
+      signList: [],
+      checked: true,
     }
   },
   created() {
-
+    this.getSignList()
   },
   mounted() {
 
   },
   methods: {
-
+    getSignList() {
+      this.$ajax
+        .post("api/front/member/findMemberSignList.json", {})
+        .then(res => {
+          this.signList = res.data.signDtoList;
+          this.todaySign = res.data.todaySign
+          this.totalSignCount = res.data.totalSignCount
+        });
+    },
   },
   computed: {
     userInfo() {
@@ -60,7 +91,8 @@ export default {
     "van-button": Button,
     "van-icon": Icon,
     "van-popup": Popup,
-    "van-image": Image
+    "van-image": Image,
+    "van-switch": Switch
   }
 }
 </script>
@@ -84,7 +116,7 @@ export default {
   color: #333334;
   line-height: 24px;
   background: #fff;
-  box-shadow: 0px 1px 7px 0px rgba(0, 0, 0, 0.08);
+  // box-shadow: 0px 1px 7px 0px rgba(0, 0, 0, 0.08);
   .van-icon-arrow-left {
     position: absolute;
     left: 15px;
@@ -141,7 +173,84 @@ export default {
     }
   }
 }
-.sign-in {
+.signin {
+  margin: 20px 14px 10px;
+  padding: 16px 10px 16px 12px;
+  background: #ffffff;
+  box-shadow: 0px 1px 10px 0px rgba(4, 0, 0, 0.1);
+  .date {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    .day-box {
+      position: relative;
+      &::after {
+        content: "";
+        display: block;
+        position: absolute;
+        width: 100%;
+        height: 1px;
+        background: #fcbe64;
+        top: 13px;
+      }
+    }
+    ul {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      li {
+        margin-right: 10px;
+        text-align: center;
+        &:last-child {
+          margin-right: 0;
+        }
+        i {
+          display: block;
+          width: 26px;
+          height: 26px;
+          background: #fcbe64;
+          border-radius: 50%;
+          font-size: 13px;
+          font-family: PingFang SC Medium, PingFang SC Medium-Medium;
+          font-weight: 500;
+          line-height: 26px;
+          color: #ffffff;
+          font-style: normal;
+        }
+        span {
+          display: block;
+          margin-top: 6px;
+          font-size: 11px;
+          font-family: PingFang SC Medium, PingFang SC Medium-Medium;
+          font-weight: 500;
+          color: #666666;
+        }
+      }
+    }
+  }
+  .desc {
+    display: inline-block;
+    margin-top: 16px;
+    .icon {
+      display: inline-block;
+      width: 13px;
+      height: 13px;
+      margin-right: 6px;
+      background-size: 13px 13px;
+      background-repeat: no-repeat;
+      @include bg-image("../../assets/img/my/date");
+      vertical-align: bottom;
+    }
+    span {
+      font-size: 11px;
+      font-family: PingFang SC Medium, PingFang SC Medium-Medium;
+      font-weight: 500;
+      color: #999999;
+    }
+  }
+  .btn-sign {
+    margin-left: 14px;
+  }
 }
 .goods-list {
 }
