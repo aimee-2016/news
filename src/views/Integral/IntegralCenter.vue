@@ -23,30 +23,92 @@
           <van-cell title="兑换记录" url="/exchangerecord/" />
         </div>
       </div>
-      <div class="signin">
-        <div class="row-1">
-          <h3>签到进度<span>1</span>/7</h3>
-          <div>
-            <span>签到提醒</span><van-switch v-model="checked" /></div>
+      <div class="signin-wrap">
+        <div class="signin">
+          <div class="row-1">
+            <h3>签到进度<span>1</span>/7</h3>
+            <div>
+              <span>签到提醒</span
+              ><van-switch
+                v-model="checked"
+                active-color="#7BB2D8"
+                size="20px"
+              />
+            </div>
+          </div>
+          <div class="date">
+            <div class="day-box">
+              <ul>
+                <li v-for="(item, index) in signList" :key="index">
+                  <i @click="$router.push('/integralcenter/')">{{
+                    item.whetherSign ? "√" : item.integral
+                  }}</i>
+                  <span>{{ item.day }}天</span>
+                </li>
+              </ul>
+            </div>
+            <van-button
+              plain
+              color="#999999"
+              size="small"
+              round
+              v-if="todaySign"
+              disabled=""
+              >已签到</van-button
+            >
+            <van-button
+              plain
+              color="#fcbe64"
+              size="small"
+              round
+              v-else
+              @click="signIn()"
+              >打卡赚积分</van-button
+            >
+          </div>
+          <div class="desc" @click="$router.push('/integralcenter/')">
+            <i class="icon"></i>
+            <span>{{ totalSignCount }}人已打卡</span>
+          </div>
         </div>
-      <div class="date">
-        <div class="day-box">
+        <div class="rule">
+          <div class="rule-title">
+            <h3>积分规则</h3>
+            <span>今日已累计<i>20积分</i></span>
+          </div>
           <ul>
-            <li v-for="(item,index) in signList" :key="index">
-              <i @click="$router.push('/integralcenter/')">{{item.whetherSign?'√':item.integral}}</i>
-              <span>{{item.day}}天</span>
+            <li>
+              <div><i>+163</i><span>绑定手机号0/1</span></div>
+              <van-button plain color="#fcbe64" size="small" round
+                >去绑定</van-button
+              >
             </li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
           </ul>
         </div>
-        <van-button plain color="#999999" size="small" round v-if="todaySign" disabled="">已签到</van-button>
-        <van-button plain color="#fcbe64" size="small" round v-else @click="signIn()">打卡赚积分</van-button>
       </div>
-      <div class="desc" @click="$router.push('/integralcenter/')">
-        <i class="icon"></i>
-        <span>{{totalSignCount}}人已打卡</span>
+      <div class="goods-list">
+        <div class="title">礼品列表</div>
+        <ul>
+          <li v-for="(item, index) in goodsList" :key="index">
+            <div class="img-wrap">
+              <van-image :src="item.goodImage" />
+              <span>剩余：{{ item.stock }}</span>
+            </div>
+            <div class="title">{{ item.name }}</div>
+            <div class="money">价值：￥{{ item.money }}</div>
+            <div class="integral">{{ item.integral }}积分</div>
+          </li>
+        </ul>
       </div>
-    </div>
-      <div class="goods-list"></div>
     </div>
   </div>
 </template>
@@ -57,11 +119,16 @@ export default {
   data() {
     return {
       signList: [],
+      todaySign: false,
+      totalSignCount: 0,
       checked: true,
+      goodsList: [],
+
     }
   },
   created() {
     this.getSignList()
+    this.getGoodesList()
   },
   mounted() {
 
@@ -76,6 +143,17 @@ export default {
           this.totalSignCount = res.data.totalSignCount
         });
     },
+    getGoodesList() {
+      this.$ajax
+        .post("api/front/good/findGoodsPageByCondition.json", {
+          page: 1,
+          size: 10
+        })
+        .then(res => {
+          this.goodsList = res.data.content
+          console.log(this.goodsList)
+        });
+    }
   },
   computed: {
     userInfo() {
@@ -101,6 +179,7 @@ export default {
 #container {
   padding-top: 58px;
   background: #f8f8f8;
+  // background: chocolate;
 }
 #head {
   position: fixed;
@@ -173,85 +252,227 @@ export default {
     }
   }
 }
-.signin {
-  margin: 20px 14px 10px;
-  padding: 16px 10px 16px 12px;
-  background: #ffffff;
-  box-shadow: 0px 1px 10px 0px rgba(4, 0, 0, 0.1);
-  .date {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    .day-box {
-      position: relative;
-      &::after {
-        content: "";
-        display: block;
-        position: absolute;
-        width: 100%;
-        height: 1px;
-        background: #fcbe64;
-        top: 13px;
-      }
-    }
-    ul {
-      position: relative;
-      z-index: 2;
+.signin-wrap {
+  padding-top: 16px;
+  .signin {
+    margin: 0px 15px 18px;
+    padding: 16px 10px 16px 12px;
+    background: #ffffff;
+    box-shadow: 0px 1px 10px 0px rgba(4, 0, 0, 0.1);
+    .row-1 {
       display: flex;
-      li {
-        margin-right: 10px;
-        text-align: center;
-        &:last-child {
-          margin-right: 0;
-        }
-        i {
-          display: block;
-          width: 26px;
-          height: 26px;
-          background: #fcbe64;
-          border-radius: 50%;
-          font-size: 13px;
-          font-family: PingFang SC Medium, PingFang SC Medium-Medium;
-          font-weight: 500;
-          line-height: 26px;
-          color: #ffffff;
-          font-style: normal;
-        }
+      justify-content: space-between;
+      margin-bottom: 18px;
+      padding-bottom: 11px;
+      border-bottom: solid 1px #f0f0f0;
+      h3 {
+        font-size: 14px;
+        font-family: PingFang SC Bold, PingFang SC Bold-Bold;
+        font-weight: 700;
+        color: #333333;
         span {
-          display: block;
-          margin-top: 6px;
-          font-size: 11px;
+          color: #fcbe64;
+        }
+      }
+      > div {
+        span {
+          margin-right: 9px;
+          font-size: 13px;
           font-family: PingFang SC Medium, PingFang SC Medium-Medium;
           font-weight: 500;
           color: #666666;
         }
+        .van-switch {
+          vertical-align: middle;
+        }
+      }
+    }
+    .date {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      .day-box {
+        position: relative;
+        &::after {
+          content: "";
+          display: block;
+          position: absolute;
+          width: 100%;
+          height: 1px;
+          background: #fcbe64;
+          top: 13px;
+        }
+      }
+      ul {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        li {
+          margin-right: 10px;
+          text-align: center;
+          &:last-child {
+            margin-right: 0;
+          }
+          i {
+            display: block;
+            width: 26px;
+            height: 26px;
+            background: #fcbe64;
+            border-radius: 50%;
+            font-size: 13px;
+            font-family: PingFang SC Medium, PingFang SC Medium-Medium;
+            font-weight: 500;
+            line-height: 26px;
+            color: #ffffff;
+            font-style: normal;
+          }
+          span {
+            display: block;
+            margin-top: 6px;
+            font-size: 11px;
+            font-family: PingFang SC Medium, PingFang SC Medium-Medium;
+            font-weight: 500;
+            color: #666666;
+          }
+        }
+      }
+    }
+    .desc {
+      display: inline-block;
+      margin-top: 16px;
+      .icon {
+        display: inline-block;
+        width: 13px;
+        height: 13px;
+        margin-right: 6px;
+        background-size: 13px 13px;
+        background-repeat: no-repeat;
+        @include bg-image("../../assets/img/my/date");
+        vertical-align: bottom;
+      }
+      span {
+        font-size: 11px;
+        font-family: PingFang SC Medium, PingFang SC Medium-Medium;
+        font-weight: 500;
+        color: #999999;
+      }
+    }
+    .btn-sign {
+      margin-left: 14px;
+    }
+  }
+  .rule {
+    padding: 0 15px;
+    .rule-title {
+      display: flex;
+      justify-content: space-between;
+      padding-bottom: 18px;
+      border-bottom: solid 1px #f0f0f0;
+      h3 {
+        font-size: 15px;
+        font-family: PingFang SC Bold, PingFang SC Bold-Bold;
+        font-weight: 700;
+        color: #333333;
+      }
+      span {
+        font-size: 13px;
+        font-family: PingFang SC Medium, PingFang SC Medium-Medium;
+        font-weight: 500;
+        color: #999999;
+        i {
+          font-style: normal;
+          color: #fc4d00;
+        }
+      }
+    }
+    ul {
+      li {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 0;
+        border-bottom: solid 1px #f0f0f0;
+        > div {
+          span {
+            font-size: 14px;
+            font-family: PingFang SC Medium, PingFang SC Medium-Medium;
+            font-weight: 500;
+            color: #333333;
+          }
+          i {
+            margin-right: 16px;
+            font-style: normal;
+            font-size: 19px;
+            font-family: PingFang SC Heavy, PingFang SC Heavy-Heavy;
+            font-weight: 800;
+            color: #f99307;
+          }
+        }
       }
     }
   }
-  .desc {
-    display: inline-block;
-    margin-top: 16px;
-    .icon {
-      display: inline-block;
-      width: 13px;
-      height: 13px;
-      margin-right: 6px;
-      background-size: 13px 13px;
-      background-repeat: no-repeat;
-      @include bg-image("../../assets/img/my/date");
-      vertical-align: bottom;
+}
+
+.goods-list {
+  padding: 0 15px;
+  > .title {
+    padding: 18px 0;
+    font-size: 15px;
+    font-family: PingFang SC Bold, PingFang SC Bold-Bold;
+    font-weight: 700;
+    color: #333333;
+  }
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  li {
+    margin-bottom: 12px;
+    margin-right: 25px;
+    .img-wrap {
+      position: relative;
+      .van-image {
+        width: 160px;
+        height: 130px;
+        border-radius: 5px;
+        overflow: hidden;
+      }
+      span {
+        position: absolute;
+        bottom: 7px;
+        right: 7px;
+        display: inline-block;
+        padding: 5px 10px;
+        background: rgba(6, 6, 6, 0.2);
+        border-radius: 11px;
+        font-size: 11px;
+        font-family: PingFang SC Medium, PingFang SC Medium-Medium;
+        font-weight: 500;
+        color: #ffffff;
+      }
     }
-    span {
-      font-size: 11px;
+    .title {
+      margin-top: 15px;
+      font-size: 15px;
+      font-family: PingFang SC Bold, PingFang SC Bold-Bold;
+      font-weight: 700;
+      color: #333333;
+    }
+
+    .money {
+      margin-top: 12px;
+      font-size: 14px;
       font-family: PingFang SC Medium, PingFang SC Medium-Medium;
       font-weight: 500;
       color: #999999;
     }
+    .integral {
+      margin-top: 10px;
+      font-size: 14px;
+      font-family: PingFang SC Medium, PingFang SC Medium-Medium;
+      font-weight: 500;
+      color: #fc4d00;
+    }
   }
-  .btn-sign {
-    margin-left: 14px;
-  }
-}
-.goods-list {
 }
 </style>
