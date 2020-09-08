@@ -51,7 +51,8 @@ export default {
   color: #333334;
   line-height: 24px;
   background: #fff;
-  box-shadow: 0px 1px 7px 0px rgba(0,0,0,0.08); 
+  // box-shadow: 0px 1px 7px 0px rgba(0,0,0,0.08); 
+  border-bottom: solid 1px #f0f0f0;
   .van-icon {
     position: absolute;
     left: 15px;

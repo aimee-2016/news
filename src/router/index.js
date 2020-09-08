@@ -136,6 +136,24 @@ const routes = [
         component: () => import('../views/aboutus/UserAgreement.vue'),
         meta: { title: '柬中资讯用户协议' },
       },
+      {
+        path: '/integralexplain',
+        name: 'integralexplain',
+        component: () => import('../views/Integral/IntegralExplain.vue'),
+        meta: { title: '积分说明' },
+      },
+      {
+        path: '/integralrecord',
+        name: 'integralrecord',
+        component: () => import('../views/Integral/IntegralRecord.vue'),
+        meta: { title: '积分记录' },
+      },
+      {
+        path: '/exchangerecord',
+        name: 'exchangerecord',
+        component: () => import('../views/Integral/ExchangeRecord.vue'),
+        meta: { title: '兑换记录' },
+      },
     ],
   },
   {
@@ -214,25 +232,11 @@ const routes = [
     component: () => import('../views/Integral/IntegralCenter.vue'),
   },
   {
-    path: '/integraldetails',
-    name: 'integraldetails',
-    component: () => import('../views/Integral/IntegralDetails.vue'),
+    path: '/goodsdetails',
+    name: 'goodsdetails',
+    component: () => import('../views/Integral/GoodsDetails.vue'),
   },
-  {
-    path: '/integralexplain',
-    name: 'integralexplain',
-    component: () => import('../views/Integral/IntegralExplain.vue'),
-  },
-  {
-    path: '/integralrecord',
-    name: 'integralrecord',
-    component: () => import('../views/Integral/IntegralRecord.vue'),
-  },
-  {
-    path: '/exchangerecord',
-    name: 'exchangerecord',
-    component: () => import('../views/Integral/ExchangeRecord.vue'),
-  },
+  
   {
     path: '/exchangedetails',
     name: 'exchangedetails',

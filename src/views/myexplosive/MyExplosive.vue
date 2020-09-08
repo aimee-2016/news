@@ -1,42 +1,5 @@
 <template>
   <div>
-    <!-- <van-pull-refresh
-      v-model="refreshing"
-      success-text="刷新成功"
-      @refresh="onRefresh"
-    >
-      <van-list
-        v-model="loading"
-        :finished="finished"
-        finished-text="没有更多了"
-        @load="onLoad"
-      >
-        <div
-          v-for="(item, index) in list"
-          :key="index"
-          class="article-item"
-        >
-          <div class="content">
-            <div class="img-wrap">
-              <img v-lazy="item.imagePaths[0]" />
-            </div>
-            <div class="right">
-              <div class="text">
-                {{
-                  item.title
-                }}围观围观围观围观围观围观围观围观围观围观围观围观围观围观围观围观围观围观围观围观围观
-              </div>
-              <div class="operate">
-                <span class="status" :class="{ success: item.viewCount === 44 }"
-                  >{{ item.viewCount }}围观</span
-                >
-                <span class="time">{{ item.pubDate | changeTime }}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </van-list>
-    </van-pull-refresh> -->
     <van-pull-refresh
       v-model="refreshing"
       success-text="刷新成功"
@@ -113,21 +76,6 @@ export default {
             })
         })
     },
-    // getData() {
-    //   return new Promise((resolve, reject) => {
-    //       this.$ajax
-    //         .post("api/front/articles/findArticlesByColumnId.json", {
-    //           page: this.page,
-    //           size: this.size,
-    //           columnId: 5,
-    //           type: "PublishArticle"
-    //         }).then(response=>{
-    //           resolve(response)
-    //         }).catch(error=>{
-    //           reject(error)
-    //         })
-    //     })
-    // },
     onLoad() {
         if (this.refreshing) {
           this.page = 1

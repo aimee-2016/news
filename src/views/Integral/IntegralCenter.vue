@@ -3,7 +3,7 @@
     <div id="head">
       <van-icon name="arrow-left" @click="$router.go(-1)" />
       <span>积分中心</span>
-      <van-icon name="ellipsis" @click="modal.user = true" />
+      <van-icon name="ellipsis" @click="showShare = true" />
     </div>
     <div class="main">
       <div class="head-info">
@@ -26,11 +26,15 @@
       <div class="signin-wrap">
         <div class="signin">
           <div class="row-1">
-            <h3>签到进度<span>1</span>/7</h3>
+            <h3>
+              签到进度<span>{{ signedDays }}</span
+              >/{{ totalDays }}
+            </h3>
             <div>
               <span>签到提醒</span
               ><van-switch
-                v-model="checked"
+                v-model="whetherSignReminder"
+                @change="setSignReminder"
                 active-color="#7BB2D8"
                 size="20px"
               />
@@ -40,9 +44,7 @@
             <div class="day-box">
               <ul>
                 <li v-for="(item, index) in signList" :key="index">
-                  <i @click="$router.push('/integralcenter/')">{{
-                    item.whetherSign ? "√" : item.integral
-                  }}</i>
+                  <i>{{ item.whetherSign ? "√" : item.integral }}</i>
                   <span>{{ item.day }}天</span>
                 </li>
               </ul>
@@ -66,7 +68,7 @@
               >打卡赚积分</van-button
             >
           </div>
-          <div class="desc" @click="$router.push('/integralcenter/')">
+          <div class="desc">
             <i class="icon"></i>
             <span>{{ totalSignCount }}人已打卡</span>
           </div>
@@ -74,31 +76,41 @@
         <div class="rule">
           <div class="rule-title">
             <h3>积分规则</h3>
-            <span>今日已累计<i>20积分</i></span>
+            <span>今日已累计<i>{{ruleIntegral}}积分</i></span>
           </div>
           <ul>
-            <li>
-              <div><i>+163</i><span>绑定手机号0/1</span></div>
-              <van-button plain color="#fcbe64" size="small" round
-                >去绑定</van-button
-              >
+            <li v-for="(item, index) in ruleList" :key="index">
+              <div>
+                <i>+{{ item.integral }}</i
+                ><span
+                  >{{
+                    item.name +
+                      item.currentCompleteCount +
+                      "/" +
+                      item.completeNumber
+                  }}</span
+                >
+              </div>
+              <van-button plain color="#fcbe64" size="small" round v-if="item.currentCompleteCount<item.completeNumber" @click="toPage(item.integralType.name)">{{
+                item.integralType.message
+              }}</van-button>
+              <van-button
+              plain
+              color="#999999"
+              size="small"
+              round
+              disabled=""
+              v-else
+              >已完成</van-button
+            >
             </li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
           </ul>
         </div>
       </div>
       <div class="goods-list">
         <div class="title">礼品列表</div>
         <ul>
-          <li v-for="(item, index) in goodsList" :key="index">
+          <li v-for="(item, index) in goodsList" :key="index" @click="$router.push({path: '/goodsdetails/',query: {id:item.id}})">
             <div class="img-wrap">
               <van-image :src="item.goodImage" />
               <span>剩余：{{ item.stock }}</span>
@@ -110,11 +122,12 @@
         </ul>
       </div>
     </div>
+    <van-share-sheet v-model="showShare" :options="options" title="分享到" />
   </div>
 </template>
 
 <script type="text/ecmascript-6">
-import { Cell, CellGroup, Button, Icon, Popup, Image, Switch } from "vant";
+import { Cell, CellGroup, Button, Icon, Popup, Image, Switch,ShareSheet, } from "vant";
 export default {
   data() {
     return {
@@ -123,12 +136,40 @@ export default {
       totalSignCount: 0,
       checked: true,
       goodsList: [],
-
+      whetherSignReminder: false,
+      signedDays: 0,
+      totalDays: 7,
+      ruleList:[],
+      ruleIntegral: 0,
+      showShare:false,
+      options: [
+        [
+          { name: "微信好友", icon: "wechat" },
+          {
+            name: "微信朋友圈",
+            icon: require("../../assets/img/home/friendscircle@2x.png")
+          },
+          { name: "QQ", icon: "qq" },
+          {
+            name: "QQ空间",
+            icon: require("../../assets/img/home/qqzone@2x.png")
+          }
+        ],
+        [
+          { name: "微博", icon: "weibo" },
+          {
+            name: "系统分享",
+            icon: require("../../assets/img/home/love@2x.png")
+          },
+          { name: "复制链接", icon: "link" }
+        ]
+      ],
     }
   },
   created() {
     this.getSignList()
     this.getGoodesList()
+    this.getRuleList()
   },
   mounted() {
 
@@ -141,6 +182,28 @@ export default {
           this.signList = res.data.signDtoList;
           this.todaySign = res.data.todaySign
           this.totalSignCount = res.data.totalSignCount
+          this.whetherSignReminder = res.data.whetherSignReminder
+          this.signedDays = res.data.signedDays
+          this.totalDays = res.data.totalDays
+        });
+    },
+    signIn() {
+      this.$ajax
+        .post("api/front/member/signIn.json", {})
+        .then(res => {
+          this.getSignList()
+        }).catch(error=> {
+          this.$toast(error)
+        });
+    },
+    setSignReminder(val) {
+      this.$ajax
+        .post("api/front/member/setSignReminder.json", {whetherSignReminder:val})
+        .then(res => {
+          this.$toast('设置成功')
+        }).catch(error=> {
+          this.whetherSignReminder = !val
+          this.$toast(error)
         });
     },
     getGoodesList() {
@@ -151,10 +214,49 @@ export default {
         })
         .then(res => {
           this.goodsList = res.data.content
-          console.log(this.goodsList)
         });
+    },
+    getRuleList() {
+      this.$ajax
+        .post("api/front/member/memberIntegralCompleteDtos.json", {})
+        .then(res => {
+          this.ruleList = res.data.memberIntegralCompleteDtos
+          this.ruleIntegral = res.data.todayIntegral
+        });
+    },
+    toPage(type) {
+      let url = ''
+      switch (type) {
+        case 'Share':
+          url = 'home'
+          break;
+        case 'Comment':
+          url = 'home'
+          break;
+        case 'ViewVideo':
+          url = 'home'
+          break;
+        case 'ReadingNews':
+          url = 'home'
+          break;
+        case 'ReadingArticles':
+          url = 'home'
+          break;
+        case 'PushExplosive':
+          url = 'myexplosive'
+          break;
+        case 'PushVideo':
+          url = 'home'
+          break;
+        case 'PushArticles':
+          url = 'home'
+          break;
+        case 'BindPhone':
+          url = 'accountprivacy'
+      }
+      this.$router.push('/'+url+'/')
     }
-  },
+  }, 
   computed: {
     userInfo() {
       return this.$store.state.userInfo;
@@ -170,7 +272,8 @@ export default {
     "van-icon": Icon,
     "van-popup": Popup,
     "van-image": Image,
-    "van-switch": Switch
+    "van-switch": Switch,
+    "van-share-sheet": ShareSheet,
   }
 }
 </script>
@@ -400,6 +503,8 @@ export default {
             color: #333333;
           }
           i {
+            display: inline-block;
+            width: 50px;
             margin-right: 16px;
             font-style: normal;
             font-size: 19px;
