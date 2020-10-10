@@ -109,7 +109,8 @@
       </div>
       <div class="goods-list">
         <div class="title">礼品列表</div>
-        <ul>
+        <no-content v-if="!goodsList.length"></no-content>
+        <ul v-else>
           <li v-for="(item, index) in goodsList" :key="index" @click="$router.push({path: '/goodsdetails/',query: {id:item.id}})">
             <div class="img-wrap">
               <van-image :src="item.goodImage" />
