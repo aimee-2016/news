@@ -24,7 +24,7 @@
                 <div class="address-text">
                   <span v-if="item.whetherDefault" class="default-flag"
                     >默认</span
-                  >{{ item.address }}
+                  >地址：{{ item.address }}
                 </div>
               </div>
             </div>

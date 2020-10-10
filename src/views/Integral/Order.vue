@@ -36,7 +36,7 @@
                       addressDefault.contactsPhone
                   }}
                 </div>
-                <div class="address-text">{{ addressDefault.address }}</div>
+                <div class="address-text">地址：{{ addressDefault.address }}</div>
               </div>
             </div>
             <div class="right-icon">
