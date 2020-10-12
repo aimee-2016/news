@@ -2,11 +2,11 @@
   <div id="container">
     <div id="head">
       <van-icon name="arrow-left" @click="$router.go(-1)" />
-      <span v-if="goodsStatus">{{ goodsStatus }}</span>
+      <span>{{ goodsStatusT }}</span>
     </div>
     <div class="main">
       <div class="top-info">
-        <div class="head-name">
+        <div class="head-name" @click="$router.push({path: '/goodsdetails/',query: {id:details.specificationDetailsDto.goodId}})">
           <span>{{ details.name }}</span>
           <van-icon name="arrow" />
         </div>
@@ -50,14 +50,17 @@
       <div class="interval-bar"></div>
       <div class="logistics">
         <div class="order-info">
-          <div>订单编号：{{ details.orderNo }}<span>复制</span></div>
+          <div>
+            订单编号：{{ details.orderNo }}<span @click="copyText()">复制</span>
+          </div>
+          <textarea id="input" v-model="details.orderNo" ref="inputT"></textarea>
           <div>支付方式：{{ details.paymentMethod }}</div>
           <div>兑换时间：{{ details.exchangeDate }}</div>
           <div>成交时间：{{ details.closingDate }}</div>
           <div>收款方：{{ details.payee }}</div>
         </div>
         <div class="transport-status">
-          <h3>物流状态</h3>
+          <h3 class="h-name">物流状态</h3>
           <div class="address-w">
             <img src="../../assets/img/integral/icon-location@2x.png" alt="" />
             <div class="address-info">
@@ -69,7 +72,7 @@
               </div>
             </div>
           </div>
-          <div class="logistics-status">
+          <!-- <div class="logistics-status">
             <img src="../../assets/img/integral/icon-order@2x.png" alt="" />
             <ul>
               <li v-for="(inner, index) in details.logisticsDto" :key="index">
@@ -77,7 +80,29 @@
                 <div>{{ inner.logisticsDate }}</div>
               </li>
             </ul>
-          </div>
+          </div> -->
+          <van-steps
+            direction="vertical"
+            :active="details.logisticsDto.length - 1"
+            active-color="#FEA900"
+            class="transport-steps"
+          >
+            <van-step
+              v-for="(inner, index) in details.logisticsDto"
+              :key="index"
+            >
+              <h3>{{ inner.logistics }}</h3>
+              <p>{{ inner.logisticsDate }}</p>
+            </van-step>
+            <!-- <van-step>
+              <h3>【城市】物流状态2</h3>
+              <p>2016-07-11 10:00</p>
+            </van-step>
+            <van-step>
+              <h3>快件已发货</h3>
+              <p>2016-07-10 09:30</p>
+            </van-step> -->
+          </van-steps>
         </div>
       </div>
     </div>
@@ -85,11 +110,12 @@
 </template>
 
 <script type="text/ecmascript-6">
-import { Cell, CellGroup, Button, Icon, Popup, Image } from "vant";
+import { Cell, CellGroup, Button, Icon, Popup, Image,Step, Steps } from "vant";
 export default {
   data() {
     return {
-      details: null
+      details: null,
+      goodsStatusT: ''
     }
   },
   created() {
@@ -104,6 +130,7 @@ export default {
         .post("api/front/good/findOrderById.json", {id:this.$route.query.id})
         .then(res => {
           this.details = res.data
+          this.goodsStatus(this.details.exchangeStatus.name)
         });
     },
     formatconfig(val) {
@@ -113,21 +140,10 @@ export default {
         resultarr.push(valJ[key])
       }
       return resultarr.join()
-    }
-
-  },
-  computed: {
-      userInfo() {
-      return this.$store.state.userInfo;
     },
-    goodsStatus() {
+    goodsStatus(name) {
       let text = ''
-      // console.log(11)
-      // console.log(this.details)
-      // console.log(this.details.exchangeStatus.name)
-      // console.log(22)
-      if(this.details.exchangeStatus.name) {
-        switch (this.details.exchangeStatus.name) {
+        switch (name) {
           case 'Pending':
             text='待受理'
             break;
@@ -140,10 +156,20 @@ export default {
           case 'Cancel':
             text='已取消'
             break;
-        }
       }
-      return text
+      this.goodsStatusT = text
+    },
+    copyText() {
+      this.$refs['inputT'].select()
+      document.execCommand("copy"); // 执行浏览器复制命令
+      this.$toast("复制成功")
     }
+  },
+  computed: {
+      userInfo() {
+      return this.$store.state.userInfo;
+    },
+
   },
   watch: {
 
@@ -154,7 +180,9 @@ export default {
     "van-button": Button,
     "van-icon": Icon,
     "van-popup": Popup,
-    "van-image": Image
+    "van-image": Image,
+    "van-steps":Steps,
+    "van-step":Step
   }
 }
 </script>
@@ -195,6 +223,7 @@ export default {
   padding: 18px 15px 10px;
   border-bottom: solid 1px #f0f0f0;
   .head-name {
+    display: inline-block;
     span {
       margin-right: 8px;
       font-size: 15px;
@@ -332,7 +361,7 @@ export default {
 }
 .transport-status {
   margin-top: 20px;
-  h3 {
+  .h-name {
     position: relative;
     margin-bottom: 20px;
     font-size: 14px;
@@ -397,4 +426,21 @@ export default {
     }
   }
 }
+#input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  z-index: -10;
+}
+// .transport-steps {
+//   background: chocolate;
+//   .van-icon {
+//     font-size: 18px;
+//   }
+
+// }
+// .van-step__icon--active {
+//     font-size: 18px;
+//   }
 </style>

@@ -188,8 +188,8 @@ export default {
       })
         .then(res => {
           // 商品id,跳订单详情
-          // res.data
           this.$toast('兑换商品成功')
+           this.$router.push({path:'/exchangedetails/',query:{id:res.data}})
         }).catch(error=>{
           this.$toast(error.message)
         })
