@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <div class="search">
-      <van-icon name="arrow-left" @click="$router.push('/home')" />
+      <van-icon name="arrow-left" @click="$router.go(-1)" />
       <van-search
         v-model="serchValue"
         show-action

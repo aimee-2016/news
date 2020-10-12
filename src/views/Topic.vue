@@ -3,42 +3,67 @@
     <div class="nav">
       <ul>
         <li
-          v-for="(item,index) in navList"
+          v-for="(item, index) in navList"
           :key="index"
-          :class="{selected:navId===item.id}"
-          @click="getTopic(item.value)"
-        >{{item.name}}</li>
+          :class="{ selected: navVal === item.value }"
+          @click="checkNav(index)"
+        >
+          {{ item.name }}
+        </li>
       </ul>
-      <van-icon name="search" />
+      <van-icon name="search" @click="$router.push('/search')" />
     </div>
-    <div class="tc-content">
-      <div v-for="(item, index) in topicList" :key="index" @click="$router.push({path: '/topicdetails/', query: {id: item.id}})">
-        <div class="tc-fm">
-          <img :src="item.imagePathsStr" />
-        </div>
-        <div class="tp-desc">
-          <p class="tp-title">{{item.title}}</p>
-          <div class="tp-bt">
-            <div class="tp-left">
-              <img v-if="index < 4" src="../assets/img/topic/hot.png">
-              <span class="tp-hot" v-if="index < 4">热评</span>
-              <span class="tp-lok" v-if="item.viewCount > 10000">{{item.viewCount / 10000}}万人围观</span> 
-              <span class="tp-lok" v-else>{{item.viewCount}}人围观</span>
-              <span v-if="item.commentCount > 10000">{{item.commentCount / 10000}}万评论</span>
-              <span v-else>{{item.commentCount}}评论</span>
+    <van-pull-refresh
+      v-model="refreshing"
+      success-text="刷新成功"
+      @refresh="onRefresh"
+    >
+      <van-list
+        v-model="loading"
+        :finished="finished"
+        finished-text="没有更多了"
+        @load="onLoad"
+      >
+        <div class="tc-content">
+          <div
+            v-for="(item, index) in list"
+            :key="index"
+            @click="
+              $router.push({ path: '/topicdetails/', query: { id: item.id } })
+            "
+          >
+            <div class="tc-fm">
+              <img :src="item.imagePathsStr" />
             </div>
-            <div class="tp-right">
-              <span>{{item.tiemText}}</span>
+            <div class="tp-desc">
+              <p class="tp-title">{{ item.title }}</p>
+              <div class="tp-bt">
+                <div class="tp-left">
+                  <img v-if="index < 4" src="../assets/img/topic/hot.png" />
+                  <span class="tp-hot" v-if="index < 4">热评</span>
+                  <span class="tp-lok" v-if="item.viewCount > 10000"
+                    >{{ item.viewCount / 10000 }}万人围观</span
+                  >
+                  <span class="tp-lok" v-else>{{ item.viewCount }}人围观</span>
+                  <span v-if="item.commentCount > 10000"
+                    >{{ item.commentCount / 10000 }}万评论</span
+                  >
+                  <span v-else>{{ item.commentCount }}评论</span>
+                </div>
+                <div class="tp-right">
+                  <span>{{ item.pubDate|changeTime }}</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>
+      </van-list>
+    </van-pull-refresh>
   </div>
 </template>
 
 <script>
-import { Icon } from "vant";
+import { Icon, List, PullRefresh } from "vant";
 export default {
   data() {
     return {
@@ -46,71 +71,108 @@ export default {
         {
           value: "Newest",
           name: "最新",
-          id: "1"
+          id: "1",
         },
         {
           value: "Hottest",
           name: "热门",
-          id: "2"
-        }
+          id: "2",
+        },
       ],
-      navId: "1",
-      topicList: []
+      navVal: "Newest",
+      topicList: [],
+      page: 1,
+      size: 5,
+      list: [],
+      loading: false,
+      finished: false,
+      refreshing: false,
     };
   },
   components: {
-    "van-icon": Icon
+    "van-icon": Icon,
+    "van-list": List,
+    "van-pull-refresh": PullRefresh,
   },
   created() {
-    this.getTopic();
+    this.checkNav(0);
   },
   methods: {
-    getTopic(value) {
-      this.$ajax
-        .post("api/front/articles/findTopicArticles.json", {
-          page: "1",
-          size: "10",
-          topicQueryType: value || "Newest",
-          title: ""
-        })
-        .then(res => {
-          this.topicList = res.data.content;
-          this.topicList.forEach(item => {
-            item.tiemText = this.calculationDate(item);
+    checkNav(index) {
+      this.navVal = this.navList[index].value;
+      this.page = 1;
+      this.list = [];
+      this.finished = false;
+      this.loading = true;
+      this.onLoad();
+    },
+    getData() {
+      return new Promise((resolve, reject) => {
+        this.$ajax
+          .post("api/front/articles/findTopicArticles.json", {
+            page: this.page,
+            size: this.size,
+            topicQueryType: this.navVal,
+            title: "",
           })
-        })
-        .catch(function(error) {
-          console.log(error);
-        });
+          .then((response) => {
+            resolve(response);
+          })
+          .catch((error) => {
+            reject(error);
+          });
+      });
+    },
+    onLoad() {
+      if (this.refreshing) {
+        this.page = 1;
+        this.list = [];
+        this.refreshing = false;
+      }
+      this.getData().then((res) => {
+        this.list.push(...res.data.content);
+        this.loading = false;
+        if (this.page >= res.data.totalPages) {
+          this.finished = true;
+        }
+        this.page++;
+      });
+      console.log(this.list);
+    },
+    onRefresh() {
+      this.finished = false;
+      this.loading = true;
+      this.onLoad();
     },
     calculationDate(item) {
       let date = new Date(item.pubDate);
       let date2 = new Date(item.nowDate);
       let year = date.getFullYear();
-      let month = date.getMonth() + 1 > 9 ? date.getMonth() : '0' + date.getMonth();
-      let day = date.getDay() > 9 ? date.getDay() : '0' + date.getDay();
+      let month =
+        date.getMonth() + 1 > 9 ? date.getMonth() : "0" + date.getMonth();
+      let day = date.getDay() > 9 ? date.getDay() : "0" + date.getDay();
       let num = date2.getTime() - date.getTime();
       if (num >= 604800000) {
-          if (date.getFullYear() === date2.getFullYear()) {
-            return `${month} - ${day}`
-          } else {
-            return `${year} - ${month} - ${day}`
-          }
+        if (date.getFullYear() === date2.getFullYear()) {
+          return `${month} - ${day}`;
+        } else {
+          return `${year} - ${month} - ${day}`;
+        }
       }
       if (num >= 86400000) {
-        return new Date(num).getDay() + '天前'
+        return new Date(num).getDay() + "天前";
       }
       if (num >= 3600000) {
-        return new Date(num).getHours() + '小时前'
+        return new Date(num).getHours() + "小时前";
       }
       if (num >= 180000) {
-        return new Date(num).getMinutes() + '分钟前'
+        return new Date(num).getMinutes() + "分钟前";
       }
       if (num < 180000) {
-        return '刚刚'
+        return "刚刚";
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -119,6 +181,7 @@ export default {
   position: relative;
   padding-top: 10px;
   height: calc(100% - 58px);
+  padding-bottom: 58px;
 }
 .search {
   display: flex;
@@ -136,8 +199,10 @@ export default {
 .nav {
   position: relative;
   padding: 0 16px;
+  padding-bottom: 23px;
   ul {
     display: flex;
+    justify-content: center;
     align-items: center;
     padding-right: 20px;
     li {
@@ -146,6 +211,9 @@ export default {
       font-family: PingFang SC Medium, PingFang SC Medium-Medium;
       font-weight: 500;
       color: #999999;
+      &:last-of-type {
+        margin-right: 0;
+      }
       &.selected {
         position: relative;
         font-size: 17px;
@@ -204,8 +272,8 @@ export default {
           vertical-align: middle;
         }
         .tp-hot {
-          color: #F45641;
-          margin-left:6px;
+          color: #f45641;
+          margin-left: 6px;
         }
         .tp-lok {
           margin: 0 9px 0 12px;
@@ -217,5 +285,4 @@ export default {
     }
   }
 }
-
 </style>
