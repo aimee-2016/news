@@ -43,7 +43,7 @@
           </div>
         </div>
         <div class="vote-show">
-          <div class="circle-l circle" @click="vote('Orthodox')">
+          <div class="circle-l circle" :class="{unselect1:topicDetails.orthodoxVoteCount!=null}" @click="vote('Orthodox')">
             <img src="../assets/img/topic/hand-l.png" />
             <span>喜欢</span>
           </div>
@@ -60,7 +60,7 @@
               <span class="bar" :style="{width:topicDetails.opposingProportion+'%'||'50%'}"></span>
             </div>
           </div>
-          <div class="circle-r circle" @click="vote('Opposing')">
+          <div class="circle-r circle" :class="{unselect2:topicDetails.opposingVoteCount!=null}" @click="vote('Opposing')">
             <img src="../assets/img/topic/hand-r.png" />
             <span>不喜欢</span>
           </div>
@@ -514,6 +514,10 @@ export default {
       });
     },
     vote(type) {
+      if(this.topicDetails.orthodoxVoteCount!=null) {
+        this.$toast("你已经投过票了");
+        return false
+      }
       this.$ajax
         .post("api/front/articles/vote.json", {
           articlesId: this.$route.query.id,
@@ -825,6 +829,12 @@ export default {
   }
   .circle-r {
     background: #fd585e;
+  }
+  .unselect1 {
+    background: #80a0e5;
+  }
+  .unselect2 {
+    background: #CECECE;
   }
   .vote-proportion {
     flex-grow: 1;
