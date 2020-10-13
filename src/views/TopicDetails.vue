@@ -8,7 +8,7 @@
         <span>{{ topicDetails.title }}</span>
       </div>
       <div>
-        <img src="../assets/img/topic/icon1.png" @click="showShare=true"/>
+        <img src="../assets/img/topic/icon1.png" @click="showShare = true" />
       </div>
     </div>
     <div class="tp-top-box">
@@ -42,11 +42,32 @@
             <span>{{ topicDetails.opposingView || "--" }}</span>
           </div>
         </div>
-        <div>
-          <div class="tp-"></div>
+        <div class="vote-show">
+          <div class="circle-l circle" @click="vote('Orthodox')">
+            <img src="../assets/img/topic/hand-l.png" />
+            <span>喜欢</span>
+          </div>
+          <div class="vote-proportion">
+            <div class="vote-text">
+              <span>{{ topicDetails.orthodoxVoteCount||0 }}</span>
+              <div class="img-wrap">
+                <img src="../assets/img/topic/text-pk@2x.png" alt="" />
+              </div>
+              <span>{{ topicDetails.opposingVoteCount||0 }}</span>
+            </div>
+            <div class="bar-wrap">
+              <span class="bar" :style="{width:topicDetails.orthodoxProportion+'%'||'50%'}"></span>
+              <span class="bar" :style="{width:topicDetails.opposingProportion+'%'||'50%'}"></span>
+            </div>
+          </div>
+          <div class="circle-r circle" @click="vote('Opposing')">
+            <img src="../assets/img/topic/hand-r.png" />
+            <span>不喜欢</span>
+          </div>
         </div>
       </div>
     </div>
+    <div class="interval-bar"></div>
     <van-list
       v-model="loading"
       :finished="finished"
@@ -170,9 +191,7 @@
           />
         </van-cell-group>
         <div class="center">
-          <div class="text">
-            <span>#</span>我有话要说:
-          </div>
+          <div class="text"><span>#</span>我有话要说:</div>
           <van-field
             v-model="message"
             rows="6"
@@ -183,7 +202,13 @@
           />
         </div>
         <div class="footer">
-          <van-button type="primary" round class="btn-yellow" @click="reportArticle()">确定</van-button>
+          <van-button
+            type="primary"
+            round
+            class="btn-yellow"
+            @click="reportArticle()"
+            >确定</van-button
+          >
         </div>
       </div>
     </van-popup>
@@ -191,7 +216,14 @@
     <van-share-sheet v-model="showShare1" :options="options1" title="分享到" />
     <van-popup v-model="commentShow" position="bottom">
       <div class="comment-textarea">
-        <van-field v-model="comment" rows="2" autosize label type="textarea" placeholder="写评价" />
+        <van-field
+          v-model="comment"
+          rows="2"
+          autosize
+          label
+          type="textarea"
+          placeholder="写评价"
+        />
         <span @click="articleComment">发送</span>
       </div>
     </van-popup>
@@ -214,8 +246,8 @@ import {
 export default {
   data() {
     return {
-    //   topicDetails: {},
-    //   commentList: {},
+      //   topicDetails: {},
+      //   commentList: {},
       modal: {
         complaint: false,
       },
@@ -481,6 +513,23 @@ export default {
         query: { articleId: this.$route.query.id, id: id },
       });
     },
+    vote(type) {
+      this.$ajax
+        .post("api/front/articles/vote.json", {
+          articlesId: this.$route.query.id,
+          differentiationType: type
+        })
+        .then((res) => {
+          this.$toast("投票成功");
+          this.topicDetails.orthodoxProportion=res.data.orthodoxProportion
+          this.topicDetails.opposingProportion=res.data.opposingProportion
+          this.topicDetails.orthodoxVoteCount=res.data.orthodoxVoteCount
+          this.topicDetails.opposingVoteCount=res.data.opposingVoteCount
+        })
+        .catch((error) => {
+          this.$toast(error.message);
+        });
+    }
   },
   components: {
     "van-image": Image,
@@ -581,8 +630,8 @@ export default {
 }
 .tp-ct-box {
   background: #fff;
-  margin-top: 10px;
-  padding: 20px 15px 0;
+  margin-top: 17px;
+  padding: 0px 15px 0;
   .tp-ct-title {
     font-size: 15px;
     color: #333333;
@@ -657,7 +706,7 @@ export default {
     .child-item {
       margin-top: 13px;
       padding: 8px 15px;
-      background: #F8f8f8;
+      background: #f8f8f8;
       font-size: 14px;
       line-height: 1.5;
     }
@@ -740,6 +789,77 @@ export default {
   }
   > span {
     color: #999;
+  }
+}
+.interval-bar {
+  width: 100%;
+  height: 10px;
+  background: #f8f8f8;
+}
+.vote-show {
+  display: flex;
+  align-items: center;
+  margin: 27px 0 24px;
+  .circle {
+    padding-top: 11px;
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    text-align: center;
+    font-size: 0;
+    img {
+      width: 16px;
+    }
+    span {
+      display: block;
+      margin-top: 7px;
+      font-size: 12px;
+      font-family: PingFang SC Medium, PingFang SC Medium-Medium;
+      font-weight: 500;
+      text-align: justifyLeft;
+      color: #ffffff;
+    }
+  }
+  .circle-l {
+    background: #3d77f5;
+  }
+  .circle-r {
+    background: #fd585e;
+  }
+  .vote-proportion {
+    flex-grow: 1;
+    padding: 0 9px;
+    .vote-text {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0;
+      img {
+        width: 50%;
+      }
+      span {
+        font-size: 15px;
+        font-family: PingFang SC Bold, PingFang SC Bold-Bold;
+        font-weight: 700;
+        text-align: justifyLeft;
+        color: #3c78f5;
+        &:last-of-type {
+          color: #FD585E;
+        }
+      }
+      
+    }
+    .bar-wrap {
+      margin-top: 6px;
+      .bar {
+        display: inline-block;
+        height: 10px;
+        background: #3D77F5;
+        &:last-of-type {
+          background: #F75B5E;
+        }
+      }
+    }
   }
 }
 </style>
