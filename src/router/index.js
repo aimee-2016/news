@@ -219,12 +219,12 @@ const routes = [
   {
     path: '/authapply',
     name: 'authapply',
-    component: () => import('../views/MyAuth/Apply.vue'),
+    component: () => import('../views/myauth/Apply.vue'),
   },
   {
     path: '/createfiled',
     name: 'createfiled',
-    component: () => import('../views/MyAuth/CreateFiled.vue'),
+    component: () => import('../views/myauth/CreateFiled.vue'),
   },
   {
     path: '/integralcenter',
@@ -256,6 +256,17 @@ const routes = [
     path: '/addaddress',
     name: 'addaddress',
     component: () => import('../views/Integral/AddAddress.vue'),
+  },
+
+  {
+    path: '/releasebroke',
+    name: 'releasebroke',
+    component: () => import('../views/release/Broke.vue'),
+  },
+  {
+    path: '/releasevideo',
+    name: 'releasevideo',
+    component: () => import('../views/release/Video.vue'),
   },
   {
     path: '*',

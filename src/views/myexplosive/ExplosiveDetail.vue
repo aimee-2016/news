@@ -1,16 +1,16 @@
 <template>
   <div class="container">
     <div class="top">
-      <div>审核状态：{{ explosiveDetails.status }}</div>
+      <div>审核状态：{{ explosiveDetails.status.message }}</div>
       <div>提交时间：{{ explosiveDetails.pubDate }}</div>
       <div>反馈时间：{{ explosiveDetails.auditDate }}</div>
     </div>
     <div class="title">{{ explosiveDetails.title }}</div>
     <div class="content" v-html="explosiveDetails.content"></div>
     <div class="bottom">
-      <div>联系人:{{explosiveDetails.author.nickName}}</div>
-      <div>联系方式：{{explosiveDetails.contactInformation}}</div>
-      <div>邮箱：{{explosiveDetails.email}}1231</div>
+      <div>联系人:{{ explosiveDetails.author.nickName }}</div>
+      <div>联系方式：{{ explosiveDetails.contactInformation }}</div>
+      <div>邮箱：{{ explosiveDetails.email }}1231</div>
     </div>
   </div>
 </template>
@@ -63,14 +63,25 @@ export default {
     font-family: PingFang SC Medium, PingFang SC Medium-Medium;
     font-weight: 500;
     color: #666666;
-    line-height: 30px;
   }
 }
 .title {
+  margin-bottom: 20px;
   font-size: 17px;
   font-family: PingFang SC Heavy, PingFang SC Heavy-Heavy;
   font-weight: 800;
   color: #333333;
   line-height: 30px;
+}
+.bottom {
+  margin-top: 24px;
+  > div {
+    margin-bottom: 10px;
+    font-size: 12px;
+    font-family: PingFang SC Medium, PingFang SC Medium-Medium;
+    font-weight: 500;
+    text-align: left;
+    color: #333333;
+  }
 }
 </style>

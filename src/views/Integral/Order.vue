@@ -245,7 +245,7 @@ export default {
   .van-icon-ellipsis {
     position: absolute;
     right: 15px;
-    top: 16px;
+    top: 15px;
     font-size: 24px;
   }
 }

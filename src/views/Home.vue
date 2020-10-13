@@ -2,17 +2,23 @@
   <div class="home">
     <div class="top-f">
       <div class="search">
-        <van-search v-model="serchValue" placeholder="请输入搜索关键词" @click="$router.push('/search')" />
-        <van-icon name="chat-o" badge="9" />
+        <van-search
+          v-model="serchValue"
+          placeholder="请输入搜索关键词"
+          @click="$router.push('/search')"
+        />
+        <van-icon name="chat-o" :badge="msgNum" @click="$router.push('/msgcenter/')" />
       </div>
       <div class="nav">
         <ul>
           <li
-            v-for="(item,index) in navList"
+            v-for="(item, index) in navList"
             :key="index"
-            :class="{selected:navId===item.id}"
+            :class="{ selected: navId === item.id }"
             @click="checkNav(item.id)"
-          >{{item.name}}</li>
+          >
+            {{ item.name }}
+          </li>
         </ul>
         <van-icon name="wap-nav" @click="getRecommendList()" />
       </div>
@@ -25,24 +31,53 @@
       </div>-->
       <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
         <transition name="fade">
-          <p class="refresh-m" v-if="refreshMessage">柬中资讯成功为您推荐{{resultSize}}条内容</p>
+          <p class="refresh-m" v-if="refreshMessage">
+            柬中资讯成功为您推荐{{ resultSize }}条内容
+          </p>
         </transition>
-        <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
-          <div v-for="(item,index) in articleList" :key="index" class="article-item" >
-            <div @click="$router.push({path: '/articledetails/', query: {id: item.id}})">
-              <h3>{{item.title}}</h3>
+        <van-list
+          v-model="loading"
+          :finished="finished"
+          finished-text="没有更多了"
+          @load="onLoad"
+        >
+          <div
+            v-for="(item, index) in articleList"
+            :key="index"
+            class="article-item"
+          >
+            <div
+              @click="
+                $router.push({
+                  path: '/articledetails/',
+                  query: { id: item.id },
+                })
+              "
+            >
+              <h3>{{ item.title }}</h3>
               <div class="img-wrap">
-                <img :src="inner" alt v-for="(inner,index) in item.imagePaths" :key="index" />
+                <img
+                  :src="inner"
+                  alt
+                  v-for="(inner, index) in item.imagePaths"
+                  :key="index"
+                />
               </div>
             </div>
             <div class="operat">
               <div class="left">
-                <span>{{item.author.nickName}}</span>
-                <span>{{item.commentCount}}评论</span>
-                <span>{{item.pubDate|changeTime}}</span>
+                <span>{{ item.author.nickName }}</span>
+                <span>{{ item.commentCount }}评论</span>
+                <span>{{ item.pubDate | changeTime }}</span>
               </div>
               <div class="close">
-                <van-icon name="cross" @click="modal.article = true;selectedItem=item" />
+                <van-icon
+                  name="cross"
+                  @click="
+                    modal.article = true;
+                    selectedItem = item;
+                  "
+                />
               </div>
             </div>
           </div>
@@ -53,7 +88,7 @@
       <div class="column">
         <div class="head">
           <span>所有栏目</span>
-          <van-icon name="cross" @click="columnShow=false" />
+          <van-icon name="cross" @click="columnShow = false" />
         </div>
         <div class="container">
           <div class="item">
@@ -62,13 +97,13 @@
                 <span class="title">我的栏目</span>
                 <span class="desc">点击进入栏目</span>
               </div>
-              <button @click="isEdit=false" v-if="isEdit">编辑</button>
+              <button @click="isEdit = false" v-if="isEdit">编辑</button>
               <button @click="addColumn()" v-else>完成</button>
             </div>
             <ul class="list">
-              <li v-for="(item,index) in myList" :key="index">
-                {{item.name}}
-                <span v-if="!isEdit&&!item.mustHave" @click="delId(item.id)">
+              <li v-for="(item, index) in myList" :key="index">
+                {{ item.name }}
+                <span v-if="!isEdit && !item.mustHave" @click="delId(item.id)">
                   <van-icon name="cross" />
                 </span>
               </li>
@@ -82,9 +117,13 @@
               </div>
             </div>
             <ul class="list">
-              <li v-for="(item,index) in recommendList" :key="index" @click="addId(item.id)">
+              <li
+                v-for="(item, index) in recommendList"
+                :key="index"
+                @click="addId(item.id)"
+              >
                 <van-icon name="plus" />
-                {{item.name}}
+                {{ item.name }}
               </li>
             </ul>
           </div>
@@ -96,7 +135,13 @@
         <div class="img-wrap">
           <img src="../assets/img/myhome/icon-56@2x.png" alt />
         </div>
-        <div class="text" @click="modal.article=false;uninterested()">
+        <div
+          class="text"
+          @click="
+            modal.article = false;
+            uninterested();
+          "
+        >
           <span>不感兴趣</span>
         </div>
       </div>
@@ -104,7 +149,13 @@
         <div class="img-wrap">
           <img src="../assets/img/myhome/icon-57@2x.png" alt />
         </div>
-        <div class="text" @click="modal.article=false;modal.report=true">
+        <div
+          class="text"
+          @click="
+            modal.article = false;
+            modal.report = true;
+          "
+        >
           <span>举报内容</span>
           <span>内容质量差 标题党 低俗 暴力血腥 恶心</span>
         </div>
@@ -113,15 +164,25 @@
         <div class="img-wrap">
           <img src="../assets/img/myhome/icon-58@2x.png" alt />
         </div>
-        <div class="text" @click="modal.article=false;blockAuthor()">
-          <span>拉黑作者：{{selectedItem.author.nickName}}</span>
+        <div
+          class="text"
+          @click="
+            modal.article = false;
+            blockAuthor();
+          "
+        >
+          <span>拉黑作者：{{ selectedItem.author.nickName }}</span>
         </div>
       </div>
     </van-popup>
     <van-popup v-model="modal.report" class="more-popup" v-if="selectedItem">
-      <div v-for="(item,index) in articleReportList" :key="index" @click="reportArticle(item.val)">
+      <div
+        v-for="(item, index) in articleReportList"
+        :key="index"
+        @click="reportArticle(item.val)"
+      >
         <div class="text">
-          <span>{{item.name}}</span>
+          <span>{{ item.name }}</span>
         </div>
       </div>
     </van-popup>
@@ -170,7 +231,7 @@ export default {
         { name: "快讯", id: 1 },
         { name: "新闻", id: 1 },
         { name: "娱乐", id: 1 },
-        { name: "体育", id: 1 }
+        { name: "体育", id: 1 },
       ],
       recommendList: [
         { name: "关注", id: 1 },
@@ -179,7 +240,7 @@ export default {
         { name: "快讯", id: 1 },
         { name: "新闻", id: 1 },
         { name: "娱乐", id: 1 },
-        { name: "体育", id: 1 }
+        { name: "体育", id: 1 },
       ],
       columnShow: false,
       isEdit: true,
@@ -195,13 +256,14 @@ export default {
       refreshMessage: false,
       selectedItem: null,
       articleReportList: [
-        {name:'内容质量差',val:'PoorContent'},
-        {name:'标题党',val:'TitleParty'},
-        {name:'低俗',val:'Vulgar'},
-        {name:'暴力血腥',val:'ViolentBloody'},
-        {name:'恶心',val:'Nausea'},
+        { name: "内容质量差", val: "PoorContent" },
+        { name: "标题党", val: "TitleParty" },
+        { name: "低俗", val: "Vulgar" },
+        { name: "暴力血腥", val: "ViolentBloody" },
+        { name: "恶心", val: "Nausea" },
       ],
-      topList: []
+      topList: [],
+      msgNum: 0
     };
   },
   components: {
@@ -209,30 +271,31 @@ export default {
     "van-icon": Icon,
     "van-list": List,
     "van-pull-refresh": PullRefresh,
-    "van-popup": Popup
+    "van-popup": Popup,
   },
   created() {
     this.getNavList();
+    this.unreadData()
   },
   methods: {
     getNavList() {
       this.$ajax
         .post("api/front/member/findIndexColumnList.json", {})
-        .then(res => {
+        .then((res) => {
           this.navList = res.data;
           this.navId = res.data[0].id;
           this.firstId = res.data[0].id;
           // this.getArticle();
-          this.onLoad()
+          this.onLoad();
         })
-        .catch(error=> {
+        .catch((error) => {
           console.log(error);
         });
     },
     checkNav(id) {
-      this.navId=id;
-      this.page=1;
-      this.articleList=[];
+      this.navId = id;
+      this.page = 1;
+      this.articleList = [];
       this.finished = false;
       this.loading = true;
       this.onLoad();
@@ -241,44 +304,46 @@ export default {
       return new Promise((resolve, reject) => {
         // console.log(this.page)
         // console.log(this.size)
-          this.$ajax
-            .post("api/front/articles/findArticlesByColumnId.json", {
-              page: this.page,
-              size: this.size,
-              columnId: this.navId,
-              type: "PublishArticle"
-            }).then(response=>{
-              resolve(response)
-            }).catch(error=>{
-              reject(error)
-            })
-        })
+        this.$ajax
+          .post("api/front/articles/findArticlesByColumnId.json", {
+            page: this.page,
+            size: this.size,
+            columnId: this.navId,
+            type: "PublishArticle",
+          })
+          .then((response) => {
+            resolve(response);
+          })
+          .catch((error) => {
+            reject(error);
+          });
+      });
     },
     onLoad() {
-        if (this.refreshing) {
-          this.page = 1
-          this.articleList = [];
-          this.refreshing = false;
-          this.refreshMessage = true;
-          setTimeout(() => {
-            this.refreshMessage = false
-          }, 3000);
+      if (this.refreshing) {
+        this.page = 1;
+        this.articleList = [];
+        this.refreshing = false;
+        this.refreshMessage = true;
+        setTimeout(() => {
+          this.refreshMessage = false;
+        }, 3000);
+      }
+      this.testPromise().then((res) => {
+        // console.log(res.data.content)
+        this.resultSize = res.data.number * res.data.size;
+        this.articleList.push(...res.data.content);
+        // let topList = res.data.content.filter(element => {
+        //   return element.whetherTop === true
+        // });
+        // this.topList.push(...topList)
+        // console.log(topList)
+        this.loading = false;
+        if (this.page >= res.data.totalPages) {
+          this.finished = true;
         }
-        this.testPromise().then(res=>{
-          // console.log(res.data.content)
-          this.resultSize = res.data.number*res.data.size
-          this.articleList.push(...res.data.content);
-          // let topList = res.data.content.filter(element => {
-          //   return element.whetherTop === true
-          // });
-          // this.topList.push(...topList)
-          // console.log(topList)
-          this.loading = false;
-          if(this.page>=res.data.totalPages) {
-            this.finished = true;
-          }
-          this.page++
-        })
+        this.page++;
+      });
     },
     onRefresh() {
       // 清空列表数据
@@ -292,96 +357,108 @@ export default {
     getRecommendList() {
       this.$ajax
         .post("api/front/articles/findArticlesAddColumn.json", {})
-        .then(res => {
+        .then((res) => {
           this.myList = res.data.memberColumns;
           this.recommendList = res.data.recommendedColumns;
-          this.columnShow=true
+          this.columnShow = true;
         })
-        .catch((error)=> {
+        .catch((error) => {
           console.log(error);
           // console(this.$router)
           this.$router.push({
-              name: 'login'
-            })
+            name: "login",
+          });
         });
     },
     delId(id) {
-      let endIndex = this.myList.findIndex(item => item.id === id);
-      let endItem = this.myList.filter(item => item.id === id);
+      let endIndex = this.myList.findIndex((item) => item.id === id);
+      let endItem = this.myList.filter((item) => item.id === id);
       this.myList.splice(endIndex, 1);
       this.recommendList.push(endItem[0]);
     },
     addId(id) {
-      let endIndex = this.recommendList.findIndex(item => item.id === id);
-      let endItem = this.recommendList.filter(item => item.id === id);
+      let endIndex = this.recommendList.findIndex((item) => item.id === id);
+      let endItem = this.recommendList.filter((item) => item.id === id);
       this.recommendList.splice(endIndex, 1);
       this.myList.push(endItem[0]);
     },
     addColumn() {
-      let ids = this.myList.map(item => item.id);
+      let ids = this.myList.map((item) => item.id);
       this.$ajax
         .post("api/front/member/addColumn.json", { ids: ids })
         .then(() => {
           Toast("修改成功");
-          this.getNavList()
+          this.getNavList();
           this.isEdit = true;
         })
-        .catch(error=> {
+        .catch((error) => {
           Toast(error.message);
         });
     },
     uninterested() {
       this.$ajax
-        .post("api/front/articles/uninterestedArticle.json", { id: this.selectedItem.id })
+        .post("api/front/articles/uninterestedArticle.json", {
+          id: this.selectedItem.id,
+        })
         .then(() => {
-          this.checkNav(this.navId)
+          this.checkNav(this.navId);
           this.$toast("操作成功");
         })
-        .catch(error=> {
+        .catch((error) => {
           this.$toast(error.message);
         });
     },
     blockAuthor() {
       this.$ajax
-        .post("api/front/member/block.json", { id: this.selectedItem.author.id })
+        .post("api/front/member/block.json", {
+          id: this.selectedItem.author.id,
+        })
         .then(() => {
           // this.checkNav(this.navId)
           this.$toast("操作成功");
         })
-        .catch(error=> {
+        .catch((error) => {
           this.$toast(error.message);
         });
     },
     reportArticle(val) {
       this.$ajax
-        .post("api/front/articles/report.json", { 
-            type: 'Article',
-            articleId: this.selectedItem.id,
-            articlesReportType: val,
-          })
+        .post("api/front/articles/report.json", {
+          type: "Article",
+          articleId: this.selectedItem.id,
+          articlesReportType: val,
+        })
         .then(() => {
-          this.modal.report = false
+          this.modal.report = false;
           this.$toast("举报成功");
         })
-        .catch(error=> {
+        .catch((error) => {
           this.$toast(error.message);
         });
-    }
+    },
+    unreadData() {
+      this.$ajax
+        .post('api/front/message/findMessageUnRead.json', {})
+        .then((res) => {
+          this.msgNum = res.data.systemMessageCount+res.data.replyCount+res.data.privateLetterCount
+        })
+    },
   },
   computed: {
     userInfo() {
       return this.$store.state.userInfo;
-    }
-  }
+    },
+  },
 };
 </script>
 <style lang="scss" scoped>
 .fade-leave-active {
-  transition: height .5s ease;
+  transition: height 0.5s ease;
 }
-.fade-leave,.fade-enter-to {
- opacity: 1;
- height: 30px;
+.fade-leave,
+.fade-enter-to {
+  opacity: 1;
+  height: 30px;
 }
 .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
   height: 0;
@@ -397,7 +474,7 @@ export default {
   position: fixed;
   top: 0;
   z-index: 2;
-  background:#fff;
+  background: #fff;
 }
 .search {
   display: flex;
@@ -457,7 +534,7 @@ export default {
 }
 .article {
   // min-height: 100%;
-  padding-top:100px;
+  padding-top: 100px;
   padding-bottom: 58px;
   text-align: left;
   .refresh-m {

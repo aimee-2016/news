@@ -309,7 +309,7 @@ export default {
   .van-icon-ellipsis {
     position: absolute;
     right: 15px;
-    top: 16px;
+    top: 15px;
     font-size: 24px;
   }
 }
@@ -530,11 +530,15 @@ export default {
   }
   ul {
     display: flex;
+    justify-content: space-between;
     flex-wrap: wrap;
   }
   li {
     margin-bottom: 12px;
-    margin-right: 25px;
+    // margin-right: 25px;
+    // &:nth-of-type(2n+2) {
+    //   margin-right: 0;
+    // }
     .img-wrap {
       position: relative;
       .van-image {

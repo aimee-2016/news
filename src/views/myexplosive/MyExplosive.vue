@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="container">
     <van-pull-refresh
       v-model="refreshing"
       success-text="刷新成功"
@@ -13,9 +13,12 @@
       >
         <div v-for="(item, index) in list" :key="index" class="article-item" @click="toDetail(item.id)">
           <div class="content">
-            <div class="img-wrap">
-              <img v-lazy="item.imagePaths[0]" />
-            </div>
+            <van-image
+              fit="cover"
+              lazy-load
+              class="img-box"
+              :src="item.imagePaths[0]"
+            />
             <div class="right">
               <div class="text">
                 {{ item.title }}
@@ -46,6 +49,7 @@
 import {
   List,
   PullRefresh,
+  Image
 } from "vant";
 export default {
   data() {
@@ -109,11 +113,15 @@ export default {
   components: {
     "van-list": List,
     "van-pull-refresh": PullRefresh,
+    "van-image": Image
   }
 }
 </script>
 
 <style lang="scss" scoped>
+#container {
+  padding-top: 18px;
+}
 .article-item {
   margin-bottom: 17px;
   padding: 0 16px;
@@ -132,22 +140,12 @@ export default {
       -webkit-line-clamp: 2;
       overflow: hidden;
     }
-    .img-wrap {
-      display: flex;
-      position: relative;
-      img {
-        width: 110px;
-        height: 80px;
-        margin-right: 10px;
-      }
-      .van-icon {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        color: rgba($color: #070707, $alpha: 0.4);
-        font-size: 22px;
-        transform: translate(-11px, -11px);
-      }
+    .img-box {
+      width: 109px;
+      height: 81px;
+      border-radius: 3px;
+      overflow: hidden;
+      margin-right: 10px;
     }
     .right {
       .operate {
