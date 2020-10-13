@@ -7,6 +7,14 @@
     </div>
     <div class="title">{{ explosiveDetails.title }}</div>
     <div class="content" v-html="explosiveDetails.content"></div>
+    <div class="imgs">
+      <img
+        :src="item"
+        alt=""
+        v-for="(item, index) in explosiveDetails.imagePaths"
+        :key="index"
+      />
+    </div>
     <div class="bottom">
       <div>联系人:{{ explosiveDetails.author.nickName }}</div>
       <div>联系方式：{{ explosiveDetails.contactInformation }}</div>
@@ -72,6 +80,18 @@ export default {
   font-weight: 800;
   color: #333333;
   line-height: 30px;
+}
+.content {
+  margin-bottom: 20px;
+  font-size: 16px;
+  font-family: PingFang SC Regular, PingFang SC Regular-Regular;
+  color: #333333;
+  line-height: 28px;
+}
+.imgs {
+  img {
+    width: 100%;
+  }
 }
 .bottom {
   margin-top: 24px;

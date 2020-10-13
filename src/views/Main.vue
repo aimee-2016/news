@@ -18,7 +18,7 @@
           <img src="../assets/img/home/icon-broken@2x.png" alt />
           <span>发爆料</span>
         </div>
-        <div @click="$router.push('/releasevideo/')">
+        <div @click="selectType()">
           <img src="../assets/img/home/icon-video@2x.png" alt />
           <span>发布视频</span>
         </div>
@@ -31,16 +31,25 @@
         />
       </div>
     </van-popup>
+    <van-action-sheet
+      v-model="modal.avatar"
+      :actions="actions"
+      cancel-text="取消"
+      close-on-click-action
+      @select="onSelect"
+    />
   </div>
 </template>
 <script>
-import { Popup } from "vant";
+import { Popup,ActionSheet, } from "vant";
 export default {
   data() {
     return {
       modal: {
         add: false,
+        avatar: false
       },
+      actions: [{ name: "从相册上传" }],
     };
   },
   created() {},
@@ -48,9 +57,23 @@ export default {
     addmodal() {
       this.modal.add = true;
     },
+    onSelect(item) {
+      console.log(item)
+      if(item.name==='从相册上传') {
+        // let domObj = this.$refs['uploadAvatar']
+        // console.log(domObj)
+        // domObj.chooseFile()
+      }
+    },
+    selectType(){
+      this.modal.add = false
+      this.modal.avatar = true
+      // this.$router.push('/releasevideo/') 
+    }
   },
   components: {
     "van-popup": Popup,
+    "van-action-sheet": ActionSheet,
   },
 };
 </script>
