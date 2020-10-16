@@ -56,7 +56,17 @@
       color="#ffcb00"
     >
       <van-tab title="全部">
-        <ul class="all">
+        <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
+        <van-list
+          v-model="loading"
+          :finished="finished"
+          finished-text="没有更多了"
+          @load="onLoad"
+        >
+         
+        <ul class="all"  v-for="(item, index) in articleList"
+            :key="index"
+           >
           <li>
             <div class="info">
               <div class="left">
@@ -119,6 +129,8 @@
             </div>
           </li>
         </ul>
+        </van-list>
+      </van-pull-refresh>
       </van-tab>
       <van-tab title="文章">
         <ul class="all">
@@ -262,7 +274,8 @@ import {
   ActionSheet,
   Dialog,
   Field,
-  Button
+  Button,
+  List, PullRefresh,
 } from "vant"; // Cell, CellGroup, Button,
 export default {
   data() {
@@ -276,7 +289,13 @@ export default {
         user: false,
         support: false
       },
-      message: ""
+      message: "",
+      loading: false,
+      finished: false,
+      page: 1,
+      size: 5,
+      articleList: [],
+      refreshing: false,
     };
   },
   created() {
@@ -314,7 +333,48 @@ export default {
           })
           .catch(() => {});
       }
-    }
+    },
+    testPromise() {
+      return new Promise((resolve, reject) => {
+        this.$ajax
+          .post("api/front/articles/findArticlesPageByCondition.json", {
+            EQ_memberId: this.userInfo.id,
+            EQ_type: 'PublishArticle',
+            page: this.page,
+            size: this.size,
+            sort: 'pubDate',
+          })
+          .then((response) => {
+            resolve(response);
+          })
+          .catch((error) => {
+            reject(error);
+          });
+      });
+    },
+    onLoad() {
+      if (this.refreshing) {
+        this.page = 1;
+        this.articleList = [];
+        this.refreshing = false;
+      }
+      this.testPromise().then((res) => {
+        this.articleList.push(...res.data.content);
+        this.loading = false;
+        if (this.page >= res.data.totalPages) {
+          this.finished = true;
+        }
+        this.page++;
+      });
+    },
+    onRefresh() {
+      // 清空列表数据
+      this.finished = false;
+      // 重新加载数据
+      // 将 loading 设置为 true，表示处于加载状态
+      this.loading = true;
+      this.onLoad();
+    },
   },
   computed: {
     userInfo() {
@@ -332,7 +392,9 @@ export default {
     "van-popup": Popup,
     "van-action-sheet": ActionSheet,
     // "van-dialog": Dialog,
-    "van-field": Field
+    "van-field": Field,
+    "van-list": List,
+    "van-pull-refresh": PullRefresh,
   }
 };
 </script>
