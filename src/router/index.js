@@ -172,6 +172,11 @@ const routes = [
     component: () => import('../views/TopicDetails.vue'),
   },
   {
+    path: '/videodetails',
+    name: 'videodetails',
+    component: () => import('../views/VideoDetails.vue'),
+  },
+  {
     path: '/myhome',
     name: 'myhome',
     component: () => import('../views/MyHome.vue'),
@@ -219,12 +224,12 @@ const routes = [
   {
     path: '/authapply',
     name: 'authapply',
-    component: () => import('../views/myauth/Apply.vue'),
+    component: () => import('../views/MyAuth/Apply.vue'),
   },
   {
     path: '/createfiled',
     name: 'createfiled',
-    component: () => import('../views/myauth/CreateFiled.vue'),
+    component: () => import('../views/MyAuth/CreateFiled.vue'),
   },
   {
     path: '/integralcenter',

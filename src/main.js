@@ -19,7 +19,8 @@ import { format } from 'timeago.js';
 Vue.filter('changeTime', function(dateStr) {
   return format(dateStr, 'zh_CN');
 })
-
+import { formatSeconds } from '@/utils/sfmformat.js';
+Vue.filter('formatSeconds', formatSeconds)
 Vue.config.productionTip = false
 // axios.defaults.baseURL = 'http://47.56.186.16:8089'
 new Vue({

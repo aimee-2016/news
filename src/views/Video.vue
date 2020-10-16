@@ -37,7 +37,7 @@
               class="img-box"
               @click="
                 $router.push({
-                  path: '/articledetails/',
+                  path: '/videodetails/',
                   query: { id: item.id },
                 })
               "
@@ -50,7 +50,7 @@
               <img src="../assets/img/video/play2x.png" alt="" />
               <div class="info">
                 <span>{{ item.viewCount }}次播放量 | </span
-                ><span>{{ item.videoTime }}s</span>
+                ><span>{{ item.videoTime | formatSeconds }}</span>
               </div>
             </div>
             <div class="operat">
@@ -89,7 +89,7 @@
                 <div
                   @click="
                     $router.push({
-                      path: '/articledetails/',
+                      path: '/videodetails/',
                       query: { id: item.id },
                     })
                   "
