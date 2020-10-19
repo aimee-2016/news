@@ -1,0 +1,9 @@
+.van-dialog--round-button .van-dialog__confirm {
+    color:#333333 !important
+  }
+#app .van-button--disabled {
+    cursor: not-allowed;
+    background: #c8c8c8;
+    border-color: #c8c8c8;
+    color: #fff;
+}

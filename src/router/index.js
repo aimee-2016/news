@@ -227,6 +227,11 @@ const routes = [
     component: () => import('../views/MyAuth/Apply.vue'),
   },
   {
+    path: '/applystatus',
+    name: 'applystatus',
+    component: () => import('../views/MyAuth/ApplyStatus.vue'),
+  },
+  {
     path: '/createfiled',
     name: 'createfiled',
     component: () => import('../views/MyAuth/CreateFiled.vue'),

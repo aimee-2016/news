@@ -13,28 +13,20 @@
       <div class="interval-bar"></div>
       <div class="task-list">
         <ul>
-          <li>
-            <span class="name">有过点赞</span>
+          <li v-for="(item, index) in taskList" :key="index">
+            <span class="name">{{ item.type.message }}</span>
             <div class="operate">
-              <img src="../../assets/img/auth/icon-completed.png" alt="" />
-            </div>
-          </li>
-          <li>
-            <span class="name">发表过评论</span>
-            <div class="operate">
-              <van-button type="primary" class="btn-yellow">去完成</van-button>
-            </div>
-          </li>
-          <li>
-            <span class="name">收藏过</span>
-            <div class="operate">
-              <img src="../../assets/img/auth/icon-completed.png" alt="" />
-            </div>
-          </li>
-          <li>
-            <span class="name">绑定手机号</span>
-            <div class="operate">
-              <van-button type="primary" class="btn-yellow">去完成</van-button>
+              <van-button
+                type="primary"
+                v-if="!item.whetherComplete"
+                @click="$router.push('/home/')"
+                >去完成</van-button
+              >
+              <img
+                src="../../assets/img/auth/icon-completed.png"
+                alt=""
+                v-else
+              />
             </div>
           </li>
         </ul>
@@ -59,43 +51,62 @@
         </dl>
       </div>
       <div class="btn-wrap">
-        <van-button type="primary" class="btn-yellow">申请创作者</van-button>
+        <van-button
+          type="primary"
+          :class="{ 'btn-yellow': btnStatus }"
+          @click="creatorAuthor"
+          >申请创作者</van-button
+        >
       </div>
     </div>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
-import { Cell, CellGroup, Button, Icon, Popup, Image } from "vant";
+import { Cell, CellGroup, Button, Icon, Popup, Image,Dialog} from "vant";
 export default {
   data() {
     return {
-      addressList: []
+      taskList: [],
+      btnStatus: false
     }
   },
   created() {
-    // this.getAddressList()
+    this.getTaskList()
   },
   mounted() {
 
   },
   methods: {
-    getAddressList() {
+    getTaskList() {
       this.$ajax
-        .post("api/front/good/findReceivingAddressListAll.json")
+        .post("api/front/member/findMemberAuthorizationRecord.json")
         .then(res => {
-          this.addressList = res.data
+          this.taskList = res.data
+          this.btnStatus = this.taskList.every(item=>item.whetherComplete)
         });
     },
-    selectAddress(id) {
-      this.$router.push({path:'/order/',query: {
-        id: id
-      }})
-    },
-    editAddress(id){
-      this.$router.push({path:'/addaddress/',query: {
-        id: id
-      }})
+    creatorAuthor() {
+      if(!this.btnStatus) {
+        this.$toast('请先完成申请条件')
+        return false
+      }
+      Dialog.confirm({
+          title: "是否申请创作者？",
+          confirmButtonColor: "rgb(255, 203, 0)"
+        })
+          .then(() => {
+            this.$ajax
+        .post("api/front/member/applyCreatorAuthor.json")
+        .then(res => {
+          this.$toast('申请创作者成功')
+          this.$router.push('/applystatus/')
+        }).catch(error=> {
+          this.$toast(error)
+        });
+          })
+          .catch(() => {});
+
     }
   },
   computed: {
@@ -271,14 +282,19 @@ export default {
   padding: 0 28px 38px;
   .van-button {
     width: 100%;
-height: 41px;
-background: #fee263;
-border-color: #fdd004;
-border-radius: 5px;
-font-size: 15px;
-font-family: PingFang SC Bold, PingFang SC Bold-Bold;
-font-weight: 700;
-color: #666666;
+    height: 41px;
+    background: #fee263;
+    border-color: #fdd004;
+    border-radius: 5px;
+    font-size: 15px;
+    font-family: PingFang SC Bold, PingFang SC Bold-Bold;
+    font-weight: 700;
+    color: #666666;
+  }
+  .btn-yellow {
+    background: #fdd004;
+    border-color: #fdd004;
+    color: #333333;
   }
 }
 </style>

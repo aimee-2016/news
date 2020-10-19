@@ -9,7 +9,7 @@
         <div class="row-1">
           <img :src="userInfo.headImgPath" alt class="avatar" />
           <span class="btn-edit" @click="$router.push('/editmaterials/')">编辑资料</span>
-          <span class="btn-auth" @click="$router.push('/authapply/')">我的认证</span>
+          <span class="btn-auth" @click="myAuth()">我的认证</span>
         </div>
         <div class="row-2">
           <span class="name">{{userInfo.nickName}}</span>
@@ -374,6 +374,21 @@ export default {
       // 将 loading 设置为 true，表示处于加载状态
       this.loading = true;
       this.onLoad();
+    },
+    myAuth(){
+      
+      this.$ajax
+        .post("api/front/articles/countArticlesAndVideo.json")
+        .then(res => {
+          if(res.data.memberStatus) {
+            this.$router.push('/applystatus/') 
+          } else {
+            this.$router.push('/authapply/') 
+          }
+        });
+    },
+    getTaskList() {
+      
     },
   },
   computed: {
