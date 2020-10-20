@@ -35,7 +35,7 @@
             <van-button type="primary" @click="publishArticle()"
               >去发布文章</van-button
             >
-            <van-button type="primary" :disabled="!articleStatusL">立即申请领域标签</van-button>
+            <van-button type="primary" :disabled="!articleStatusL" @click="toFiled('ApplyArticlesLabel')">立即申请领域标签</van-button>
           </div>
         </div>
         <div class="item">
@@ -56,7 +56,7 @@
             <van-button type="primary"
               >去发布视频</van-button
             >
-            <van-button type="primary" :disabled="!videoStatusL" @click="$router.push('/createfiled/')">立即申请领域标签</van-button>
+            <van-button type="primary" :disabled="!videoStatusL" @click="toFiled('ApplyVideoLabel')">立即申请领域标签</van-button>
           </div>
         </div>
       </div>
@@ -143,6 +143,9 @@ export default {
           document.execCommand("copy"); // 执行浏览器复制命令
           this.$toast("复制成功")
         })
+    },
+    toFiled(name){
+      this.$router.push({path:'/createfiled/',query:{type:name}})
     }
   },
   computed: {
@@ -243,6 +246,7 @@ export default {
     font-family: PingFang SC Bold, PingFang SC Bold-Bold;
     font-weight: 700;
     color: #333333;
+    text-align: center;
     img {
       position: absolute;
       top: 0;

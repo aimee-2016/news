@@ -376,20 +376,12 @@ export default {
       this.onLoad();
     },
     myAuth(){
-      
-      this.$ajax
-        .post("api/front/articles/countArticlesAndVideo.json")
-        .then(res => {
-          if(res.data.memberStatus) {
-            this.$router.push('/applystatus/') 
-          } else {
-            this.$router.push('/authapply/') 
-          }
-        });
-    },
-    getTaskList() {
-      
-    },
+      if(this.userInfo.memberStatus.name==='NotApplied') {
+        this.$router.push('/authapply/') 
+      } else {
+        this.$router.push('/applystatus/') 
+      }
+    }
   },
   computed: {
     userInfo() {

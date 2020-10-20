@@ -7,7 +7,14 @@
     </div>
     <div class="main">
       <ul>
-        <li v-for="(item, index) in lableList" :key="index" :class="{'selected':item.id===endZoneId}" @click="selectZone(item)">{{ item.name }}</li>
+        <li
+          v-for="(item, index) in lableList"
+          :key="index"
+          :class="{ selected: item.id === endZoneId }"
+          @click="selectZone(item)"
+        >
+          {{ item.name }}
+        </li>
       </ul>
     </div>
   </div>
@@ -24,13 +31,13 @@ export default {
     }
   },
   created() {
-    this.getTaskList()
+    this.getLabelList()
   },
   mounted() {
 
   },
   methods: {
-    getTaskList() {
+    getLabelList() {
       this.$ajax
         .post("api/front/articles/findArticlesColumnListByCondition.json")
         .then(res => {
@@ -51,35 +58,18 @@ export default {
           confirmButtonColor: "rgb(255, 203, 0)",
         })
           .then(() => {
-        this.$ajax
-        .post("api/front/member/applyLabel.json",{
-          applyLabelType: 'ApplyVideoLabel',
-          columnId: this.endZoneId
-        })
-        .then(res => {
-        }).catch(error=> {
-          this.$toast(error)
-        });
+            this.$ajax
+            .post("api/front/member/applyLabel.json",{
+              applyLabelType: this.$route.query.type,
+              columnId: this.endZoneId
+            })
+            .then(res => {
+              this.$router.push('/applystatus/')
+            }).catch(error=> {
+              this.$toast(error)
+            });
           })
-          .catch(() => {});
-
-    },
-    getVideoC() {
-      this.$ajax
-        .post("api/front/member/applyLabel.json",{
-          applyLabelType: 'ApplyVideoLabel'
-        })
-        .then(res => {
-        });
-    },
-    getArticleC() {
-      this.$ajax
-        .post("api/front/member/applyLabel.json",{
-          applyLabelType: 'ApplyArticlesLabel'
-        })
-        .then(res => {
-        });
-    },
+    }
   },
   computed: {
       userInfo() {
@@ -155,10 +145,10 @@ export default {
         margin-right: 0;
       }
       &:hover {
-        background: #FDD004;
+        background: #fdd004;
       }
       &.selected {
-        background: #FDD004;
+        background: #fdd004;
       }
     }
   }

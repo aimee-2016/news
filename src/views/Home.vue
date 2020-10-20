@@ -283,8 +283,8 @@ export default {
         .post("api/front/member/findIndexColumnList.json", {})
         .then((res) => {
           this.navList = res.data;
-          this.navId = res.data[0].id;
-          this.firstId = res.data[0].id;
+          this.navId = res.data.filter(item=>item.name==='热点')[0].id
+          // this.firstId = res.data.filter(item=>item.name==='热点')[0].id
           // this.getArticle();
           this.onLoad();
         })
@@ -494,9 +494,11 @@ export default {
   padding: 0 16px;
   ul {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     padding-right: 20px;
     padding-bottom: 13px;
+    width: 500px;
     li {
       margin-right: 20px;
       font-size: 15px;

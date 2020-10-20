@@ -87,7 +87,7 @@
       </li>
     </ul>
     <van-cell-group>
-      <van-cell is-link url="/msgcenter/">
+      <van-cell is-link to="/msgcenter/">
         <template #title>
           <span class="icon-news"></span>
           <span>消息中心</span>
@@ -97,32 +97,32 @@
           <van-icon name="arrow" style="line-height: inherit;font-size:16px;color:#969799;" />
         </template>
       </van-cell>
-      <van-cell is-link url="/myexplosive/">
+      <van-cell is-link to="/myexplosive/">
         <template #title>
           <span class="icon-broke"></span>
           <span>我的爆料</span>
         </template>
       </van-cell>
-      <van-cell is-link url="/feedbackhelp/">
+      <van-cell is-link to="/feedbackhelp/">
         <template #title>
           <span class="icon-edit"></span>
           <span>反馈帮助</span>
         </template>
       </van-cell>
-      <van-cell is-link url="/setup/">
+      <van-cell is-link to="/setup/">
         <template #title>
           <span class="icon-setting"></span>
           <span>系统设置</span>
         </template>
       </van-cell>
-      <van-cell is-link url="/aboutus/">
+      <van-cell is-link to="/aboutus/">
         <template #title>
           <span class="icon-info"></span>
           <span>关于我们</span>
         </template>
       </van-cell>
     </van-cell-group>
-    <van-popup v-model="modalSupport" class="modal-support">
+    <van-popup v-model="modalSupport" class="modal-support" v-if="userInfo">
       <div class="container">
         <div class="name">{{userInfo.nickName}}</div>
         <div class="text">
