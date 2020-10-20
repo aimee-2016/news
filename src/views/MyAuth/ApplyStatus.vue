@@ -35,7 +35,7 @@
             <van-button type="primary" @click="publishArticle()"
               >去发布文章</van-button
             >
-            <van-button type="primary" :disabled="!articleStatus">立即申请领域标签</van-button>
+            <van-button type="primary" :disabled="!articleStatusL">立即申请领域标签</van-button>
           </div>
         </div>
         <div class="item">
@@ -56,7 +56,7 @@
             <van-button type="primary"
               >去发布视频</van-button
             >
-            <van-button type="primary" :disabled="!videoStatus" @click="$router.push('/createfiled/')">立即申请领域标签</van-button>
+            <van-button type="primary" :disabled="!videoStatusL" @click="$router.push('/createfiled/')">立即申请领域标签</van-button>
           </div>
         </div>
       </div>
@@ -106,6 +106,8 @@ export default {
       authStatus: false,
       videoStatus: false,
       articleStatus: false,
+      videoStatusL: false,
+      articleStatusL: false,
       textareaV: 'www.cjhchchchch'
     }
   },
@@ -123,6 +125,8 @@ export default {
           this.authStatus= res.data.memberStatus.name
           this.videoStatus = res.data.whetherVideoApply
           this.articleStatus = res.data.whetherArticleApply
+          this.videoStatusL = res.data.whetherVideoLabel
+          this.articleStatusL = res.data.whetherArticleLabel
         });
     },
     publishArticle() {
