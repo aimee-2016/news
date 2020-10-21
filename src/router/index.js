@@ -291,12 +291,31 @@ const router = new VueRouter({
 })
 
 const LOGIN_PAGE_NAME = 'login'
+// 15002304121 123456
+// 一、不需要登陆，就可以进入的页面
+
+// 二、不需要token就可以调用的接口
+// 文章详情和评论列表，和评论详情等
+// 首页查询栏目api/front/member/findIndexColumnList.json
+// 首页查询新闻、视频api/front/articles/findArticlesByColumnId.json
+// 文章详情、视频、爆料详情api/front/articles/findArticlesById.json
+// 文章详情、视频详情推荐列表api/front/articles/findRecommendArticles.json
+// 文章、视频评论查询分页api/front/articles/findCommentPageByCondition.json
+// 话题首页api/front/articles/findTopicArticles.json
+// 查看话题详情api/front/articles/findArticlesTopicDetails.json
+// 查询热搜 api/front/articles/findHotSearch.json
+// 综合查询 api/front/articles/findComprehensive.json
+// 首页查询用户 api/front/member/findMemberPageByNickName.json
+// 根据问题分类查询帮助列表 api/front/help/findHelpPageByCondition.json
+// 问题分类列表 api/front/help/findProblemTypeListByCondition.json
+// 他的主页-个人资料 api/front/member/findMemberById.json
+// 他的/我的主页-文章列表 api/front/articles/findArticlesPageByCondition.json
 
 // 路由守卫
 router.beforeEach((to, from, next) => {
   const token = getToken()
   // next()
-  if (to.name == 'home' || to.name == 'articledetails' || to.name == 'video' || to.name == 'my' || to.name == 'topic' || to.name == 'topicdetails' || to.name == 'myhome' || to.name == 'search' || to.name == 'test') {
+  if (to.name == 'home' || to.name == 'articledetails' || to.name == 'articlecommentdetails' || to.name == 'video' || to.name == 'videodetails' || to.name == 'my' || to.name == 'topic' || to.name == 'topicdetails' || to.name == 'myhome' || to.name == 'search' || to.name == 'test') {
     next()
   } else if (!token && to.name !== LOGIN_PAGE_NAME) {
     // 未登录且要跳转的页面不是登录页
@@ -318,7 +337,7 @@ router.beforeEach((to, from, next) => {
       store.dispatch('getUserInfo').then(() => {
         next()
       }).catch(() => {
-        setToken('')
+        store.commit('setToken', {token:''})
         next({
           name: 'login'
         })

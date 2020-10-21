@@ -56,7 +56,7 @@ export default new Vuex.Store({
     handleLogOut ({ commit }) {
       return new Promise((resolve, reject) => {
         axios.post('api/front/member/loginOut.json').then(() => {
-          commit('setToken', '')
+          commit('setToken', {token:''})
           resolve()
         }).catch(function (error) {
           reject(error);
