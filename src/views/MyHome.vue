@@ -1,229 +1,214 @@
 <template>
   <div>
-    <div class="top-info" :style="{background: '#2e2840 url('+userInfo.headImgPath+') no-repeat center',backgroundSize:'cover'}">
+    <div
+      class="top-info"
+      :style="{
+        background:
+          '#2e2840 url(' + userInfo.headImgPath + ') no-repeat center',
+        backgroundSize: 'cover',
+      }"
+    >
       <div class="bg">
         <div class="return">
-          <van-icon name="arrow-left" @click="$router.go(-1)"/>
-          <van-icon name="ellipsis" @click="modal.user = true" />
+          <van-icon name="arrow-left" @click="$router.go(-1)" />
+          <!-- <van-icon name="ellipsis" @click="modal.user = true" /> -->
         </div>
         <div class="row-1">
           <img :src="userInfo.headImgPath" alt class="avatar" />
-          <span class="btn-edit" @click="$router.push('/editmaterials/')">编辑资料</span>
+          <span class="btn-edit" @click="$router.push('/editmaterials/')"
+            >编辑资料</span
+          >
           <span class="btn-auth" @click="myAuth()">我的认证</span>
         </div>
         <div class="row-2">
-          <span class="name">{{userInfo.nickName}}</span>
-          <span class="age" v-if="userInfo.sex||userInfo.age">
-            <span v-if="userInfo.sex">{{userInfo.sex.message}}</span>
-            <span v-if="userInfo.age"> {{userInfo.age}}</span>
+          <span class="name">{{ userInfo.nickName }}</span>
+          <span class="age" v-if="userInfo.sex || userInfo.age">
+            <span v-if="userInfo.sex">{{ userInfo.sex.message }}</span>
+            <span v-if="userInfo.age"> {{ userInfo.age }}</span>
           </span>
         </div>
         <ul class="row-3">
           <li>
-            <span class="num">{{userInfo.followCount}}</span>
+            <span class="num">{{ userInfo.followCount }}</span>
             <span class="text">关注</span>
           </li>
           <li>
-            <span class="num">{{userInfo.fansCount}}</span>
+            <span class="num">{{ userInfo.fansCount }}</span>
             <span class="text">粉丝</span>
           </li>
           <li>
-            <span class="num">{{userInfo.fabulousCount}}</span>
+            <span class="num">{{ userInfo.fabulousCount }}</span>
             <span class="text">获赞</span>
           </li>
         </ul>
         <ul class="row-4">
           <li>
             <span class="icon-auth icon"></span>
-            <span class="text">认证：{{userInfo.memberStatus.message}}</span>
+            <span class="text">认证：{{ userInfo.memberStatus.message }}</span>
           </li>
           <li>
             <span class="icon-location icon"></span>
-            <span class="text">位置：{{userInfo.address||'---'}}</span>
+            <span class="text">位置：{{ userInfo.address || "---" }}</span>
           </li>
           <li>
             <span class="icon-desc icon"></span>
-            <span class="text">简介：{{userInfo.synopsis||'---'}}</span>
+            <span class="text">简介：{{ userInfo.synopsis || "---" }}</span>
           </li>
         </ul>
       </div>
     </div>
-    <van-tabs
-      v-model="active"
-      line-width="15px"
-      line-heigth="2px"
-      title-active-color=" #333333"
-      color="#ffcb00"
-    >
-      <van-tab title="全部">
-        <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
+    <div class="tabs">
+      <div class="nav">
+        <ul>
+          <li
+            v-for="(item, index) in navList"
+            :key="index"
+            :class="{ selected: navId === item.id }"
+            @click="checkNav(item.id, item.type)"
+          >
+            {{ item.name }}
+          </li>
+        </ul>
+      </div>
+      <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
         <van-list
           v-model="loading"
           :finished="finished"
           finished-text="没有更多了"
           @load="onLoad"
         >
-         
-        <ul class="all"  v-for="(item, index) in articleList"
-            :key="index"
-           >
-          <li>
-            <div class="info">
-              <div class="left">
-                <img :src="userInfo.headImgPath" alt class="avatar" />
-                <div class="text">
-                  <span class="name">大马哈</span>
-                  <span class="time">5分钟前</span>
+          <ul class="all" v-for="(item, index) in articleList" :key="index">
+            <li v-if="item.type.name === 'PublishVideo'">
+              <div class="info">
+                <div class="left">
+                  <img :src="userInfo.headImgPath" alt class="avatar" />
+                  <div class="text">
+                    <span class="name">{{ userInfo.nickName }}</span>
+                    <span class="time">{{ item.pubDate | changeTime }}</span>
+                  </div>
+                </div>
+                <div class="right">
+                  <span class="icon-top" v-if="item.whetherTop"></span>
+                  <van-icon
+                    name="ellipsis"
+                    @click="
+                      selectedItem = item;
+                      modal.user = true;
+                    "
+                  />
                 </div>
               </div>
-              <div class="right">
-                <span class="icon-top"></span>
-                <van-icon name="ellipsis" @click="modal.article = true" />
+              <div
+                class="content"
+                @click="
+                  $router.push({
+                    path: '/videodetails/',
+                    query: { id: item.id },
+                  })
+                "
+              >
+                <van-image fit="cover" lazy-load :src="item.videoImagePath" />
+                <img src="../assets/img/video/play2x.png" alt="" />
+                <span class="time">{{ item.videoTime | formatSeconds }}</span>
               </div>
-            </div>
-            <div class="content"></div>
-            <div class="opreate">
-              <span>
-                <img src="../assets/img/myhome/icon-share@2x.png" alt />
-              </span>
-              <span>
-                <img src="../assets/img/myhome/icon-50@2x.png" @click="modal.support=true" alt />
-                <i class="num">12</i>
-              </span>
-              <span>
-                <img src="../assets/img/myhome/icon-49@2x.png" alt />
-                <i class="num">355</i>
-              </span>
-            </div>
-          </li>
-          <li>
-            <div class="info">
-              <div class="left">
-                <img :src="userInfo.headImgPath" alt class="avatar" />
-                <div class="text">
-                  <span class="name">大马哈</span>
-                  <span class="time">5分钟前</span>
+              <div class="opreate">
+                <span @click="modal.share = true">
+                  <img src="../assets/img/myhome/icon-share@2x.png" alt />
+                </span>
+                <span>
+                  <img
+                    src="../assets/img/home/icon-support-hover@2x.png"
+                    @click="articleunSupport(item)"
+                    v-if="item.whetherLikeArticles"
+                  />
+                  <img
+                    src="../assets/img/home/icon-support@2x.png"
+                    @click="articleSupport(item)"
+                    v-else
+                  />
+                  <i class="num">{{ item.likeCount }}</i>
+                </span>
+                <span
+                  @click="
+                    $router.push({
+                      path: '/videodetails/',
+                      query: { id: item.id },
+                    })
+                  "
+                >
+                  <img src="../assets/img/myhome/icon-49@2x.png" alt />
+                  <i class="num">{{ item.commentCount }}</i>
+                </span>
+              </div>
+            </li>
+            <li v-if="item.type.name === 'PublishArticle'">
+              <div class="info">
+                <div class="left">
+                  <img :src="userInfo.headImgPath" alt class="avatar" />
+                  <div class="text">
+                    <span class="name">{{ userInfo.nickName }}</span>
+                    <span class="time">{{ item.pubDate | changeTime }}</span>
+                  </div>
+                </div>
+                <div class="right">
+                  <span class="icon-top" v-if="item.whetherTop"></span>
+                  <van-icon
+                    name="ellipsis"
+                    @click="
+                      selectedItem = item;
+                      modal.user = true;
+                    "
+                  />
                 </div>
               </div>
-              <div class="right">
-                <span class="icon-top"></span>
-                <van-icon name="ellipsis" />
+              <div
+                class="content1"
+                @click="
+                  $router.push({
+                    path: '/articledetails/',
+                    query: { id: item.id },
+                  })
+                "
+              >
+                <div class="article">{{ item.title }}</div>
+                <div class="picture">
+                  <van-image fit="cover" lazy-load :src="item.imagePaths[0]" />
+                </div>
               </div>
-            </div>
-            <div class="content1">
-              <div class="article">三里屯街拍：身材这么好的妹子难遇到，网友：回家去三里屯街拍：身材这么好的妹子回家去三里屯街拍：身材这么好的妹子.</div>
-              <div class="picture"></div>
-            </div>
-            <div class="opreate">
-              <span>
-                <img src="../assets/img/myhome/icon-share@2x.png" alt />
-              </span>
-              <span>
-                <img src="../assets/img/myhome/icon-50@2x.png" @click="modal.support=true" alt />
-                <i class="num">12</i>
-              </span>
-              <span>
-                <img src="../assets/img/myhome/icon-49@2x.png" alt />
-                <i class="num">355</i>
-              </span>
-            </div>
-          </li>
-        </ul>
+              <div class="opreate">
+                <span @click="modal.share = true">
+                  <img src="../assets/img/myhome/icon-share@2x.png" alt />
+                </span>
+                <span>
+                  <img
+                    src="../assets/img/home/icon-support-hover@2x.png"
+                    @click="articleunSupport(item)"
+                    v-if="item.whetherLikeArticles"
+                  />
+                  <img
+                    src="../assets/img/home/icon-support@2x.png"
+                    @click="articleSupport(item)"
+                    v-else
+                  />
+                  <i class="num">{{ item.likeCount }}</i>
+                </span>
+                <span
+                  @click="
+                    $router.push({
+                      path: '/articledetails/',
+                      query: { id: item.id },
+                    })
+                  "
+                >
+                  <img src="../assets/img/myhome/icon-49@2x.png" alt />
+                  <i class="num">{{ item.commentCount }}</i>
+                </span>
+              </div>
+            </li>
+          </ul>
         </van-list>
       </van-pull-refresh>
-      </van-tab>
-      <van-tab title="文章">
-        <ul class="all">
-          <li>
-            <div class="info">
-              <div class="left">
-                <img :src="userInfo.headImgPath" alt class="avatar" />
-                <div class="text">
-                  <span class="name">大马哈</span>
-                  <span class="time">5分钟前</span>
-                </div>
-              </div>
-              <div class="right">
-                <span class="icon-top"></span>
-                <van-icon name="ellipsis" />
-              </div>
-            </div>
-            <div class="content1">
-              <div class="article">三里屯街拍：身材这么好的妹子难遇到，网友：回家去三里屯街拍：身材这么好的妹子回家去三里屯街拍：身材这么好的妹子.</div>
-              <div class="picture"></div>
-            </div>
-            <div class="opreate">
-              <span>
-                <img src="../assets/img/myhome/icon-share@2x.png" alt />
-              </span>
-              <span>
-                <img src="../assets/img/myhome/icon-50@2x.png" @click="modal.support=true" alt />
-                <i class="num">12</i>
-              </span>
-              <span>
-                <img src="../assets/img/myhome/icon-49@2x.png" alt />
-                <i class="num">355</i>
-              </span>
-            </div>
-          </li>
-        </ul>
-      </van-tab>
-      <van-tab title="视频"></van-tab>
-    </van-tabs>
-    <van-popup v-model="modal.article" class="more-popup">
-      <div>
-        <div class="img-wrap">
-          <img src="../assets/img/myhome/icon-56@2x.png" alt />
-        </div>
-        <div class="text">
-          <span>不感兴趣</span>
-        </div>
-      </div>
-      <div class="row-2">
-        <div class="img-wrap">
-          <img src="../assets/img/myhome/icon-57@2x.png" alt />
-        </div>
-        <div class="text" @click="modal.article=false;modal.report=true">
-          <span>举报内容</span>
-          <span>内容质量差 标题党 低俗 暴力血腥 恶心</span>
-        </div>
-      </div>
-      <div>
-        <div class="img-wrap">
-          <img src="../assets/img/myhome/icon-58@2x.png" alt />
-        </div>
-        <div class="text">
-          <span>拉黑作者：小千作者</span>
-        </div>
-      </div>
-    </van-popup>
-    <van-popup v-model="modal.report" class="more-popup">
-      <div>
-        <div class="text">
-          <span>内容质量差</span>
-        </div>
-      </div>
-      <div>
-        <div class="text">
-          <span>标题党</span>
-        </div>
-      </div>
-      <div>
-        <div class="text">
-          <span>低俗</span>
-        </div>
-      </div>
-      <div>
-        <div class="text">
-          <span>暴力血腥</span>
-        </div>
-      </div>
-      <div>
-        <div class="text">
-          <span>恶心</span>
-        </div>
-      </div>
-    </van-popup>
+    </div>
     <van-action-sheet
       v-model="modal.user"
       :actions="actions"
@@ -231,38 +216,7 @@
       close-on-click-action
       @select="onSelect"
     />
-    <van-popup v-model="modal.complaint" closeable class="modal-complaint">
-      <div class="container">
-        <div class="title">举报用户</div>
-        <div class="center">
-          <div class="text">
-            <span>#</span>我有话要说:
-          </div>
-          <van-field
-            v-model="message"
-            rows="6"
-            autosize
-            type="textarea"
-            placeholder="请具体说明问题，我们将尽快处理"
-            style="background: #f0f0f0;"
-          />
-        </div>
-        <div class="footer">
-          <van-button type="primary" round class="btn-yellow" @click="modal.complaint=false">确定</van-button>
-        </div>
-      </div>
-    </van-popup>
-    <van-popup v-model="modal.support" class="modal-support">
-      <div class="container">
-        <div class="name">卡卡</div>
-        <div class="text">
-          共获得
-          <span>23424354</span>个赞
-        </div>
-        <img src="../assets/img/myhome/icon-44@2x.png" alt />
-        <van-button type="primary" round class="btn-yellow" @click="modal.support=false">好的</van-button>
-      </div>
-    </van-popup>
+    <van-share-sheet v-model="modal.share" :options="options1" title="分享到" />
   </div>
 </template>
 <script type="text/ecmascript-6">
@@ -276,19 +230,40 @@ import {
   Field,
   Button,
   List, PullRefresh,
+  Image,
+  ShareSheet,
 } from "vant"; // Cell, CellGroup, Button,
 export default {
   data() {
     return {
+      navList: [
+        { name: "全部", id: 0,type:''},
+        { name: "文章", id: 1,type:'PublishArticle'},
+        { name: "视频", id: 2,type:'PublishVideo'},
+      ],
+      navId: 0,
+      type: '',
       active: 0,
-      actions: [{ name: "拉黑/解绑拉黑" }, { name: "举报用户" }],
+      actions: [{ name: "编辑" }, { name: "置顶" },{ name: "删除" }],
       modal: {
-        report: false,
-        complaint: false,
-        article: false,
         user: false,
-        support: false
+        share: false
       },
+      options1: [
+        [
+          { name: "微信好友", icon: "wechat" },
+          {
+            name: "微信朋友圈",
+            icon: require("../assets/img/home/friendscircle@2x.png"),
+          },
+          { name: "QQ", icon: "qq" },
+          {
+            name: "QQ空间",
+            icon: require("../assets/img/home/qqzone@2x.png"),
+          },
+        ],
+        [{ name: "微博", icon: "weibo" }],
+      ],
       message: "",
       loading: false,
       finished: false,
@@ -296,53 +271,65 @@ export default {
       size: 5,
       articleList: [],
       refreshing: false,
+      selectedItem: null
     };
   },
   created() {
-    // this.getData()
   },
   mounted() {},
   methods: {
-    getData() {
-      this.$ajax
-        .post("api/front/articles/findArticlesPageByCondition.json", {
-          EQ_memberId: this.userInfo.id,
-          EQ_type: 'PublishVideo',
-          sort: 'pubDate'
+    onSelect(item) {
+      if (item.name === "删除") {
+        Dialog.confirm({
+          title: "确定删除此内容吗？",
+          confirmButtonColor: "rgb(255, 203, 0)"
+        })
+          .then(() => {
+
+            this.$ajax
+            .post("api/front/articles/deleteArticle.json", {
+              id: this.selectedItem.id,
+            })
+            .then(() => {
+              this.$toast('删除成功');
+              this.checkNav(this.navId,this.type)
+            })
+            .catch(error=> {
+              this.$toast(error)
+            });
+          })
+      } else if(item.name === "置顶"){
+        this.$ajax
+        .post("api/front/articles/setTop.json", {
+          id: this.selectedItem.id,
         })
         .then(() => {
-          // this.$toast('修改成功')
+          this.$toast('置顶成功')
+          this.checkNav(this.navId,this.type)
         })
         .catch(error=> {
           this.$toast(error)
         });
-    },
-    onSelect(item) {
-      this.modal.user = false;
-      if (item.name === "举报用户") {
-        this.modal.complaint = true;
-      } else {
-        Dialog.confirm({
-          title: "确定拉黑该用户？？",
-          message: "拉黑后此用户不能关注您，也无法给您发送任何消息",
-          confirmButtonColor: "rgb(255, 203, 0)"
-        })
-          .then(() => {
-            this.$toast(item.name + "成功");
-            // 已解除黑名单
-          })
-          .catch(() => {});
       }
+    },
+    checkNav(id,type) {
+      this.navId = id;
+      this.type = type
+      this.page = 1;
+      this.articleList = [];
+      this.finished = false;
+      this.loading = true;
+      this.onLoad();
     },
     testPromise() {
       return new Promise((resolve, reject) => {
         this.$ajax
           .post("api/front/articles/findArticlesPageByCondition.json", {
             EQ_memberId: this.userInfo.id,
-            EQ_type: 'PublishArticle',
+            EQ_type: this.type,
             page: this.page,
             size: this.size,
-            sort: 'pubDate',
+            sort: 'whetherTop',
           })
           .then((response) => {
             resolve(response);
@@ -377,11 +364,39 @@ export default {
     },
     myAuth(){
       if(this.userInfo.memberStatus.name==='NotApplied') {
-        this.$router.push('/authapply/') 
+        this.$router.push('/authapply/')
       } else {
-        this.$router.push('/applystatus/') 
+        this.$router.push('/applystatus/')
       }
-    }
+    },
+    articleSupport(item) {
+      this.$ajax
+        .post("api/front/articles/likeArticles.json", {
+          id: item.id,
+        })
+        .then(() => {
+          item.whetherLikeArticles = true;
+          item.likeCount++
+          this.$toast("点赞成功");
+        })
+        .catch((error) => {
+          this.$toast(error.message);
+        });
+    },
+    articleunSupport(item) {
+      this.$ajax
+        .post("api/front/articles/unLikeArticles.json", {
+          id: item.id,
+        })
+        .then(() => {
+          item.whetherLikeArticles = false;
+          item.likeCount--
+          this.$toast("取消点赞");
+        })
+        .catch((error) => {
+          this.$toast(error.message);
+        });
+    },
   },
   computed: {
     userInfo() {
@@ -402,6 +417,8 @@ export default {
     "van-field": Field,
     "van-list": List,
     "van-pull-refresh": PullRefresh,
+    "van-image": Image,
+    "van-share-sheet": ShareSheet,
   }
 };
 </script>
@@ -535,6 +552,45 @@ export default {
     }
   }
 }
+.tabs {
+  .nav {
+    position: relative;
+    padding: 0 16px;
+    ul {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 0;
+      border-bottom: solid 1px #f0f0f0;
+      li {
+        font-size: 14px;
+        font-family: PingFang SC Medium, PingFang SC Medium-Medium;
+        font-weight: 500;
+        color: #666666;
+        &.selected {
+          position: relative;
+          font-size: 14px;
+          font-family: PingFang SC Bold, PingFang SC Bold-Bold;
+          font-weight: 700;
+          color: #333333;
+          &::after {
+            content: "";
+            display: block;
+            position: absolute;
+            left: 50%;
+            bottom: -16px;
+            transform: translateX(-7.5px);
+            width: 15px;
+            height: 2px;
+            background: #ffcb00;
+            border-radius: 1px;
+          }
+        }
+      }
+    }
+  }
+}
 .all {
   padding: 22px 15px;
   .info {
@@ -588,18 +644,53 @@ export default {
     }
   }
   .content {
+    position: relative;
     margin-top: 18px;
     width: 100%;
     height: 180px;
-    border: #333333 solid 1px;
+    border-radius: 3px;
+    overflow: hidden;
+    .van-image {
+      width: 100%;
+      height: 180px;
+    }
+    > img {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 38px;
+      height: 38px;
+      transform: translate(-14px, -14px);
+      z-index: 1;
+    }
+    .time {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      z-index: 1;
+      width: 100%;
+      height: 33px;
+      padding: 12px 15px 0 0;
+      background-image: linear-gradient(
+        0deg,
+        rgba(97, 100, 105, 1),
+        rgba(255, 255, 255, 0)
+      );
+      opacity: 0.87;
+      text-align: right;
+      font-size: 10px;
+      font-family: PingFang SC Medium, PingFang SC Medium-Medium;
+      font-weight: 500;
+      color: #ffffff;
+    }
   }
   .content1 {
     display: flex;
     margin-top: 18px;
     .article {
       margin-top: 10px;
-      width: 65%;
-      margin-right: 5%;
+      width: 207px;
+      margin-right: 30px;
       height: 58px;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -613,9 +704,14 @@ export default {
       color: #333333;
     }
     .picture {
-      width: 30%;
+      width: 109px;
       height: 81px;
-      background: pink;
+      border-radius: 3px;
+      overflow: hidden;
+      .van-image {
+        width: 109px;
+        height: 81px;
+      }
     }
   }
   .opreate {
@@ -637,101 +733,4 @@ export default {
     }
   }
 }
-.more-popup {
-  padding: 0 22px;
-  width: 300px;
-  background: #ffffff;
-  border-radius: 5px;
-  > div {
-    display: flex;
-    padding: 24px 0;
-    border-bottom: 1px solid #f0f0f0;
-  }
-  .img-wrap {
-    margin-right: 8px;
-    width: 15px;
-    img {
-      width: 100%;
-    }
-  }
-  .text {
-    font-size: 15px;
-    font-family: PingFang SC Medium, PingFang SC Medium-Medium;
-    font-weight: 500;
-    text-align: left;
-    color: #333333;
-    line-height: 1;
-    letter-spacing: -1px;
-  }
-  .row-2 {
-    .text {
-      span {
-        display: block;
-        &:last-child {
-          margin-top: 10px;
-          color: #999999;
-        }
-      }
-    }
-  }
-}
-.modal-complaint {
-  width: 320px;
-  border-radius: 5px;
-  padding: 17px;
-  .title {
-    font-size: 16px;
-    font-family: PingFang SC Medium, PingFang SC Medium-Medium;
-    font-weight: bold;
-    color: #333333;
-    line-height: 24px;
-    letter-spacing: 0px;
-    text-align: center;
-  }
-  .center {
-    margin-top: 14px;
-    .text {
-      margin-bottom: 12px;
-      font-size: 15px;
-      font-family: PingFang SC Medium, PingFang SC Medium-Medium;
-      font-weight: 500;
-      text-align: justifyLeft;
-      color: #333333;
-      span {
-        color: #f99307;
-      }
-    }
-  }
-}
-.modal-support {
-  padding: 36px 0;
-  width: 250px;
-  border-radius: 5px;
-  text-align: center;
-  .name {
-    font-size: 15px;
-    font-family: PingFang SC Bold, PingFang SC Bold-Bold;
-    font-weight: 700;
-    color: #333333;
-  }
-  .text {
-    margin-top: 13px;
-    font-size: 13px;
-    font-family: PingFang SC Medium, PingFang SC Medium-Medium;
-    font-weight: 500;
-    color: #333333;
-    span {
-      color: #f7962a;
-    }
-  }
-  img {
-    margin-top: 23px;
-    width: 92px;
-    height: 41px;
-  }
-  button {
-    margin-top: 22px;
-  }
-}
 </style>
- 

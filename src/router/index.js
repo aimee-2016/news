@@ -163,7 +163,7 @@ const routes = [
   },
   {
     path: '/articlecommentdetails',
-    name: '/articlecommentdetails',
+    name: 'articlecommentdetails',
     component: () => import('../views/ArticleCommentDetails.vue'),
   },
   {

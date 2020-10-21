@@ -112,7 +112,8 @@
                 </div>
               </div>
               <div class="child-item" @click="toCommentDetail(item.id)" v-if="item.commentTopDtos.length">
-                <div v-for="inner in item.commentTopDtos" :key="inner.id">{{inner.content}}</div>
+                <div v-for="inner in item.commentTopDtos" :key="inner.id"><span>{{inner.memberDto.nickName}}</span>
+                <span v-if="inner.type.name==='ReplyReply'"><i class="text">回复</i> <i class="replay">@{{inner.replyCommentMemberDto.nickName}}</i></span>：{{inner.content}}</div>
               </div>
             </div>
           </div>
@@ -772,6 +773,17 @@ export default {
       background: #F8f8f8;
       font-size: 14px;
       line-height: 1.5;
+      >div {
+        i {
+          font-style: normal;
+        }
+        .text {
+          color: #999999;
+        }
+        .replay {
+          color: #4273AD;
+        }
+      }
     }
   }
 }
