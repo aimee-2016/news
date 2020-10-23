@@ -63,6 +63,7 @@ export default {
         // let domObj = this.$refs['uploadAvatar']
         // console.log(domObj)
         // domObj.chooseFile()
+        this.$router.push('/releasevideo/')
       }
     },
     selectType(){

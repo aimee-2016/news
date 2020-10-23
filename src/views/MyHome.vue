@@ -329,7 +329,7 @@ export default {
             EQ_type: this.type,
             page: this.page,
             size: this.size,
-            sort: 'whetherTop',
+            sort: 'whetherTop,desc',
           })
           .then((response) => {
             resolve(response);

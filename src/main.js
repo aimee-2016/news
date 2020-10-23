@@ -8,6 +8,9 @@ import './assets/js/rem.js'
 import './assets/css/index.scss'
 import axios from '@/libs/axios.js'
 import selfHeader from '@/components/header'
+// 15002304121 123456
+// http://47.56.186.16:8090/
+// https://www.c-cnews.com/api/front/articles/findArticlesByColumnId.json
 Vue.component('selfHeader',selfHeader);
 import noContent from "@/components/nocontent";
 Vue.component('noContent',noContent);

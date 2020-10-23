@@ -291,7 +291,6 @@ const router = new VueRouter({
 })
 
 const LOGIN_PAGE_NAME = 'login'
-// 15002304121 123456
 // 一、不需要登陆，就可以进入的页面
 
 // 二、不需要token就可以调用的接口
