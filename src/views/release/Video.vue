@@ -12,99 +12,81 @@
         label=""
         type="textarea"
         maxlength="30"
-        placeholder="请输入你想爆料的标题（5-30个字）必填"
+        placeholder="标题"
       />
-      <van-field
-        v-model="content"
-        rows="2"
-        autosize
-        label=""
-        type="textarea"
-        maxlength="300"
-        placeholder="添加描述和配图（必填）"
-        @input="count"
-      />
-      <van-uploader
-        :max-size="500 * 1024"
-        v-model="fileList"
-        multiple
-        @oversize="onOversize"
-        :after-read="afterRead"
-      >
-        <img
-          class="img1"
-          src="../../assets/img/home/icon-upload@2x.png"
-          alt=""
-        />
-      </van-uploader>
-      <div class="count">
-        <span>{{ num }}</span
-        >/300
+      <div class="text-wrap">
+        <div class="wrap van-hairline--bottom">
+          <van-field
+            v-model="content"
+            rows="2"
+            autosize
+            label=""
+            type="textarea"
+            maxlength="300"
+            placeholder="说点什么~"
+            :border="false"
+            @input="count"
+          />
+          <van-uploader
+            v-model="fileList"
+            multiple
+            :after-read="afterRead"
+            :capture="capture1"
+            accept="video/*"
+          >
+            <img
+              class="img1"
+              src="../../assets/img/home/icon-upload@2x.png"
+              alt=""
+            />
+          </van-uploader>
+
+          <!-- <div class="img-wrap">
+            <label for="image_uploads">换封面</label>
+            <input
+              type="file"
+              id="image_uploads"
+              name="image_uploads"
+              accept=".jpg, .jpeg, .png"
+              multiple
+            />
+          </div> -->
+        </div>
       </div>
     </div>
-    <div class="interval-bar"></div>
+    <van-cell
+      title="选择视频类型"
+      is-link
+      @click="toFiled('ApplyVideoLabel')"
+    />
+    <input type="file" accept="video/*" capture="camcorder" />
+    <input type="file" accept="audio/*" capture="microphone" />
+    <input type="file" accept="image/*" capture="camera" />
     <div class="bottom">
-      <van-field
-        v-model="contacts"
-        label="联系人"
-        required
-        placeholder="必填"
-        size="large"
-      />
-      <van-field
-        v-model="contactInformation"
-        label="联系方式 "
-        required
-        placeholder="必填"
-        size="large"
-      />
-      <van-field
-        v-model="email"
-        label="邮箱 "
-        placeholder="选填"
-        size="large"
-      />
-      <dl class="explain">
-        <dt>爆料说明：</dt>
-        <dd>
-          1、反对任何形式曝光他人个人隐私的行为，如有需要，请务必在个人信息部分打上马赛克。
-        </dd>
-        <dd>
-          2、请勿在本版块重复发帖、发布广告内容、违规内容等，违者一律删帖，严重者封号处理。
-        </dd>
-        <dd>3、爆料请陈述事情的来龙去脉及提供相关爆料证据；</dd>
-        <dd>
-          4、发帖人在本版块相关的所有行为（包括但不限于访问浏览、利用、转载、宣传介绍）时，不得利用本版块以任何方式直接或者间接的从事违反中国法律、国际公约以及社会公德的行为，且访问者应当恪守下述承诺：
-          传输和利用信息符合中国法律、国际公约的规定、符合公序良俗；不将本版块以及与之相关的网络服务用作非法用途以及非正当用途；不干扰和扰乱本版块以及与之相关的网络服务；遵守与本版块以及与之相关的网络服务的协议、规定、程序和惯例等
-        </dd>
-        <dd>5、每名爆料者都能都在爆料被采用后，得到200积分的奖励。</dd>
-      </dl>
+      <van-button color="#DAB728">发布</van-button>
     </div>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
-import {  Icon,Field,Uploader } from "vant";
+import { Icon, Field, Uploader, Button, Cell } from "vant";
 export default {
   data() {
     return {
-    message: '',
-    num: 0,
-    fileList: [],
-    title: '',
-    content: '',
-    imagePaths: [],
-    contacts: '',
-    contactInformation: '',
-    email: '',
-    }
+      message: "",
+      num: 0,
+      fileList: [],
+      title: "",
+      content: "",
+      imagePaths: [],
+      contacts: "",
+      contactInformation: "",
+      email: "",
+      capture1: "camcorder",
+    };
   },
-  created() {
-
-  },
-  mounted() {
-
-  },
+  created() {},
+  mounted() {},
   methods: {
     afterRead(file) {
       let formdata = new FormData();
@@ -113,74 +95,77 @@ export default {
       this.$ajax
         .post("api/obs/upload.json", formdata)
         .then((res) => {
-            this.imagePaths.push(res.data.viewUrl)
+          this.imagePaths.push(res.data.viewUrl);
+          this.$toast(this.imagePaths);
         })
-        .catch(error=> {
-          this.$toast(error)
+        .catch((error) => {
+          this.$toast(error);
         });
     },
     onOversize(file) {
-      this.$toast('文件大小不能超过 500kb');
+      this.$toast("文件大小不能超过 500kb");
+    },
+    toFiled(name) {
+      this.$router.push({ path: "/createfiled/", query: { type: name } });
     },
     count(val) {
-      this.num = val.length
+      this.num = val.length;
     },
     selectType(val) {
-      console.log(val)
+      console.log(val);
     },
     submit() {
-      if(!(this.title.length>4&&this.title.length<31)) {
-        this.$toast('爆料的标题请输入5-30个字）')
-        return false
+      if (!(this.title.length > 4 && this.title.length < 31)) {
+        this.$toast("爆料的标题请输入5-30个字）");
+        return false;
       }
-      if(!this.content.length) {
-        this.$toast('请输入描述')
-        return false
+      if (!this.content.length) {
+        this.$toast("请输入描述");
+        return false;
       }
-      if(!this.contacts.length) {
-        this.$toast('请输入联系人')
-        return false
+      if (!this.contacts.length) {
+        this.$toast("请输入联系人");
+        return false;
       }
-      if(!this.contactInformation.length) {
-        this.$toast('请输入联系人方式')
-        return false
+      if (!this.contactInformation.length) {
+        this.$toast("请输入联系人方式");
+        return false;
       }
       this.$ajax
         .post("api/front/articles/release.json", {
           title: this.title,
           content: this.content,
-          type: 'BrokeTheNews',
+          type: "BrokeTheNews",
           imagePaths: this.imagePaths,
           contacts: this.contacts,
           contactInformation: this.contactInformation,
           email: this.email,
-          })
-        .then(() => {
-          this.$toast('提交成功')
-          this.$router.push('/myexplosive/')
         })
-        .catch((error)=> {
-          this.$toast(error)
+        .then(() => {
+          this.$toast("提交成功");
+          this.$router.push("/myexplosive/");
+        })
+        .catch((error) => {
+          this.$toast(error);
         });
     },
   },
-  computed: {
-
-  },
-  watch: {
-
-  },
+  computed: {},
+  watch: {},
   components: {
     "van-icon": Icon,
     "van-uploader": Uploader,
-    "van-field": Field
-  }
-}
+    "van-field": Field,
+    "van-button": Button,
+    "van-cell": Cell,
+  },
+};
 </script>
 
 <style lang="scss" scoped>
 #container {
   padding-top: 58px;
+  height: 100%;
   background: #1b1d29;
   color: #fff;
 }
@@ -210,8 +195,17 @@ export default {
     font-size: 17px;
   }
 }
+.van-cell {
+  background-color: #1b1d29;
+  color: #fff;
+}
 .top {
-  padding: 0 15px 24px;
+  padding: 0 15px 0;
+  .wrap {
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 22px;
+  }
   .img1 {
     width: 74px;
   }
@@ -225,26 +219,64 @@ export default {
       color: #f99307;
     }
   }
+
+  .text-wrap {
+    margin-top: 20px;
+    display: flex;
+    .van-field {
+      width: 250px;
+    }
+    .img-wrap {
+      position: relative;
+      width: 80px;
+      height: 107px;
+      background: #ffffff;
+      border-radius: 1px;
+      label {
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        z-index: 2;
+        display: inline-block;
+        width: 100%;
+        height: 21px;
+        line-height: 21px;
+        opacity: 0.3;
+        background: #1b1d2a;
+        border-radius: 1px;
+        font-size: 11px;
+        font-family: PingFang SC Medium, PingFang SC Medium-Medium;
+        font-weight: 500;
+        text-align: left;
+        color: #ffffff;
+        text-align: center;
+      }
+      input {
+        width: 100%;
+        opacity: 0;
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        z-index: 1;
+      }
+    }
+  }
 }
 
 .bottom {
+  position: fixed;
+  bottom: 0;
   padding: 0 15px 34px;
-  .explain {
-    padding: 0 5px;
-    dt {
-      margin-top: 24px;
-      margin-bottom: 16px;
-      font-size: 16px;
-      font-family: PingFang SC Medium, PingFang SC Medium-Medium;
-      font-weight: 500;
-      color: #f18139;
-    }
-    dd {
-      font-size: 14px;
-      font-family: PingFang SC Medium, PingFang SC Medium-Medium;
-      color: #666666;
-      line-height: 2;
-    }
+  width: 100%;
+  text-align: center;
+  .van-button {
+    width: 250px;
+    height: 40px;
+    border-radius: 5px;
+    font-size: 16px;
+    font-family: PingFang SC Medium, PingFang SC Medium-Medium;
+    font-weight: 500;
+    color: #ffffff;
   }
 }
 </style>

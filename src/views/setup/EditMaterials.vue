@@ -206,7 +206,7 @@ import {
 export default {
   data() {
     return {
-      actions: [{ name: "从相册上传" }],
+      actions: [{name: '拍照'},{name: "从相册上传" }],  
       modal: {
         introduce: false,
         sex: false,

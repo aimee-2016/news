@@ -4,7 +4,7 @@
       title="手机号"
       :value="userInfo.whetherBindPhone?'更改手机号':'去绑定手机号'"
       is-link
-      url="/bindphone/"
+      to="/bindphone/"
       class="modify-tel"
     />
     <van-cell title="修改密码" is-link @click="onSelect" />

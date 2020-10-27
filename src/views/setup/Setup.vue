@@ -1,8 +1,8 @@
 <template>
   <div>
-    <van-cell title="编辑资料" is-link url="/editmaterials/" />
-    <van-cell title="账号和隐私设置" is-link url="/accountprivacy/" />
-    <van-cell title="黑名单" is-link url="/blacklist/" />
+    <van-cell title="编辑资料" is-link to="/editmaterials/" />
+    <van-cell title="账号和隐私设置" is-link to="/accountprivacy/" />
+    <van-cell title="黑名单" is-link to="/blacklist/" />
     <!-- <van-cell title="清理缓存" value="200MB" @click="show = true" /> -->
     <div @click="loginout" class="login-out">退出登录</div>
     <!-- <van-action-sheet

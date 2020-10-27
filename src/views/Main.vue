@@ -49,7 +49,7 @@ export default {
         add: false,
         avatar: false
       },
-      actions: [{ name: "从相册上传" }],
+      actions: [{ name: "相册" },{name: "录视频"}],
     };
   },
   created() {},
@@ -59,7 +59,7 @@ export default {
     },
     onSelect(item) {
       console.log(item)
-      if(item.name==='从相册上传') {
+      if(item.name==='相册') {
         // let domObj = this.$refs['uploadAvatar']
         // console.log(domObj)
         // domObj.chooseFile()

@@ -10,7 +10,7 @@
         <van-icon name="arrow" />
       </div>
       <div class="top">
-        <div class="avatar">
+        <div class="avatar" @click="$router.push('/editmaterials/')">
           <img :src="userInfo.headImgPath" alt />
           <i class="auth" v-if="userInfo.memberStatus.name==='CertifyAdopt'"></i>
         </div>

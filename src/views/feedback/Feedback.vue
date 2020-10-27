@@ -14,6 +14,7 @@
         />
         <van-uploader
           :max-size="500 * 1024"
+          v-model="fileList"
           multiple
           @oversize="onOversize"
           :after-read="afterRead"
@@ -59,12 +60,13 @@
     </div>
   </div>
 </template>
-b
 <script type="text/ecmascript-6">
 import { Field, RadioGroup, Radio, Button,Uploader} from "vant";
 export default {
   data() {
     return {
+      fileList: [],
+      imagePaths: [],
       message: '',
       radioList: [
         {name:'程序bug',val:'Bug'},
@@ -88,8 +90,17 @@ export default {
   },
   methods: {
     afterRead(file) {
-      // 此时可以自行将文件上传至服务器
-      console.log(file);
+      let formdata = new FormData();
+      formdata.append("filename", file.file.name);
+      formdata.append("file", file.file);
+      this.$ajax
+        .post("api/obs/upload.json", formdata)
+        .then((res) => {
+            this.imagePaths.push(res.data.viewUrl)
+        })
+        .catch(error=> {
+          this.$toast(error)
+        });
     },
     onOversize(file) {
       console.log(file);
@@ -112,12 +123,13 @@ export default {
         .post("api/front/help/feedback.json", {
           feedBackType: this.radio,
           suggestions: this.message,
-          imageList: this.file,
+          imageList: this.imagePaths,
           contactInformation: this.value
           })
         .then(() => {
           // this.list = res.data.content;
           this.$toast('提交成功')
+          this.$router.push('/feedbackhelp/')
         })
         .catch((error)=> {
           this.$toast(error)
