@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>菜鸟教程(runoob.com)</title>
+</head>
+<body>
+
+<p>要使用的图片:</p>
+<img id="scream" src="../../assets/img/auth/icon1.png">
+<video id="video" ref="video" controls="controls" width="300" height="200">
+<source src="https://jznews.oss-cn-hongkong.aliyuncs.com/video/9f410bb1-c2f7-46be-afc6-b4c23874d657.mp4" />
+</video>
+<p>画布:</p>
+<canvas id="myCanvas" width="250" height="300" style="border:1px solid #d3d3d3;">
+您的浏览器不支持 HTML5 canvas 标签。
+</canvas>
+<div id="output"></div>
+<script>
+var c=document.getElementById("myCanvas");
+var ctx=c.getContext("2d");
+var img=document.getElementById("scream");
+// img.onload = function()
+// {
+//     ctx.drawImage(img,10,10);
+// }
+var video1=document.getElementById("video");
+video1.onloadeddata = function()
+{
+    console.log(12121)
+    ctx.drawImage(video1,10,10);
+    var output = document.getElementById("output");
+    var img = document.createElement("img");
+            img.src = c.toDataURL("image/png");
+            output.appendChild(img);
+}
+</script>
+
+</body>
+</html>
