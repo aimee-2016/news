@@ -5,7 +5,7 @@ import store from '@/store';
 // 创建axios实例
 const httpService = axios.create({
     // url前缀-'https://some-domain.com/api/'
-    baseURL: 'https://www.c-cnews.com/', // 需自定义
+    baseURL: 'http://www.c-cnews.com/', // 需自定义
     // 请求超时时间
     timeout: 3000 // 需自定义
 });
