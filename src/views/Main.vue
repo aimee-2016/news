@@ -38,10 +38,11 @@
       close-on-click-action
       @select="onSelect"
     />
+    <van-uploader ref="uploadAvatar" :capture="capture1" accept="video/*" :after-read="afterRead" style="position:absolute;z-index:-100" />
   </div>
 </template>
 <script>
-import { Popup,ActionSheet, } from "vant";
+import { Popup,ActionSheet,Uploader } from "vant";
 export default {
   data() {
     return {
@@ -49,6 +50,7 @@ export default {
         add: false,
         avatar: false
       },
+      capture1: "camcorder",
       actions: [{ name: "相册" },{name: "录视频"}],
     };
   },
@@ -58,13 +60,28 @@ export default {
       this.modal.add = true;
     },
     onSelect(item) {
-      console.log(item)
-      if(item.name==='相册') {
-        // let domObj = this.$refs['uploadAvatar']
-        // console.log(domObj)
-        // domObj.chooseFile()
-        this.$router.push('/releasevideo/')
-      }
+      let domObj = this.$refs['uploadAvatar']
+      console.log(domObj)
+      domObj.chooseFile()
+      // if(item.name==='相册') {
+      // } else {
+
+      // }
+    },
+    afterRead(file) {
+      let formdata = new FormData();
+      formdata.append("filename", file.file.name);
+      formdata.append("file", file.file);
+      this.$ajax
+        .post("api/obs/upload.json", formdata)
+        .then((res) => {
+          // console.log(232424)
+          // console.log(res.data.viewUrl)
+          this.$router.push({path: '/releasevideo/', query: {videoPath:res.data.viewUrl}})
+        })
+        .catch(error=> {
+          this.$toast(error)
+        });
     },
     selectType(){
       this.modal.add = false
@@ -75,6 +92,7 @@ export default {
   components: {
     "van-popup": Popup,
     "van-action-sheet": ActionSheet,
+    "van-uploader": Uploader
   },
 };
 </script>

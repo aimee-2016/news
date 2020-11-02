@@ -260,12 +260,16 @@ export default {
         });
     },
     onSelect(item) {
-      console.log(item)
-      if(item.name==='从相册上传') {
-        let domObj = this.$refs['uploadAvatar']
+      let domObj = this.$refs['uploadAvatar']
         console.log(domObj)
         domObj.chooseFile()
-      }
+      // if(item.name==='从相册上传') {
+      //   let domObj = this.$refs['uploadAvatar']
+      //   console.log(domObj)
+      //   domObj.chooseFile()
+      // } else if(item.name==='拍照'){
+
+      // }
     },
     formatter(type, val) {
       if (type === 'year') {

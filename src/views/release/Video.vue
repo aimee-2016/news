@@ -1,7 +1,7 @@
 <template>
   <div id="container">
     <div id="head">
-      <van-icon name="arrow-left" @click="$router.go(-1)" />
+      <van-icon name="arrow-left" @click="back()" />
       <span>发布</span>
     </div>
     <div class="top">
@@ -32,16 +32,18 @@
               width="100%"
               height="100%"
               lazy-load
-              fit='cover'
+              fit="cover"
               :src="imgUrl"
             />
-            <label for="image_uploads">{{imgUrl?'换封面':'上传封面'}}</label>
+            <label for="image_uploads">{{
+              imgUrl ? "换封面" : "上传封面"
+            }}</label>
             <input
               type="file"
               id="image_uploads"
               name="image_uploads"
               accept=".jpg, .jpeg, .png"
-              class="upload" 
+              class="upload"
               @change="tirggerFile"
             />
           </div>
@@ -51,19 +53,26 @@
     <div class="type">
       <div class="wrap">
         <span class="title">选择视频类型</span>
-        <van-icon name="arrow" v-if="!endZoneName" @click="columnShow=true"/>
-        <span class="text" v-else>{{endZoneName}}</span>
+        <van-icon name="arrow" v-if="!endZoneName" @click="columnShow = true" />
+        <span class="text" v-else>{{ endZoneName }}</span>
       </div>
     </div>
     <div class="bottom">
-      <van-button color="#DAB728">发布</van-button>
+      <van-button color="#DAB728" @click="submit()">发布</van-button>
     </div>
     <div class="overlay" v-if="columnShow">
       <div class="column">
         <div class="head">
-          <van-icon name="arrow-left" @click="endZoneId = '';endZoneName = '';columnShow=false" />
+          <van-icon
+            name="arrow-left"
+            @click="
+              endZoneId = '';
+              endZoneName = '';
+              columnShow = false;
+            "
+          />
           <span> 选择创作领域</span>
-          <i class="right-text" @click="columnShow=false"> 确定</i>
+          <i class="right-text" @click="columnShow = false"> 确定</i>
         </div>
         <div class="main">
           <ul>
@@ -83,7 +92,7 @@
 </template>
 
 <script type="text/ecmascript-6">
-import { Icon, Field, Uploader, Button, Cell,Image } from "vant";
+import { Icon, Field, Uploader, Button, Cell, Image, Dialog } from "vant";
 export default {
   data() {
     return {
@@ -92,20 +101,20 @@ export default {
       fileList: [],
       title: "",
       content: "",
-      imagePath: '',
+      imagePath: "",
       contacts: "",
       contactInformation: "",
       email: "",
       capture1: "camcorder",
-      result: '',
-      imgUrl: '',
+      result: "",
+      imgUrl: "",
       columnShow: false,
-      endZoneId: '',
-      endZoneName: ''
+      endZoneId: "",
+      endZoneName: "",
     };
   },
   created() {
-    this.getLabelList()
+    this.getLabelList();
   },
   mounted() {},
   methods: {
@@ -115,11 +124,11 @@ export default {
       var reader = new FileReader();
       reader.readAsDataURL(file);
       let that = this;
-      reader.onload = function(e) {
+      reader.onload = function (e) {
         url = this.result.substring(this.result.indexOf(",") + 1);
         that.imgUrl = "data:image/png;base64," + url;
       };
-      this.afterRead(file)
+      this.afterRead(file);
     },
     afterRead(file) {
       let formdata = new FormData();
@@ -128,7 +137,7 @@ export default {
       this.$ajax
         .post("api/obs/upload.json", formdata)
         .then((res) => {
-          this.imagePath=res.data.viewUrl;
+          this.imagePath = res.data.viewUrl;
         })
         .catch((error) => {
           this.$toast(error);
@@ -152,22 +161,23 @@ export default {
         this.$toast("请输入内容");
         return false;
       }
-      if (!this.content.length) {
+      if (!this.endZoneName) {
         this.$toast("请选择类型");
         return false;
       }
-     
+
       this.$ajax
         .post("api/front/articles/release.json", {
           title: this.title,
           content: this.content,
+          videoPath: this.$route.query.videoPath,
           type: "PublishVideo",
           videoImagePath: this.imagePath,
-          columnId: this.contacts
+          columnId: this.endZoneId,
         })
         .then(() => {
           this.$toast("提交成功");
-          this.$router.push("/myexplosive/");
+          this.$router.push("/video/");
         })
         .catch((error) => {
           this.$toast(error);
@@ -176,32 +186,24 @@ export default {
     getLabelList() {
       this.$ajax
         .post("api/front/articles/findArticlesColumnListByCondition.json")
-        .then(res => {
-          this.lableList = res.data
+        .then((res) => {
+          this.lableList = res.data;
         });
     },
-    selectZone(item){
-      this.endZoneId = item.id
-      this.endZoneName = item.name
+    selectZone(item) {
+      this.endZoneId = item.id;
+      this.endZoneName = item.name;
     },
-    zoneSubmit() {
-      // Dialog.confirm({
-      //     title: `确定要申请${this.endZoneName}领域的标签认证吗？`,
-      //     confirmButtonColor: "rgb(255, 203, 0)",
-      //   })
-      //     .then(() => {
-      //       this.$ajax
-      //       .post("api/front/member/applyLabel.json",{
-      //         applyLabelType: this.$route.query.type,
-      //         columnId: this.endZoneId
-      //       })
-      //       .then(res => {
-      //         this.$router.push('/applystatus/')
-      //       }).catch(error=> {
-      //         this.$toast(error)
-      //       });
-      //     })
-    }
+    back() {
+      Dialog.confirm({
+        title: `确定放弃编辑这段视频?`,
+        confirmButtonColor: "rgb(255, 203, 0)",
+      })
+        .then(() => {
+          this.$router.go(-1);
+        })
+        .catch(() => {});
+    },
   },
   computed: {},
   watch: {},
@@ -211,7 +213,7 @@ export default {
     "van-field": Field,
     "van-button": Button,
     "van-cell": Cell,
-    "van-image": Image
+    "van-image": Image,
   },
 };
 </script>
@@ -255,6 +257,9 @@ export default {
   &::after {
     border-color: #282a37;
   }
+}
+.van-field__control {
+  color: #fff;
 }
 .top {
   .wrap {
@@ -362,63 +367,63 @@ export default {
   text-align: left;
   padding-top: 58px;
   .head {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 10;
-  width: 100%;
-  padding: 14px 15px;
-  font-size: 17px;
-  font-family: PingFang SC Medium, PingFang SC Medium-Medium;
-  font-weight: 500;
-  text-align: center;
-  color: #333334;
-  line-height: 24px;
-  background: #fff;
-  box-shadow: 0px 1px 7px 0px rgba(0, 0, 0, 0.08);
-  .van-icon-arrow-left {
-    position: absolute;
-    left: 15px;
-    top: 18px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 10;
+    width: 100%;
+    padding: 14px 15px;
     font-size: 17px;
-  }
-  .right-text {
-    font-style: normal;
-    position: absolute;
-    right: 15px;
-    top: 15px;
-    font-size: 15px;
-  }
-}
-.main {
-  padding: 15px 15px 0;
-  ul {
-    display: flex;
-    flex-wrap: wrap;
-    li {
-      margin-bottom: 15px;
-      margin-right: 10px;
-      width: 77px;
-      height: 31px;
-      background: #f5f5f5;
-      border-radius: 3px;
+    font-family: PingFang SC Medium, PingFang SC Medium-Medium;
+    font-weight: 500;
+    text-align: center;
+    color: #333334;
+    line-height: 24px;
+    background: #fff;
+    box-shadow: 0px 1px 7px 0px rgba(0, 0, 0, 0.08);
+    .van-icon-arrow-left {
+      position: absolute;
+      left: 15px;
+      top: 18px;
+      font-size: 17px;
+    }
+    .right-text {
+      font-style: normal;
+      position: absolute;
+      right: 15px;
+      top: 15px;
       font-size: 15px;
-      font-family: PingFang SC Medium, PingFang SC Medium-Medium;
-      font-weight: 500;
-      color: #333333;
-      text-align: center;
-      line-height: 31px;
-      &:nth-of-type(4n + 4) {
-        margin-right: 0;
-      }
-      &:hover {
-        background: #fdd004;
-      }
-      &.selected {
-        background: #fdd004;
+    }
+  }
+  .main {
+    padding: 15px 15px 0;
+    ul {
+      display: flex;
+      flex-wrap: wrap;
+      li {
+        margin-bottom: 15px;
+        margin-right: 10px;
+        width: 77px;
+        height: 31px;
+        background: #f5f5f5;
+        border-radius: 3px;
+        font-size: 15px;
+        font-family: PingFang SC Medium, PingFang SC Medium-Medium;
+        font-weight: 500;
+        color: #333333;
+        text-align: center;
+        line-height: 31px;
+        &:nth-of-type(4n + 4) {
+          margin-right: 0;
+        }
+        &:hover {
+          background: #fdd004;
+        }
+        &.selected {
+          background: #fdd004;
+        }
       }
     }
   }
-}
 }
 </style>
