@@ -4,7 +4,7 @@
       title="手机号"
       :value="userInfo.whetherBindPhone?'更改手机号':'去绑定手机号'"
       is-link
-      to="/bindphone/"
+      @click="toPage()"
       class="modify-tel"
     />
     <van-cell title="修改密码" is-link @click="onSelect" />
@@ -42,10 +42,17 @@ export default {
 
   },
   methods: {
+    toPage(){
+      if(this.userInfo.whetherBindPhone) {
+        this.$router.push('/Changephone/')
+      } else {
+        this.$router.push('/bindphone/')
+      }
+    },
     onSelect(item) {
       Dialog.confirm({
           title: "修改登录密码",
-          message: "将给手机+85*****821发送验证码",
+          message: `将给手机+${this.userInfo.memberPhone}发送验证码`,
           confirmButtonColor: "rgb(255, 203, 0)"
         })
           .then(() => {

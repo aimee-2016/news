@@ -62,7 +62,7 @@
             >
           </div>
         </van-form>
-        <div class="tips">已向手机+85*****821发送验证码</div>
+        <div class="tips">已向手机+{{this.telephoneF}}发送验证码</div>
       </div>
       <van-popup v-model="showPicker" position="bottom">
         <van-picker
@@ -87,6 +87,7 @@ export default {
       code: "",
       showPicker: false,
       telephone: "",
+      telephoneF: "",
       countryList: [],
       countryIndex: 0,
       cnName: "中国",
@@ -130,7 +131,8 @@ export default {
         });
     },
     onSubmit1() {
-      this.step = 2;
+      
+      this.sendCode()
     },
     onConfirm(item) {
       this.cnName = item.text;
@@ -139,15 +141,13 @@ export default {
     },
     onSubmit5() {
       this.$ajax
-        .post("api/front/member/forgetPassWord.json", {
+        .post("api/front/member/bindingPhone.json", {
           phone: this.telephone,
-          passWord: this.password1,
           sysCode: this.code,
           codeArea: this.countryTel
         })
         .then(() => {
-          Toast('修改成功')
-          this.step = 3
+          Toast('绑定手机号成功')
         })
         .catch(function(error) {
           Toast(error.message)
@@ -172,9 +172,13 @@ export default {
           codeArea: this.countryTel
         })
         .then(() => {
-          Toast('发送成功')
+          // Toast('发送成功')
+          this.step = 2;
+          this.telephoneF = this.telephone.slice(0,3)+'*****'+this.telephone.slice(-4)
         })
-        .catch(function(error) {
+        .catch((error)=> {
+          clearInterval(this.codeInstance);
+          this.codeText = "获取验证码";
           Toast(error.message)
         });
     }

@@ -30,7 +30,7 @@
             >
           </div>
         </van-form>
-        <div class="tips">已向手机+85*****821发送验证码</div>
+        <div class="tips">已向手机+{{this.userInfo.memberPhone}}发送验证码</div>
       </div>
     </div>
   </div>
@@ -62,10 +62,9 @@ export default {
     }
   },
   created() {
-
+    this.sendCode()
   },
   mounted() {
-
   },
   methods: {
     onSubmit5() {
@@ -74,22 +73,20 @@ export default {
       if(reg.test(this.password1)) {
         console.log(1)
       } else {
-        this.$toast('密码位数错误，需要大于6位，小于20位的英文或数字')
+        this.$toast('密码位数错误，需要大于6位， 小于20位的英文或数字')
       }
-      // this.$ajax
-      //   .post("api/front/member/forgetPassWord.json", {
-      //     phone: this.telephone,
-      //     passWord: this.password1,
-      //     sysCode: this.code,
-      //     codeArea: this.countryTel
-      //   })
-      //   .then(() => {
-      //     Toast('修改成功')
-      //     this.step = 3
-      //   })
-      //   .catch(function(error) {
-      //     Toast(error.message)
-      //   });
+      this.$ajax
+        .post("api/front/member/updatePassWord.json", {
+          passWord: this.password1,
+          code: this.code,
+        })
+        .then(() => {
+          Toast('密码修改成功')
+          this.$router.push('/accountprivacy/')
+        })
+        .catch(function(error) {
+          Toast(error.message)
+        });
     },
     sendCode() {
       if(this.codeText != '获取验证码') {
@@ -105,20 +102,21 @@ export default {
         }
       }, 1000);
       this.$ajax
-        .post("api/front/member/sysCode.json", {
-          phone: this.telephone,
-          codeArea: this.countryTel
-        })
+        .post("api/front/member/passWordSendSysCode.json", {})
         .then(() => {
-          Toast('发送成功')
+          // Toast('发送成功')
         })
         .catch(function(error) {
+          clearInterval(this.codeInstance);
+          this.codeText = "获取验证码";
           Toast(error.message)
         });
     }
   },
   computed: {
-
+    userInfo() {
+      return this.$store.state.userInfo;
+    }
   },
   watch: {
 
