@@ -106,6 +106,7 @@
 
 <script type="text/ecmascript-6">
 import { Icon,Form,Field,Button,Picker,Popup,Toast,CellGroup } from "vant";
+import { mapActions } from "vuex";
 export default {
   data() {
     return {
@@ -143,6 +144,7 @@ export default {
 
   },
   methods: {
+    ...mapActions(["getUserInfo"]),
     getContryList(name) {
       this.$ajax
         .post("api/front/member/findPhoneCode.json", {})
@@ -202,7 +204,8 @@ export default {
           code: this.code,
         })
         .then(() => {
-          Toast('绑定手机号成功')
+          Toast('更改手机号成功')
+          this.getUserInfo();
           this.$router.push('/accountprivacy/')
         })
         .catch(function(error) {

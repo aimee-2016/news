@@ -314,7 +314,7 @@ const LOGIN_PAGE_NAME = 'login'
 router.beforeEach((to, from, next) => {
   const token = getToken()
   // next()
-  if (to.name == 'home' || to.name == 'articledetails' || to.name == 'articlecommentdetails' || to.name == 'video' || to.name == 'videodetails' || to.name == 'my' || to.name == 'topic' || to.name == 'topicdetails' || to.name == 'myhome' || to.name == 'search' || to.name == 'test') {
+  if (to.name == 'home' || to.name == 'articledetails' || to.name == 'articlecommentdetails' || to.name == 'video' || to.name == 'videodetails' || to.name == 'my' || to.name == 'topic' || to.name == 'topicdetails' || to.name == 'myhome' || to.name == 'search' || to.name == 'aboutus' || to.name == 'useragreement') {
     next()
   } else if (!token && to.name !== LOGIN_PAGE_NAME) {
     // 未登录且要跳转的页面不是登录页
