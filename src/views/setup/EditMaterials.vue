@@ -35,7 +35,7 @@
         title="地区"
         is-link
         :value="userInfo.address || '待完善'"
-        @click="modal.zone = true"
+        @click="showDialog"
       />
     </div>
     <van-uploader ref="uploadAvatar" :after-read="afterRead" style="position:absolute;z-index:-100" />
@@ -105,92 +105,11 @@
         @cancel="modal.birthday = false"
       />
     </van-action-sheet>
-    <van-action-sheet v-model="modal.zone">
-      <van-area
-        confirm-button-text="完成"
-        :area-list="areaList"
-        value="110101"
-        @confirm="modifyArea"
-        @cancel="modal.zone = false"
-      />
-      <!-- <div  class="van-picker van-area">
-        <div class="van-picker__toolbar"><button type="button" class="van-picker__cancel">取消</button><button type="button" class="van-picker__confirm">完成</button></div>
-        <div class="van-picker__columns" style="height: 220px;">
-          <div class="van-picker-column">
-           <ul class="van-picker-column__wrapper" style="transform: translate3d(0px, 44px, 0px); transition-duration: 0ms; transition-property: none;">
-             <li role="button" tabindex="0" class="van-picker-column__item"><div class="van-ellipsis">北京市</div></li>
-             <li role="button" tabindex="0" class="van-picker-column__item van-picker-column__item--selected"><div class="van-ellipsis">天津市</div></li>
-             <li role="button" tabindex="0" class="van-picker-column__item"><div class="van-ellipsis">河北省</div></li>
-             <li role="button" tabindex="0" class="van-picker-column__item"><div class="van-ellipsis">山西省</div></li>
-             <li role="button" tabindex="0" class="van-picker-column__item"><div class="van-ellipsis">内蒙古自治区</div></li>
-             <li role="button" tabindex="0" class="van-picker-column__item"><div class="van-ellipsis">辽宁省</div></li>
-             <li role="button" tabindex="0" class="van-picker-column__item"><div class="van-ellipsis">吉林省</div></li>
-             <li role="button" tabindex="0" class="van-picker-column__item"><div class="van-ellipsis">黑龙江省</div></li>
-             <li role="button" tabindex="0" class="van-picker-column__item"><div class="van-ellipsis">上海市</div></li>
-             <li role="button" tabindex="0" class="van-picker-column__item"><div class="van-ellipsis">江苏省</div></li>
-             <li role="button" tabindex="0" class="van-picker-column__item"><div class="van-ellipsis">浙江省</div></li>
-             <li role="button" tabindex="0" class="van-picker-column__item"><div class="van-ellipsis">安徽省</div></li>
-             <li role="button" tabindex="0" class="van-picker-column__item"><div class="van-ellipsis">福建省</div></li>
-             <li role="button" tabindex="0" class="van-picker-column__item"><div class="van-ellipsis">江西省</div></li>
-             <li role="button" tabindex="0" class="van-picker-column__item"><div class="van-ellipsis">山东省</div></li>
-             <li role="button" tabindex="0" class="van-picker-column__item"><div class="van-ellipsis">河南省</div></li>
-             <li role="button" tabindex="0" class="van-picker-column__item"><div class="van-ellipsis">湖北省</div></li>
-             <li role="button" tabindex="0" class="van-picker-column__item"><div class="van-ellipsis">湖南省</div></li>
-             <li role="button" tabindex="0" class="van-picker-column__item"><div class="van-ellipsis">广东省</div></li>
-             <li role="button" tabindex="0" class="van-picker-column__item"><div class="van-ellipsis">广西壮族自治区</div></li>
-             <li role="button" tabindex="0" class="van-picker-column__item"><div class="van-ellipsis">海南省</div></li>
-             <li role="button" tabindex="0" class="van-picker-column__item"><div class="van-ellipsis">重庆市</div></li>
-             <li role="button" tabindex="0" class="van-picker-column__item"><div class="van-ellipsis">四川省</div></li>
-             <li role="button" tabindex="0" class="van-picker-column__item"><div class="van-ellipsis">贵州省</div></li>
-             <li role="button" tabindex="0" class="van-picker-column__item"><div class="van-ellipsis">云南省</div></li>
-             <li role="button" tabindex="0" class="van-picker-column__item"><div class="van-ellipsis">西藏自治区</div></li>
-             <li role="button" tabindex="0" class="van-picker-column__item"><div class="van-ellipsis">陕西省</div></li>
-             <li role="button" tabindex="0" class="van-picker-column__item"><div class="van-ellipsis">甘肃省</div></li>
-             <li role="button" tabindex="0" class="van-picker-column__item"><div class="van-ellipsis">青海省</div></li>
-             <li role="button" tabindex="0" class="van-picker-column__item"><div class="van-ellipsis">宁夏回族自治区</div></li>
-             <li role="button" tabindex="0" class="van-picker-column__item"><div class="van-ellipsis">新疆维吾尔自治区</div></li>
-             <li role="button" tabindex="0" class="van-picker-column__item"><div class="van-ellipsis">台湾省</div></li>
-             <li role="button" tabindex="0" class="van-picker-column__item"><div class="van-ellipsis">香港特别行政区</div></li>
-             <li role="button" tabindex="0" class="van-picker-column__item"><div class="van-ellipsis">澳门特别行政区</div></li>
-             <li role="button" tabindex="0" class="van-picker-column__item"><div class="van-ellipsis">海外</div></li>
-            </ul>
-          </div>
-          <div class="van-picker-column">
-            <ul class="van-picker-column__wrapper" style="transform: translate3d(0px, 88px, 0px); transition-duration: 0ms; transition-property: none;">
-              <li role="button" tabindex="0" class="van-picker-column__item van-picker-column__item--selected"><div class="van-ellipsis">天津市</div></li>
-            </ul>
-          </div>
-          <div class="van-picker-column">
-            <ul class="van-picker-column__wrapper" style="transform: translate3d(0px, 88px, 0px); transition-duration: 0ms; transition-property: none;">
-              <li role="button" tabindex="0" class="van-picker-column__item van-picker-column__item--selected"><div class="van-ellipsis">和平区</div></li>
-              <li role="button" tabindex="0" class="van-picker-column__item"><div class="van-ellipsis">河东区</div></li>
-              <li role="button" tabindex="0" class="van-picker-column__item"><div class="van-ellipsis">河西区</div></li>
-              <li role="button" tabindex="0" class="van-picker-column__item"><div class="van-ellipsis">南开区</div></li>
-              <li role="button" tabindex="0" class="van-picker-column__item"><div class="van-ellipsis">河北区</div></li>
-              <li role="button" tabindex="0" class="van-picker-column__item"><div class="van-ellipsis">红桥区</div></li>
-              <li role="button" tabindex="0" class="van-picker-column__item"><div class="van-ellipsis">东丽区</div></li>
-              <li role="button" tabindex="0" class="van-picker-column__item"><div class="van-ellipsis">西青区</div></li>
-              <li role="button" tabindex="0" class="van-picker-column__item"><div class="van-ellipsis">津南区</div></li>
-              <li role="button" tabindex="0" class="van-picker-column__item"><div class="van-ellipsis">北辰区</div></li>
-              <li role="button" tabindex="0" class="van-picker-column__item"><div class="van-ellipsis">武清区</div></li>
-              <li role="button" tabindex="0" class="van-picker-column__item"><div class="van-ellipsis">宝坻区</div></li>
-              <li role="button" tabindex="0" class="van-picker-column__item"><div class="van-ellipsis">滨海新区</div></li>
-              <li role="button" tabindex="0" class="van-picker-column__item"><div class="van-ellipsis">宁河区</div></li>
-              <li role="button" tabindex="0" class="van-picker-column__item"><div class="van-ellipsis">静海区</div></li>
-              <li role="button" tabindex="0" class="van-picker-column__item"><div class="van-ellipsis">蓟州区</div></li>
-            </ul>
-          </div>
-          <div class="van-picker__mask" style="background-size: 100% 88px;"></div>
-          <div class="van-hairline-unset--top-bottom van-picker__frame" style="height: 44px;"></div>
-        </div>
-      </div> -->
-    </van-action-sheet>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
 import selfButton from '@/components/button'
-import areaList from '@/utils/area'
 import { mapActions } from "vuex";
 import moment from 'moment'
 import {
@@ -203,6 +122,9 @@ import {
   Icon,
   Uploader
 } from "vant";
+import {
+  Style
+} from "cube-ui";
 export default {
   data() {
     return {
@@ -218,17 +140,17 @@ export default {
       user: '',
       introduce: '',
       actionssex: [{ name: "男",val: 'Man' }, { name: "女",val: 'WoMan' }],
-      areaList,
       minDate: new Date(1920, 0, 1),
       maxDate: new Date(2020, 0, 1),
       currentDate: new Date(2019,0,1),
+      cascadeData: []
     }
   },
   created() {
     this.getZoneAll()
   },
   mounted() {
-
+    
   },
   methods: {
     ...mapActions(["getUserInfo"]),
@@ -245,8 +167,10 @@ export default {
           this.$toast(error)
         });
     },
+    showDialog() {
+       this.cascadePicker.show()
+    },
     modifyAvatar(val) {
-      this.modal.zone = false
       this.$ajax
         .post("api/front/member/update.json", {
           headImgPath: val
@@ -348,15 +272,35 @@ export default {
     getZoneAll() {
       this.$ajax
         .post("api/front/member/findRegionAll.json", {})
-        .then(() => {
-
+        .then((res) => {
+          res.data.forEach(element => {
+            element.provinceDtoList.forEach(inner=> {
+              if(!inner.cityDtoList.length) {
+                delete inner.cityDtoList
+              }
+            })
+          });
+          let stringData = JSON.stringify(res.data)
+          stringData = stringData.replace(/provinceDtoList/g, 'children')
+          stringData = stringData.replace(/cityDtoList/g, 'children')
+          this.cascadeData = JSON.parse(stringData)
+          this.cascadePicker = this.$createCascadePicker({
+            title: '',
+            data: this.cascadeData,
+            selectedIndex: [0, 1, 0],
+            onSelect: this.selectHandle,
+            confirmTxt: '完成',
+            alias: {
+                value: 'id',
+                text: 'cnName'
+              }
+          })
         })
     },
-    modifyArea(val) {
-      this.modal.zone = false
+    selectHandle(selectedVal, selectedIndex, selectedText) {
       this.$ajax
         .post("api/front/member/update.json", {
-          region: ['762853243060224','762853243355136','62853244534784']
+          region: selectedVal
         })
         .then(() => {
           this.getUserInfo()
@@ -365,7 +309,7 @@ export default {
         .catch(error=> {
           this.$toast(error)
         });
-    },
+    }
   },
   computed: {
     userInfo() {
