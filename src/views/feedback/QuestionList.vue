@@ -55,6 +55,6 @@ this.getList()
 
 <style lang="scss" scoped>
 .container{
-  padding-top: 58px ;
+  padding-top: 58px;
 }
 </style>

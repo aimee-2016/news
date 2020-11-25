@@ -92,7 +92,7 @@
       </van-tab>
       <van-tab title="私信" :badge="privateLetterCount">
         <div class="msg-container">
-          <div v-for="(item, index) in list2" :key="index" class="msg-item">
+          <div v-for="(item, index) in list2" :key="index" class="msg-item" @click="toChat(item,'2')">
             <div class="content">
               <div class="left">
                 <div class="head-img">
@@ -246,11 +246,15 @@ export default {
     },
     onLoad2() {
       this.getData2().then(res=>{
-        this.list2= res.data
+        this.list2 = res.data
       })
     },
     toDetail(item,type) {
       this.$router.push({path: '/msgdetail',query: {id:item.id,type:type,title:item.title}})
+    },
+    toChat(item) {
+      console.log(item)
+      this.$router.push({path: '/chat',query: {receiverMemberId:item.receiverMemberId,nickName:item.nickName,headImgPath:item.headImgPath,}})
     }
   },
   computed: {

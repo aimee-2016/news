@@ -285,19 +285,15 @@ export default {
         .post("api/front/member/findIndexColumnList.json", {})
         .then((res) => {
           this.navList = res.data;
-          console.log(this.navList)
           this.navId = res.data.filter(item=>item.name==='热点')[0].id
           // this.firstId = res.data.filter(item=>item.name==='热点')[0].id
           // this.getArticle();
           this.$nextTick(()=>{
             let liDoms = this.$refs['navW'].children
-            console.log(liDoms)
             let endWidth = 0
             liDoms.forEach(element => {
               endWidth += element.offsetWidth+20
-              console.log(element.offsetWidth)
             });
-            console.log(endWidth)
             this.$refs['navW'].style.width = (endWidth+30)/15+'rem'
           })
           this.onLoad();
