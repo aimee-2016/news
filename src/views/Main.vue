@@ -38,7 +38,7 @@
       close-on-click-action
       @select="onSelect"
     />
-    <van-uploader ref="uploadAvatar" :capture="capture1" accept="video/*" :after-read="afterRead" style="position:absolute;z-index:-100" />
+    <van-uploader ref="uploadAvatar" :capture="capture1" accept="video/*" :after-read="afterRead" style="display:none" />
   </div>
 </template>
 <script>
@@ -97,9 +97,9 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-// .home {
-//   background: red;
-// }
+.home {
+  // background: red;
+}
 #nav {
   position: fixed;
   bottom: 0;

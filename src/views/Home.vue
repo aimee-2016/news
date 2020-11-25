@@ -10,7 +10,7 @@
         <van-icon name="chat-o" :badge="msgNum" @click="$router.push('/msgcenter/')" />
       </div>
       <div class="nav">
-        <ul>
+        <ul ref="navW">
           <li
             v-for="(item, index) in navList"
             :key="index"
@@ -20,7 +20,7 @@
             {{ item.name }}
           </li>
         </ul>
-        <van-icon name="wap-nav" @click="getRecommendList()" />
+        <span class="icon"><van-icon name="wap-nav" @click="getRecommendList()" /></span>
       </div>
     </div>
     <div class="article">
@@ -30,11 +30,11 @@
         <p v-if="userInfo&&articleList.length===0">你还没有关注任何人，请前往关注</p>
       </div>-->
       <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
-        <transition name="fade">
+        <!-- <transition name="fade">
           <p class="refresh-m" v-if="refreshMessage">
             柬中资讯成功为您推荐{{ resultSize }}条内容
           </p>
-        </transition>
+        </transition> -->
         <van-list
           v-model="loading"
           :finished="finished"
@@ -206,11 +206,11 @@ export default {
         support: false
       },
       navList: [
-        { name: "关注", id: 1 },
-        { name: "热点", id: 1 },
-        { name: "创业", id: 1 },
-        { name: "快讯", id: 1 },
-        { name: "新闻", id: 1 },
+        // { name: "关注", id: 1 },
+        // { name: "热点", id: 1 },
+        // { name: "创业", id: 1 },
+        // { name: "快讯", id: 1 },
+        // { name: "新闻", id: 1 },
         // { name: "娱乐", id: 1 },
         // { name: "体育", id: 1 }
       ],
@@ -218,13 +218,13 @@ export default {
       firstId: 0,
       serchValue: "",
       myList: [
-        { name: "关注", id: 1 },
-        { name: "热点", id: 1 },
-        { name: "创业", id: 1 },
-        { name: "快讯", id: 1 },
-        { name: "新闻", id: 1 },
-        { name: "娱乐", id: 1 },
-        { name: "体育", id: 1 },
+        // { name: "关注", id: 1 },
+        // { name: "热点", id: 1 },
+        // { name: "创业", id: 1 },
+        // { name: "快讯", id: 1 },
+        // { name: "新闻", id: 1 },
+        // { name: "娱乐", id: 1 },
+        // { name: "体育", id: 1 },
         // { name: "关注", id: 1 },
         // { name: "热点", id: 1 },
         // { name: "创业", id: 1 },
@@ -234,13 +234,13 @@ export default {
         // { name: "体育", id: 1 },
       ],
       recommendList: [
-        { name: "关注", id: 1 },
-        { name: "热点", id: 1 },
-        { name: "创业", id: 1 },
-        { name: "快讯", id: 1 },
-        { name: "新闻", id: 1 },
-        { name: "娱乐", id: 1 },
-        { name: "体育", id: 1 },
+        // { name: "关注", id: 1 },
+        // { name: "热点", id: 1 },
+        // { name: "创业", id: 1 },
+        // { name: "快讯", id: 1 },
+        // { name: "新闻", id: 1 },
+        // { name: "娱乐", id: 1 },
+        // { name: "体育", id: 1 },
       ],
       columnShow: false,
       isEdit: true,
@@ -274,8 +274,10 @@ export default {
     "van-popup": Popup,
   },
   created() {
-    this.getNavList();
+  },
+  mounted() {
     this.unreadData()
+    this.getNavList();
   },
   methods: {
     getNavList() {
@@ -283,9 +285,21 @@ export default {
         .post("api/front/member/findIndexColumnList.json", {})
         .then((res) => {
           this.navList = res.data;
+          console.log(this.navList)
           this.navId = res.data.filter(item=>item.name==='热点')[0].id
           // this.firstId = res.data.filter(item=>item.name==='热点')[0].id
           // this.getArticle();
+          this.$nextTick(()=>{
+            let liDoms = this.$refs['navW'].children
+            console.log(liDoms)
+            let endWidth = 0
+            liDoms.forEach(element => {
+              endWidth += element.offsetWidth+20
+              console.log(element.offsetWidth)
+            });
+            console.log(endWidth)
+            this.$refs['navW'].style.width = (endWidth+30)/15+'rem'
+          })
           this.onLoad();
         })
         .catch((error) => {
@@ -324,10 +338,10 @@ export default {
         this.page = 1;
         this.articleList = [];
         this.refreshing = false;
-        this.refreshMessage = true;
-        setTimeout(() => {
-          this.refreshMessage = false;
-        }, 3000);
+        // this.refreshMessage = true;
+        // setTimeout(() => {
+        //   this.refreshMessage = false;
+        // }, 3000);
       }
       this.testPromise().then((res) => {
         // console.log(res.data.content)
@@ -490,16 +504,16 @@ export default {
   }
 }
 .nav {
-  position: relative;
   padding: 0 16px;
+  width: 100%;
+  overflow-x: scroll;
   ul {
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
     padding-right: 20px;
     padding-bottom: 13px;
-    width: 500px;
     li {
+      flex-shrink: 0;
       margin-right: 20px;
       font-size: 15px;
       font-family: PingFang SC Medium, PingFang SC Medium-Medium;
@@ -525,13 +539,17 @@ export default {
       }
     }
   }
-  .van-icon-wap-nav {
+  .icon {
+    padding-right: 16px;
     position: absolute;
-    top: 0;
-    right: 16px;
-    font-size: 18px;
-    color: #2d2d2d;
+    z-index: 1;
+    bottom: 13px;
+    right: 0;
     background: #fff;
+    .van-icon-wap-nav {
+      font-size: 18px;
+      color: #2d2d2d;
+    }
   }
 }
 .article {
