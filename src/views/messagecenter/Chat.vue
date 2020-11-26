@@ -1,10 +1,35 @@
 <template>
   <div id="chat">
     <self-header>{{ $route.query.nickName }}</self-header>
-    <div class="main">121414</div>
-    <div class="comment-textarea">
-      <van-field v-model="comment" rows="1" autosize label type="textarea" placeholder="请输入......" />
-      <span @click="articleComment">发送</span>
+    <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
+      <div class="main">
+        <div class="time-tips" v-if="!chatList.length">
+          <span>{{ currentTime }}</span>
+          <div>现在可以开始聊天了</div>
+        </div>
+
+        <ul>
+          <li
+            v-for="(item, index) in chatList"
+            :key="index"
+            :class="{ left: !item.whetherOwn, right: item.whetherOwn }"
+          >
+            <van-image round fit="cover" :src="item.headImgPath" />
+            <span class="text">{{ item.content }}</span>
+          </li>
+        </ul>
+      </div>
+    </van-pull-refresh>
+    <div class="chatContent-textarea">
+      <van-field
+        v-model="chatContent"
+        rows="1"
+        autosize
+        label
+        type="textarea"
+        placeholder="请输入......"
+      />
+      <span @click="setChat">发送</span>
     </div>
   </div>
 </template>
@@ -20,7 +45,8 @@ import {
   Cell,
   CellGroup,
   Button,
-  Field
+  Field,
+  PullRefresh,
 } from "vant";
 export default {
   components: {
@@ -32,42 +58,134 @@ export default {
     "van-cell-group": CellGroup,
     "van-cell": Cell,
     "van-button": Button,
-    "van-field": Field
+    "van-field": Field,
+    "van-pull-refresh": PullRefresh,
   },
   data() {
     return {
-      comment: ''
+      chatContent: "",
+      page: 1,
+      chatList: [],
+      isLoading: false,
+      currentTime: new Date().getHours() + ":" + new Date().getMinutes(),
+      socket:""
     };
   },
   computed: {
-
+    userInfo() {
+      return this.$store.state.userInfo;
+    },
   },
   watch: {},
   methods: {
-    articleComment() {
-      // let anchor = document.createElement('a')
-      // anchor.setAttribute('id', 'topAnchor')
-      // document.body.appendChild(anchor);
-      // anchor.click()
-      // document.body.removeChild(anchor);
-      this.$ajax
-        .post("api/front/articles/articlesCommentOrReplay.json", {
-          articlesId: this.$route.query.id,
-          content: this.comment,
-          type: "Comment"
-        })
-        .then(() => {
-          this.commentShow = false;
-          this.commentInit();
-          this.$toast("评论成功");
-        })
-        .catch(error => {
-          this.$toast(error.message);
-        });
+    init() {
+      if (typeof WebSocket === "undefined") {
+        alert("您的浏览器不支持socket");
+      } else {
+        // 实例化socket
+        this.socket = new WebSocket(
+          "ws://47.56.186.16:8099/ws?token=" + this.$store.state.token.split(' ')[1]
+        );
+        // 监听socket连接
+        this.socket.onopen = this.open;
+        // 监听socket错误信息
+        this.socket.onerror = this.error;
+        // 监听socket消息
+        this.socket.onmessage = this.getMessage;
+      }
+    },
+    open() {
+      console.log("socket连接成功");
+    },
+    error() {
+      console.log("连接错误");
+    },
+    getMessage(msg) {
+      console.log(msg.data);
+      let data = JSON.parse(msg.data);
+      console.log(data)
+      if (data.data.actionType !== 'Heartbeat') {
+          var paramsJie = {
+          actionType: "MessageSignIn",
+          charRoomId: this.$route.query.receiverMemberId
+        }
+        if (this.$route.query.receiverMemberId === data.data.charRoomId && data.data.pushType === 'Other' && data.data.actionType === 'Chat') {
+          window.webSocket.send(JSON.stringify(paramsJie))
+        }
+        if(data.code === '200'&&data.data.chartRoomId===this.$route.query.receiverMemberId && data.data.actionType === 'Chat') {
+          if (data.data.pushType === 'Server' ) {
+            let info = {
+                headImgPath: this.userInfo.headImgPath,
+                content: this.chatContent,
+                whetherOwn: true
+              }
+            this.chatList.push(info)
+            this.chatContent = ''
+          } else if(data.data.pushType === 'Other') {
+            let info = {
+                whetherOwn: false,
+                headImgPath: data.data.headImgPath,
+                content: data.data.content
+              }
+              this.chatList.push(info)
+          }
+        }
+      }
+    },
+    close() {
+      console.log("socket已经关闭");
+    },
+    // 聊天
+    setChat() {
+      if (this.chatContent === "") {
+        this.$toast("请输入回复内容");
+        return;
+      }
+      let params = {
+        receiverMemberId: this.$route.query.receiverMemberId,
+        content: this.chatContent,
+        chatType: "Txt",
+        actionType: "Chat",
+      };
+      this.socket.send(JSON.stringify(params));
+    },
+    testPromise() {
+      return new Promise((resolve, reject) => {
+        this.$ajax
+          .post("api/front/message/findChatRecordPageByCondition.json", {
+            EQ_chatRoomId: this.$route.query.receiverMemberId,
+            page: this.page,
+            size: 10,
+            sort: "pubDate,desc",
+          })
+          .then((response) => {
+            resolve(response);
+          })
+          .catch((error) => {
+            reject(error);
+          });
+      });
+    },
+    onRefresh() {
+      this.page = Math.floor(this.chatList.length/10) + 1
+      let sliceNum = 10 - this.chatList.length%10
+      console.log(this.page)
+      console.log(sliceNum)
+      this.testPromise().then((res) => {
+        this.chatList.unshift(...res.data.content.reverse().slice(0,sliceNum));
+        this.isLoading = false;
+        if (this.page >= res.data.totalPages) {
+          this.isLoading = false;
+        }
+        this.page++;
+      });
     },
   },
-  created() {},
-  mounted() {},
+  created() {
+  },
+  mounted() {
+    this.init();
+  },
 };
 </script>
 <style  lang="scss" scoped>
@@ -77,11 +195,8 @@ export default {
   height: 100%;
   background: #f4f4f4;
 }
-.main {
-  padding: 20px 15px;
-}
-.comment-textarea {
-  position: absolute;
+.chatContent-textarea {
+  position: fixed;
   bottom: 0;
   width: 100%;
   padding: 15px;
@@ -105,6 +220,63 @@ export default {
     color: #333333;
     text-align: center;
     line-height: 26px;
+  }
+}
+.van-pull-refresh {
+  // min-height: 100%;
+  background: #f4f4f4;
+}
+.main {
+  padding: 15px 20px 74px;
+  .time-tips {
+    margin-bottom: 36px;
+    text-align: center;
+    span {
+      display: block;
+      margin-bottom: 12px;
+      font-size: 15px;
+      font-family: PingFang SC Medium, PingFang SC Medium-Medium;
+      font-weight: 500;
+    }
+    div {
+      display: inline-block;
+      padding: 9px 13px;
+      background: #e0dfdf;
+      border-radius: 5px;
+    }
+  }
+  li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 34px;
+    &.left {
+      padding-right: 44px;
+      .van-image {
+        margin-right: 10px;
+      }
+    }
+    &.right {
+      flex-direction: row-reverse;
+      padding-left: 44px;
+      .van-image {
+        margin-left: 10px;
+      }
+    }
+    .van-image {
+      flex-shrink: 0;
+      width: 44px;
+      height: 44px;
+    }
+    .text {
+      padding: 16px;
+      background: #ffffff;
+      border-radius: 5px;
+      font-size: 14px;
+      font-family: PingFang SC Medium, PingFang SC Medium-Medium;
+      font-weight: 500;
+      color: #222222;
+      line-height: 1.5;
+    }
   }
 }
 </style>
