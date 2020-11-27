@@ -2,7 +2,7 @@
   <div class="home">
     <div class="top-f">
       <div class="nav">
-        <ul>
+        <ul ref="navW">
           <li
             v-for="(item, index) in navList"
             :key="index"
@@ -266,6 +266,14 @@ export default {
           this.navId = res.data.filter(item=>item.name==='热点')[0].id
           // this.firstId = res.data[0].id;
           // this.getArticle();
+          this.$nextTick(()=>{
+            let liDoms = this.$refs['navW'].children
+            let endWidth = 0
+            liDoms.forEach(element => {
+              endWidth += element.offsetWidth+20
+            });
+            this.$refs['navW'].style.width = (endWidth+30)/15+'rem'
+          })
           this.onLoad();
         })
         .catch((error) => {
@@ -449,16 +457,16 @@ export default {
   background: #fff;
 }
 .nav {
-  position: relative;
   padding: 20px 16px 0;
+  width: 100%;
+  overflow-x: scroll;
   ul {
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
     padding-right: 20px;
     padding-bottom: 13px;
-    width: 500px;
     li {
+      flex-shrink: 0;
       margin-right: 20px;
       font-size: 15px;
       font-family: PingFang SC Medium, PingFang SC Medium-Medium;
@@ -485,12 +493,17 @@ export default {
     }
   }
   .van-icon-search {
+    padding-right: 16px;
+    padding-top: 20px;
     position: absolute;
-    top: 20px;
-    right: 16px;
-    font-size: 18px;
-    color: #2d2d2d;
+    z-index: 1;
+    bottom: 13px;
+    right: 0;
     background: #fff;
+    .van-icon-wap-nav {
+      font-size: 18px;
+      color: #2d2d2d;
+    }
   }
 }
 .article {

@@ -41,7 +41,7 @@
             >{{ focusText(topicDetails.author.followType) }}</self-button>
           </div>
         </div>
-        <div v-html="topicDetails.content" class="at-content"></div>
+        <div v-html="topicDetails.content" class="at-content" ref="at-content"></div>
         <p class="tp-top-ed">
           <span>本文经授权发布，柬中资讯不代表立场如若转载请联系原作者</span>
           <span>{{ topicDetails.viewCount }}人阅读</span>
@@ -282,6 +282,13 @@ export default {
         })
         .then(res => {
           this.topicDetails = res.data;
+          this.$nextTick(() => {
+            this.$refs['at-content'].style.fontSize = '16px'
+            this.$refs['at-content'].style.lineHeight = 1.5
+            this.$refs['at-content'].getElementsByTagName('img').forEach(img => {
+              img.style.width = '100%';
+            });
+          })
         });
     },
     getData() {
@@ -614,11 +621,6 @@ export default {
         }
       }
     }
-    // .at-content {
-    //   img {
-    //     width: 100% !important;
-    //   }
-    // }
     .tp-top-ed {
       margin-top: 20px;
       padding-bottom: 20px;
@@ -626,6 +628,7 @@ export default {
         display: block;
         font-size: 12px;
         color: #999999;
+        line-height: 1.5;
       }
     }
     .tp-top-plorm {

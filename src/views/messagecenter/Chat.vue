@@ -101,18 +101,16 @@ export default {
       console.log("连接错误");
     },
     getMessage(msg) {
-      console.log(msg.data);
       let data = JSON.parse(msg.data);
-      console.log(data)
       if (data.data.actionType !== 'Heartbeat') {
           var paramsJie = {
           actionType: "MessageSignIn",
           charRoomId: this.$route.query.receiverMemberId
         }
-        if (this.$route.query.receiverMemberId === data.data.charRoomId && data.data.pushType === 'Other' && data.data.actionType === 'Chat') {
-          window.webSocket.send(JSON.stringify(paramsJie))
+        if (data.data.pushType === 'Other' && data.data.actionType === 'Chat') {
+          this.socket.send(JSON.stringify(paramsJie))
         }
-        if(data.code === '200'&&data.data.chartRoomId===this.$route.query.receiverMemberId && data.data.actionType === 'Chat') {
+        if(data.code === '200' && data.data.actionType === 'Chat') {
           if (data.data.pushType === 'Server' ) {
             let info = {
                 headImgPath: this.userInfo.headImgPath,
@@ -121,13 +119,21 @@ export default {
               }
             this.chatList.push(info)
             this.chatContent = ''
-          } else if(data.data.pushType === 'Other') {
+            this.$nextTick(()=> {
+              if(document.body.scrollTop>=0) {
+                document.body.scrollTop = document.getElementsByClassName('van-pull-refresh')[0].scrollHeight;
+              }
+              if(document.documentElement.scrollTop>=0) {
+                document.documentElement.scrollTop = document.getElementsByClassName('van-pull-refresh')[0].scrollHeight;
+              }
+            })
+          } else if(data.data.pushType === "Other") {
             let info = {
                 whetherOwn: false,
                 headImgPath: data.data.headImgPath,
                 content: data.data.content
               }
-              this.chatList.push(info)
+            this.chatList.push(info)
           }
         }
       }
@@ -169,8 +175,6 @@ export default {
     onRefresh() {
       this.page = Math.floor(this.chatList.length/10) + 1
       let sliceNum = 10 - this.chatList.length%10
-      console.log(this.page)
-      console.log(sliceNum)
       this.testPromise().then((res) => {
         this.chatList.unshift(...res.data.content.reverse().slice(0,sliceNum));
         this.isLoading = false;
