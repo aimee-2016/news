@@ -116,7 +116,7 @@
                 <span class="desc">点击添加栏目</span>
               </div>
             </div>
-            <ul class="list">
+            <ul class="list list1">
               <li
                 v-for="(item, index) in recommendList"
                 :key="index"
@@ -376,7 +376,7 @@ export default {
           console.log(error);
           // console(this.$router)
           this.$router.push({
-            name: "login",
+            name: "/login/",
           });
         });
     },
@@ -702,6 +702,13 @@ export default {
           font-size: 8px;
           color: #666666;
         }
+      }
+    }
+    .list1 {
+      li {
+        padding: 9px 16px;
+        width: auto;
+        height: auto;
       }
     }
   }

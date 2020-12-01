@@ -50,7 +50,7 @@
             <span class="icon-location icon"></span>
             <span class="text">位置：{{ userInfo.address || "---" }}</span>
           </li>
-          <li>
+          <li class="van-multi-ellipsis--l2">
             <span class="icon-desc icon"></span>
             <span class="text">简介：{{ userInfo.synopsis || "---" }}</span>
           </li>
@@ -74,10 +74,11 @@
         <van-list
           v-model="loading"
           :finished="finished"
-          finished-text="没有更多了"
+          :finished-text="articleList.length?'没有更多了':''"
           @load="onLoad"
         >
-          <ul class="all" v-for="(item, index) in articleList" :key="index">
+          <no-content v-if="!articleList.length"></no-content>
+          <ul class="all" v-for="(item, index) in articleList" :key="index" v-else>
             <li v-if="item.type.name === 'PublishVideo'">
               <div class="info">
                 <div class="left">
@@ -522,6 +523,9 @@ export default {
     margin-top: 18px;
     li {
       margin-bottom: 10px;
+      &:last-child {
+        line-height: 1.2;
+      }
       .icon {
         display: inline-block;
       }

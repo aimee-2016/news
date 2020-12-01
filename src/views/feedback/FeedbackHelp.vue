@@ -20,7 +20,7 @@
     </div>
 
     <div class="btn-wrap">
-      <van-button type="primary" class="btn1">反馈历史</van-button>
+      <!-- <van-button type="primary" class="btn1">反馈历史</van-button> -->
       <van-button type="primary" class="btn2" @click="$router.push('/feedback')">意见反馈</van-button>
     </div>
   </div>
@@ -86,18 +86,25 @@ export default {
 
 <style lang="scss" scoped>
 .btn-wrap {
-  padding: 45px 56px 0;
+  padding: 20px 56px 20px;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   .btn1 {
     background: #f5f7f9;
     color: #333333;
     border: none;
   }
   .btn2 {
+    height: 39px;
     background: #ffdc22;
     color: #333333;
     border: none;
+    padding: 0 26px;
+    border-radius: 3px;
+    line-height: 39px;
   }
+}
+.van-cell-group__title {
+  color:#333334;
 }
 </style>

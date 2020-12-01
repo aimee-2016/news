@@ -21,7 +21,7 @@ import { Cell,ShareSheet} from "vant";
 export default {
   data() {
     return {
-      list: ['用户协议','为柬中资讯打分','分享给朋友'],
+      list: ['用户协议','分享给朋友'],
       showShare: false,
       options: [
         [
@@ -51,7 +51,7 @@ export default {
   },
   methods: {
     toDetail(index) {
-      if(index===2) {
+      if(index===1) {
         this.showShare = true
       } else if (index === 0) {
         this.$router.push('/useragreement/')

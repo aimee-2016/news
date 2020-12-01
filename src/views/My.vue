@@ -5,12 +5,12 @@
       <van-button color="#F99307" plain round to="login" class="login-btn">登陆/注册</van-button>
     </div>
     <div class="info-top" v-if="userInfo">
-      <div class="back-home" @click="$router.push('myhome')">
+      <div class="back-home" @click="$router.push('/myhome/')">
         <span>个人主页</span>
         <van-icon name="arrow" />
       </div>
-      <div class="top">
-        <div class="avatar" @click="$router.push('/editmaterials/')">
+      <div class="top" @click="$router.push('/myhome/')">
+        <div class="avatar">
           <img :src="userInfo.headImgPath" alt />
           <i class="auth" v-if="userInfo.memberStatus.name==='CertifyAdopt'"></i>
         </div>

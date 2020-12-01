@@ -16,10 +16,11 @@
           <van-list
             v-model="loading"
             :finished="finished"
-            finished-text="没有更多了"
+            finished-text="list.length?'没有更多了':''"
             @load="onLoad"
           >
-            <div class="msg-container">
+            <no-content v-if="!list.length"></no-content>
+            <div class="msg-container van-hairline--top" v-else>
               <div
                 v-for="(item, index) in list"
                 :key="index"
@@ -60,10 +61,11 @@
           <van-list
             v-model="loading1"
             :finished="finished1"
-            finished-text="没有更多了"
+            finished-text="list.length?'没有更多了':''"
             @load="onLoad1"
           >
-            <div class="msg-container">
+            <no-content v-if="!list1.length"></no-content>
+            <div class="msg-container van-hairline--top" v-else>
               <div v-for="(item, index) in list1" :key="index" class="msg-item" @click="toDetail(item,'2')">
                 <div class="content">
                   <div class="left">
@@ -91,7 +93,8 @@
         </van-pull-refresh>
       </van-tab>
       <van-tab title="私信" :badge="privateLetterCount">
-        <div class="msg-container">
+        <no-content v-if="!list1.length"></no-content>
+        <div class="msg-container van-hairline--top" v-else>
           <div v-for="(item, index) in list2" :key="index" class="msg-item" @click="toChat(item,'2')">
             <div class="content">
               <div class="left">
@@ -250,7 +253,7 @@ export default {
       })
     },
     toDetail(item,type) {
-      this.$router.push({path: '/msgdetail',query: {id:item.id,type:type,title:item.title}})
+      this.$router.push({path: '/msgdetail',query: {id:item.id,type:type,title:item.nickName}})
     },
     toChat(item) {
       console.log(item)
@@ -275,12 +278,11 @@ export default {
 
 <style lang="scss" scoped>
 .msg-container {
-  padding: 18px 20px 0;
+  // border-top: solid 1px #f0f0f0;
+  padding: 0 15px;
   .msg-item {
-    margin-bottom: 35px;
-    &:last-child {
-      margin-bottom: 0;
-    }
+    padding: 17px 0;
+    border-bottom: solid 1px #f0f0f0;
   }
   .content {
     display: flex;

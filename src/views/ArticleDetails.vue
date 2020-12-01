@@ -49,7 +49,7 @@
       </div>
     </div>
     <div class="recommend-list">
-      <div class="content" v-for="(item, index) in recommendList" :key="index">
+      <div class="content" v-for="(item, index) in recommendList" :key="index" @click="toDetailsPage(item.id)">
         <h3>{{ item.title }}</h3>
         <div class="img-wrap">
           <img v-lazy="item.imagePaths[0]" />
@@ -200,6 +200,7 @@ import {
   Field
 } from "vant";
 export default {
+  inject: ["reload"],
   data() {
     return {
       modal: {
@@ -287,6 +288,7 @@ export default {
             this.$refs['at-content'].style.lineHeight = 1.5
             this.$refs['at-content'].getElementsByTagName('img').forEach(img => {
               img.style.width = '100%';
+              img.style.height = 'auto';
             });
           })
         });
@@ -521,7 +523,14 @@ export default {
     },
     toCommentDetail(id) {
       this.$router.push({path: '/articlecommentdetails/', query: {articleId:this.$route.query.id,id: id}})
-    }
+    },
+    toDetailsPage(id) {
+      this.$router.push({
+        path: "/articledetails/",
+        query: { id: id },
+      });
+      this.reload();
+    },
   },
   components: {
     "van-image": Image,

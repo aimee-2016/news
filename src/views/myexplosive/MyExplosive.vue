@@ -26,11 +26,11 @@
               <div class="operate">
                 <span
                   class="status"
-                  :class="{ success: item.status === 'Approved' }"
+                  :class="{ success: item.status.code === 'Approved' }"
                   >{{
-                    item.status === 'UnderReview'
+                    item.status.code === 'UnderReview'
                       ? '审核中'
-                      : item.status === 'Approved'
+                      : item.status.code === 'Approved'
                       ? '审核通过'
                       : '审核失败'
                   }}</span

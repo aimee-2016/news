@@ -68,7 +68,7 @@
           <h3>
             {{
               item.title
-            }}次播放量次播放量次播放量次播放量次播放量次播放量次播放量次播放量
+            }}
           </h3>
           <div>
             <span class="name">{{ topicDetails.author.nickName }}</span>
@@ -574,7 +574,11 @@ export default {
           this.$toast("评论成功");
         })
         .catch((error) => {
-          this.$toast(error.message);
+          if(error.status==='208') {
+            this.$router.push('/login/')
+          } else {
+            this.$toast(error.message)
+          }
         });
     },
     toCommentDetail(id) {

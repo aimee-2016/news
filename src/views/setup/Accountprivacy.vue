@@ -11,12 +11,12 @@
     <van-cell-group title="社交平台账号绑定">
       <van-cell title="微信">
         <template #right-icon>
-          <van-switch v-model="userInfo.whetherBindWeChat" size="24px" active-color="#FDD004"/>
+          <van-switch v-model="userInfo.whetherBindWeChat" disabled size="24px" active-color="#FDD004"/>
         </template>
       </van-cell>
       <van-cell title="腾讯QQ">
         <template #right-icon>
-          <van-switch v-model="userInfo.whetherBindQQ" size="24px" active-color="#FDD004"/>
+          <van-switch v-model="userInfo.whetherBindQQ" disabled size="24px" active-color="#FDD004"/>
         </template>
       </van-cell>
     </van-cell-group>

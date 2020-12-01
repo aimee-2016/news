@@ -493,17 +493,12 @@ export default {
     }
   }
   .van-icon-search {
-    padding-right: 16px;
-    padding-top: 20px;
+    padding: 16px 16px 2px 6px;
     position: absolute;
     z-index: 1;
     bottom: 13px;
     right: 0;
     background: #fff;
-    .van-icon-wap-nav {
-      font-size: 18px;
-      color: #2d2d2d;
-    }
   }
 }
 .article {

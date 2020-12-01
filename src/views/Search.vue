@@ -61,26 +61,13 @@
         </ul>
       </div>
       <div class="article">
-        <!-- <div class="no-login" v-if="firstId===navId">
-          <img src="../assets/img/home/logo@2x.png" alt="add" />
-          <p v-if="!userInfo">您还没有登录，请前往登录</p>
-          <p v-if="userInfo&&articleList.length===0">你还没有关注任何人，请前往关注</p>
-        </div>-->
-        <!-- <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
-          <transition name="fade">
-            <p class="refresh-m" v-if="refreshMessage">柬中资讯成功为您推荐{{resultSize}}条内容</p>
-          </transition>
-          <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
-            
-          </van-list>
-        </van-pull-refresh>-->
         <div class="wrap-b" v-if="navId === 1">
           <div class="div1" v-if="videoList.length">
             <div class="article-head">
               <h3>视频</h3>
-              <span>
+              <span @click="navId = 2" >
                 查看更多
-                <van-icon name="arrow" @click="$router.push('/video')" />
+                <van-icon name="arrow" />
               </span>
             </div>
             <div
@@ -114,9 +101,9 @@
           <div class="div2" v-if="informationList.length">
             <div class="article-head">
               <h3>资讯</h3>
-              <span>
+              <span @click="navId = 3">
                 查看更多
-                <van-icon name="arrow" @click="$router.push('/home')" />
+                <van-icon name="arrow"/>
               </span>
             </div>
             <div
@@ -153,9 +140,9 @@
           <div class="div3" v-if="memberList.length">
             <div class="article-head">
               <h3>用户</h3>
-              <span>
+              <span @click="navId = 4">
                 查看更多
-                <van-icon name="arrow" />
+                <van-icon name="arrow"/>
               </span>
             </div>
             <div
@@ -199,9 +186,9 @@
           <div class="div4" v-if="topicList.length">
             <div class="article-head">
               <h3>话题</h3>
-              <span>
+              <span @click="navId = 5">
                 查看更多
-                <van-icon name="arrow" @click="$router.push('/topic')" />
+                <van-icon name="arrow"/>
               </span>
             </div>
             <div
@@ -413,7 +400,11 @@ export default {
           this.getAll()
         })
         .catch((error) => {
-          this.$toast(error)
+          if(error.status==='208') {
+            this.$router.push('/login/')
+          } else {
+            this.$toast(error.message)
+          }
         })
     },
     focusText(item) {

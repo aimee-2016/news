@@ -334,6 +334,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
 .content-user {
   padding: 15px;
   .van-cell {
