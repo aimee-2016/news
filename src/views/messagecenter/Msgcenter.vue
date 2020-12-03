@@ -16,7 +16,7 @@
           <van-list
             v-model="loading"
             :finished="finished"
-            finished-text="list.length?'没有更多了':''"
+            :finished-text="list.length?'没有更多了':''"
             @load="onLoad"
           >
             <no-content v-if="!list.length&&!loading"></no-content>
@@ -61,7 +61,7 @@
           <van-list
             v-model="loading1"
             :finished="finished1"
-            finished-text="list.length?'没有更多了':''"
+            :finished-text="list.length?'没有更多了':''"
             @load="onLoad1"
           >
             <no-content v-if="!list1.length&&!loading1"></no-content>
@@ -93,8 +93,8 @@
         </van-pull-refresh>
       </van-tab>
       <van-tab title="私信" :badge="privateLetterCount">
-        <no-content v-if="!list1.length"></no-content>
-        <div class="msg-container van-hairline--top" v-else>
+        <no-content v-if="!list2.length"></no-content>
+        <div class="msg-container van-hairline--top">
           <div v-for="(item, index) in list2" :key="index" class="msg-item" @click="toChat(item,'2')">
             <div class="content">
               <div class="left">
@@ -256,7 +256,7 @@ export default {
       this.$router.push({path: '/msgdetail',query: {id:item.id,type:type,title:item.nickName}})
     },
     toChat(item) {
-      this.$router.push({path: '/chat/',query: {receiverMemberId:item.receiverMemberId,nickName:item.nickName,headImgPath:item.headImgPath}})
+      this.$router.push({path: '/chat/',query: {roomId:item.id,receiverMemberId:item.receiverMemberId,nickName:item.nickName,headImgPath:item.headImgPath}})
     }
   },
   computed: {

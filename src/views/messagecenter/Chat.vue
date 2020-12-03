@@ -3,12 +3,7 @@
     <self-header>{{ $route.query.nickName }}</self-header>
     <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
       <div class="main">
-        <div class="time-tips" v-if="!chatList.length">
-          <span>{{ currentTime }}</span>
-          <div>现在可以开始聊天了</div>
-        </div>
-
-        <ul>
+        <ul v-if="chatList.length">
           <li
             v-for="(item, index) in chatList"
             :key="index"
@@ -18,6 +13,10 @@
             <span class="text">{{ item.content }}</span>
           </li>
         </ul>
+        <!-- <div class="time-tips" v-else>
+          <span>{{ currentTime }}</span>
+          <div>现在可以开始聊天了</div>
+        </div> -->
       </div>
     </van-pull-refresh>
     <div class="chatContent-textarea">
@@ -53,7 +52,8 @@ export default {
       chatList: [],
       isLoading: false,
       currentTime: new Date().getHours() + ":" + new Date().getMinutes(),
-      socket:""
+      socket:"",
+      allPage: 1
     };
   },
   computed: {
@@ -144,7 +144,7 @@ export default {
       return new Promise((resolve, reject) => {
         this.$ajax
           .post("api/front/message/findChatRecordPageByCondition.json", {
-            EQ_chatRoomId: this.$route.query.receiverMemberId,
+            EQ_chatRoomId: this.$route.query.roomId,
             page: this.page,
             size: 10,
             sort: "pubDate,desc",
@@ -158,11 +158,17 @@ export default {
       });
     },
     onRefresh() {
+      if (this.page > this.allPage) {
+        this.isLoading = false;
+        this.$toast('已经全部加载完毕')
+        return false
+      }
       this.page = Math.floor(this.chatList.length/10) + 1
       let sliceNum = 10 - this.chatList.length%10
       this.testPromise().then((res) => {
         this.chatList.unshift(...res.data.content.reverse().slice(0,sliceNum));
         this.isLoading = false;
+        this.allPage = res.data.totalPages
         if (this.page >= res.data.totalPages) {
           this.isLoading = false;
         }
@@ -171,6 +177,8 @@ export default {
     },
   },
   created() {
+    this.isLoading = true
+    this.onRefresh()
   },
   mounted() {
     this.init();

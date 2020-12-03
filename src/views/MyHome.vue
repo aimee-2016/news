@@ -687,20 +687,8 @@ export default {
     getMessage(msg) {
       let data = JSON.parse(msg.data);
       if (data.code === '200' && data.data.actionType === 'CreateRoom'&& data.data.pushType === 'Server') {
-        this.getRoomAll()
-        // this.$router.push({path: '/chat/',query: {receiverMemberId:data.data.chartRoomId,nickName:this.herInfo.nickName,headImgPath:this.herInfo.headImgPath}})
+        this.$router.push({path: '/chat/',query: {roomId:data.data.chartRoomId,receiverMemberId:this.herInfo.id,nickName:this.herInfo.nickName,headImgPath:this.herInfo.headImgPath}})
       }
-    },
-    getRoomAll() {
-      this.$ajax
-        .post("api/front/message/findChatRoomAll.json", {})
-        .then((res) => {
-          // this.list2 = res.data
-          console.log(res.data)
-        })
-        .catch((error) => {
-          this.$toast(error.message);
-        });
     }
   },
   computed: {

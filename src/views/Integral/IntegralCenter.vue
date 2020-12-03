@@ -18,9 +18,9 @@
           >
         </div>
         <div>
-          <van-cell title="积分说明" url="/integralexplain/" />
-          <van-cell title="积分记录" url="/integralrecord/" />
-          <van-cell title="兑换记录" url="/exchangerecord/" />
+          <van-cell title="积分说明" to="/integralexplain/" />
+          <van-cell title="积分记录" to="/integralrecord/" />
+          <van-cell title="兑换记录" to="/exchangerecord/" />
         </div>
       </div>
       <div class="signin-wrap">
