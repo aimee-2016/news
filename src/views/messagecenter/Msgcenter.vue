@@ -256,7 +256,6 @@ export default {
       this.$router.push({path: '/msgdetail',query: {id:item.id,type:type,title:item.nickName}})
     },
     toChat(item) {
-      console.log(item)
       this.$router.push({path: '/chat/',query: {receiverMemberId:item.receiverMemberId,nickName:item.nickName,headImgPath:item.headImgPath}})
     }
   },

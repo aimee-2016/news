@@ -42,7 +42,7 @@ export default {
         );
         // 监听socket连接
         this.socket.onopen = () => {
-          console.log("socket连接成功,心跳");
+          console.log("socket连接成功,心跳a");
           let params = {
             actionType: 'Heartbeat'
           }
@@ -50,7 +50,7 @@ export default {
         };
         // 监听socket错误信息
         this.socket.onerror = () => {
-          console.log("连接错误,心跳");
+          console.log("连接错误,心跳a");
         };
         // 监听socket消息
         this.socket.onmessage = evt => {

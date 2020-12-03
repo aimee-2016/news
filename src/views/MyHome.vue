@@ -24,6 +24,7 @@
               v-if="
                 !(herInfo.followType && herInfo.followType.name === 'Block')
               "
+              @click="init();"
               >私信</span
             >
             <span
@@ -400,7 +401,9 @@ export default {
   created() {
     this.getUserInfo();
   },
-  mounted() {},
+  mounted() {
+    
+  },
   methods: {
     getUserInfo() {
       this.$ajax
@@ -497,7 +500,6 @@ export default {
       }
     },
     onSelectBlock(item) {
-      console.log(item);
       if (item.name === "拉黑") {
         Dialog.confirm({
           title: "确定拉黑该用户？",
@@ -635,10 +637,8 @@ export default {
     articleFunc(item) {
       this.selectedItem = item;
       if (this.userInfo.id === this.herInfo.id) {
-        console.log(1);
         this.modal.user = true;
       } else {
-        console.log(2);
         this.modal.article = true;
       }
     },
@@ -657,6 +657,51 @@ export default {
           this.$toast(error.message);
         });
     },
+    init() {
+      if (typeof WebSocket === "undefined") {
+        alert("您的浏览器不支持socket");
+      } else {
+        // 实例化socket
+        this.socket = new WebSocket(
+          "ws://47.56.186.16:8099/ws?token=" + this.$store.state.token.split(' ')[1]
+        );
+        // 监听socket连接
+        this.socket.onopen = this.open;
+        // 监听socket错误信息
+        this.socket.onerror = this.error;
+        // 监听socket消息
+        this.socket.onmessage = this.getMessage;
+      }
+    },
+    open() {
+      console.log("socket连接成功他的主页");
+      var paramsJie = {
+        actionType: "CreateRoom",
+        receiverMemberId: this.$route.query.id
+      }
+      this.socket.send(JSON.stringify(paramsJie))
+    },
+    error() {
+      console.log("连接错误");
+    },
+    getMessage(msg) {
+      let data = JSON.parse(msg.data);
+      if (data.code === '200' && data.data.actionType === 'CreateRoom'&& data.data.pushType === 'Server') {
+        this.getRoomAll()
+        // this.$router.push({path: '/chat/',query: {receiverMemberId:data.data.chartRoomId,nickName:this.herInfo.nickName,headImgPath:this.herInfo.headImgPath}})
+      }
+    },
+    getRoomAll() {
+      this.$ajax
+        .post("api/front/message/findChatRoomAll.json", {})
+        .then((res) => {
+          // this.list2 = res.data
+          console.log(res.data)
+        })
+        .catch((error) => {
+          this.$toast(error.message);
+        });
+    }
   },
   computed: {
     userInfo() {

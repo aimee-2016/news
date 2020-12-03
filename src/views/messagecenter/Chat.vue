@@ -80,10 +80,10 @@ export default {
       }
     },
     open() {
-      console.log("socket连接成功");
+      console.log("socket连接成功chat");
     },
     error() {
-      console.log("连接错误");
+      console.log("连接错误chat");
     },
     getMessage(msg) {
       let data = JSON.parse(msg.data);
@@ -124,7 +124,7 @@ export default {
       }
     },
     close() {
-      console.log("socket已经关闭");
+      console.log("socket已经关闭chat");
     },
     // 聊天
     setChat() {
