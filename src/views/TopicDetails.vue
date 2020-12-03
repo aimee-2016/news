@@ -1,7 +1,7 @@
 <template>
   <div id="detial">
     <div class="tp-head">
-      <div @click="$router.push('/topic/')">
+      <div @click="$router.go(-1)">
         <img src="../assets/img/topic/back.png" />
       </div>
       <div>
@@ -45,7 +45,7 @@
         <div class="vote-show">
           <div class="circle-l circle" :class="{unselect1:topicDetails.orthodoxVoteCount!=null}" @click="vote('Orthodox')">
             <img src="../assets/img/topic/hand-l.png" />
-            <span>喜欢</span>
+            <span>{{topicDetails.orthodoxButtonText}}</span>
           </div>
           <div class="vote-proportion">
             <div class="vote-text">
@@ -62,7 +62,7 @@
           </div>
           <div class="circle-r circle" :class="{unselect2:topicDetails.opposingVoteCount!=null}" @click="vote('Opposing')">
             <img src="../assets/img/topic/hand-r.png" />
-            <span>不喜欢</span>
+            <span>{{topicDetails.opposingButtonText}}</span>
           </div>
         </div>
       </div>
@@ -231,9 +231,7 @@
 </template>
 
 <script>
-import selfButton from "@/components/button";
 import {
-  Image,
   List,
   Popup,
   Dialog,
@@ -390,7 +388,6 @@ export default {
       Dialog.confirm({
         title: "确定删除此评论？",
         confirmButtonColor: "#f99307",
-        theme: "round-button",
       })
         .then(() => {
           this.delComment(id);
@@ -502,6 +499,7 @@ export default {
           this.commentShow = false;
           this.commentInit();
           this.$toast("评论成功");
+          this.comment = ""
         })
         .catch((error) => {
           this.$toast(error.message);
@@ -536,8 +534,6 @@ export default {
     }
   },
   components: {
-    "van-image": Image,
-    "self-button": selfButton,
     "van-list": List,
     "van-share-sheet": ShareSheet,
     "van-popup": Popup,
@@ -574,6 +570,7 @@ export default {
   .tp-top-content {
     padding: 0 16px 0 19px;
     .content-v {
+      line-height: 1.2;
       .view-count {
         display: inline-block;
         margin-top: 38px;

@@ -38,13 +38,22 @@
         <van-list
           v-model="loading"
           :finished="finished"
-          finished-text="没有更多了"
+          :finished-text="articleList.length?'没有更多了':''"
           @load="onLoad"
         >
+          <!-- <template #loading>
+            <img class="doge" src="../assets/img/home/loading.png" />
+          </template> -->
+          <div v-if="!articleList.length&&!loading">
+            <no-content v-if="hotId===navId&&userInfo">您还没有关注任何人，请前往关注</no-content>
+            <no-content v-if="hotId===navId&&!userInfo">您还没有登录，请前往登录</no-content>
+            <no-content v-if="hotId!==navId"></no-content>
+          </div>
           <div
             v-for="(item, index) in articleList"
             :key="index"
             class="article-item"
+            v-else
           >
             <div
               @click="
@@ -57,10 +66,10 @@
               <h3>{{ item.title }}</h3>
               <div class="img-wrap">
                 <img
-                  :src="inner"
-                  alt
                   v-for="(inner, index) in item.imagePaths"
                   :key="index"
+                   v-lazy="inner"
+                   alt
                 />
               </div>
             </div>
@@ -263,7 +272,8 @@ export default {
         { name: "恶心", val: "Nausea" },
       ],
       topList: [],
-      msgNum: 0
+      msgNum: 0,
+      hotId: ''
     };
   },
   components: {
@@ -281,11 +291,14 @@ export default {
   },
   methods: {
     getNavList() {
-      this.$ajax
+      this.$ajax  
         .post("api/front/member/findIndexColumnList.json", {})
         .then((res) => {
           this.navList = res.data;
           this.navId = res.data.filter(item=>item.name==='热点')[0].id
+          this.hotId = res.data.filter(item=>item.name==='关注')[0].id
+
+          console.log(this.hotId)
           // this.firstId = res.data.filter(item=>item.name==='热点')[0].id
           // this.getArticle();
           this.$nextTick(()=>{
@@ -562,6 +575,11 @@ export default {
     color: #fb9600;
     line-height: 30px;
     text-align: center;
+  }
+  .doge {
+    display: block;
+    width: 180px;
+    margin: 0 auto;
   }
   .article-item {
     margin-bottom: 17px;

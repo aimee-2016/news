@@ -13,9 +13,10 @@
     >
       <van-tab title="关注">
         <van-pull-refresh v-model="refreshing" success-text="刷新成功" @refresh="onRefresh">
-          <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
+          <van-list v-model="loading" :finished="finished" :finished-text="list.length?'没有更多了':''" @load="onLoad">
             <div class="msg-container">
-              <div v-for="(item, index) in list" :key="index" class="msg-item">
+              <no-content v-if="!list.length&&!loading">您还没有关注任何人，请前往关注</no-content>
+              <div v-for="(item, index) in list" :key="index" class="msg-item" v-else>
                 <div class="content">
                   <div class="left">
                     <div class="head-img">
@@ -32,11 +33,18 @@
                     </div>
                   </div>
                   <div class="right">
-                    <self-button
-                      round
-                      @click="focusUser(item.id)"
-                      :disabled="!item.followType ? false : true"
-                    >{{ focusText(item.followType) }}</self-button>
+                     <span
+                        class="focus"
+                        @click="focusUser(item)"
+                        v-if="!item.followType"
+                        >+关注</span
+                      >
+                      <span
+                        class="focused"
+                        @click="unfocusUser(item)"
+                        v-if="item.followType&&item.followType.name === 'Fans'"
+                        >已关注</span
+                      >
                   </div>
                 </div>
               </div>
@@ -46,9 +54,10 @@
       </van-tab>
       <van-tab title="粉丝">
         <van-pull-refresh v-model="refreshing1" success-text="刷新成功" @refresh="onRefresh1">
-          <van-list v-model="loading1" :finished="finished1" finished-text="没有更多了" @load="onLoad1">
+          <van-list v-model="loading1" :finished="finished1" :finished-text="list1.length?'没有更多了':''" @load="onLoad1">
             <div class="msg-container">
-              <div v-for="(item, index) in list1" :key="index" class="msg-item">
+              <no-content v-if="!list1.length&&!loading1"></no-content>
+              <div v-for="(item, index) in list1" :key="index" class="msg-item" v-else>
                 <div class="content">
                   <div class="left">
                     <div class="head-img">
@@ -65,11 +74,23 @@
                     </div>
                   </div>
                   <div class="right">
-                    <self-button
+                    <!-- <self-button
                       round
-                      @click="focusUser(item.id)"
+                      @click="focusUser(item)"
                       :disabled="!item.followType ? false : true"
-                    >{{ focusText(item.followType) }}</self-button>
+                    >{{ focusText(item.followType) }}</self-button> -->
+                    <span
+                        class="focus"
+                        @click="focusUser(item)"
+                        v-if="!item.followType"
+                        >+关注</span
+                      >
+                      <span
+                        class="focused"
+                        @click="unfocusUser(item)"
+                        v-if="item.followType&&item.followType.name === 'Fans'"
+                        >已关注</span
+                      >
                   </div>
                 </div>
               </div>
@@ -186,18 +207,32 @@ export default {
         query: { id: item.id, type: type, title: item.title }
       });
     },
-    focusUser(id) {
+    focusUser(item) {
       this.$ajax
         .post("api/front/member/follow.json", {
-          id: id
+          id: item.id
         })
         .then(() => {
+          item.followType = {}
+          item.followType.name = 'Fans'
           this.$toast("关注成功");
-          this.getAll();
         })
         .catch(error => {
           this.$toast(error);
         });
+    },
+    unfocusUser(item) {
+      this.$ajax
+        .post('api/front/member/unFollow.json', {
+          id: item.id,
+        })
+        .then(() => {
+          item.followType = null
+          this.$toast('取消关注成功')
+        })
+        .catch((error) => {
+          this.$toast(error)
+        })
     },
     focusText(item) {
       if (item) {
@@ -280,6 +315,28 @@ export default {
           color: #999999;
           line-height: 11px;
         }
+      }
+    }
+    .right {
+      span {
+        display: inline-block;
+        width: 60px;
+        height: 25px;
+        border-radius: 13px;
+        font-size: 11px;
+        font-family: PingFang SC Bold, PingFang SC Bold-Bold;
+        font-weight: 700;
+        line-height: 25px;
+        text-align: center;
+      }
+      .focus {
+        background: #fdd004;
+        color: #333333;
+      }
+      .focused {
+        background: #e8e8e8;
+        color: #999999;
+
       }
     }
   }

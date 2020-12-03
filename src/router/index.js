@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import store from '@/store'
-import { getToken, setToken } from '@/libs/util'
+import { getToken } from '@/libs/util'
 import config from '@/libs/config'
 const { homeName } = config
 

@@ -186,13 +186,10 @@
 </template>
 
 <script type="text/ecmascript-6">
-import selfButton from "@/components/button";
 import {
-  Image,
   List,
   Popup,
   Dialog,
-  ShareSheet,
   Cell,
   CellGroup,
   Button,
@@ -294,6 +291,7 @@ export default {
           this.commentShow = false;
           this.commentInit();
           this.$toast("评论成功");
+          this.comment = ""
         })
         .catch(error => {
           this.$toast(error.message);
@@ -311,6 +309,7 @@ export default {
           this.commentShow = false;
           this.commentInit();
           this.$toast("评论成功");
+          this.comment = ""
         })
         .catch(error => {
           this.$toast(error.message);
@@ -396,7 +395,6 @@ export default {
       Dialog.confirm({
         title: "确定删除此评论？",
         confirmButtonColor: "#f99307",
-        theme: "round-button"
       })
         .then(() => {
           this.delComment(id);
@@ -423,10 +421,7 @@ export default {
   computed: {},
   watch: {},
   components: {
-    "van-image": Image,
-    "self-button": selfButton,
     "van-list": List,
-    "van-share-sheet": ShareSheet,
     "van-popup": Popup,
     "van-cell-group": CellGroup,
     "van-cell": Cell,

@@ -21,10 +21,11 @@
       <van-list
         v-model="loading"
         :finished="finished"
-        finished-text="没有更多了"
+        :finished-text="list.length?'没有更多了':''"
         @load="onLoad"
       >
-        <div class="tc-content">
+        <no-content v-if="!list.length&&!loading"></no-content>
+        <div class="tc-content" v-else>
           <div
             v-for="(item, index) in list"
             :key="index"
@@ -137,7 +138,6 @@ export default {
         }
         this.page++;
       });
-      console.log(this.list);
     },
     onRefresh() {
       this.finished = false;

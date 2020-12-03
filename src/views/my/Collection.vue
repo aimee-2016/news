@@ -3,6 +3,9 @@
     <div id="head">
       <van-icon name="arrow-left" @click="$router.go(-1)" />
       <span class="title" style="float:right" v-if="active===0" @click="editStatus=!editStatus">{{editStatus?'取消':'编辑'}}</span>
+      <!-- <span class="title" style="float:right" v-if="active===1" @click="editStatus1=!editStatus1">{{editStatus1?'取消':'编辑'}}</span>
+      <span class="title" style="float:right" v-if="active===2" @click="editStatus2=!editStatus2">{{editStatus2?'取消':'编辑'}}</span> -->
+      <span class="title" style="float:right" v-if="active===3" @click="editStatus3=!editStatus3">{{editStatus3?'取消':'编辑'}}</span>
     </div>
     <van-tabs
       v-model="active"
@@ -12,10 +15,11 @@
       color="#ffcb00"
       sticky
     >
-      <van-tab title="收藏"> 
+      <van-tab title="收藏">
         <van-pull-refresh v-model="refreshing" success-text="刷新成功" @refresh="onRefresh">
-          <van-list v-model="loading" :finished="finished" finished-text="我是有底线的" @load="onLoad">
-            <ul class="all">
+          <van-list v-model="loading" :finished="finished" :finished-text="list.length?'我是有底线的':''" @load="onLoad">
+            <no-content v-if="!list.length&&!loading"></no-content>
+            <ul class="all" v-else>
               <li v-for="(item, index) in list" :key="index">
                 <div v-if="item.articlesQueryResultDto.type.name=='PublishArticle'">
                   <div v-if="editStatus" class="checkbox-wrap">
@@ -85,7 +89,7 @@
                       <span>
                         <img src="../../assets/img/myhome/icon-share@2x.png" alt />
                       </span>
-                      <span>
+                      <span @click="toDetail(item.articlesQueryResultDto.type.name,item.articlesQueryResultDto.id)">
                         <img src="../../assets/img/myhome/icon-49@2x.png" alt />
                         <i class="num">{{item.articlesQueryResultDto.commentCount}}</i>
                       </span>
@@ -140,10 +144,14 @@
       </van-tab>
       <van-tab title="评论">
         <van-pull-refresh v-model="refreshing1" success-text="刷新成功" @refresh="onRefresh1">
-          <van-list v-model="loading1" :finished="finished1" finished-text="没有更多了" @load="onLoad1">
-            <ul class="all comment-all">
+          <van-list v-model="loading1" :finished="finished1" :finished-text="list1.length?'我是有底线的':''" @load="onLoad1">
+            <no-content v-if="!list1.length&&!loading1"></no-content>
+            <ul class="all comment-all" v-else>
               <li v-for="(item, index) in list1" :key="index">
                 <div>
+                  <div v-if="editStatus1" class="checkbox-wrap">
+                    <van-checkbox v-model="item.checked" checked-color="#ffcb00" @click="changeNum(item.checked)"/>
+                  </div>
                   <div class="box-content comment-box">
                     <div class="info">
                       <div class="left">
@@ -166,7 +174,7 @@
                           {{item.commentSingleDto.content}}
                         </div>
                       </div>
-                      <van-image fit="cover" lazy-load :src="item.articlesDto.imagePaths[0]"/>
+                      <van-image fit="cover" lazy-load :src="item.imagePath"/>
                     </div>
                     <div class="opreate">
                       <span>
@@ -199,10 +207,14 @@
       </van-tab>
       <van-tab title="点赞"> 
         <van-pull-refresh v-model="refreshing2" success-text="刷新成功" @refresh="onRefresh2">
-          <van-list v-model="loading2" :finished="finished2" finished-text="我是有底线的" @load="onLoad2">
-            <ul class="all">
+          <van-list v-model="loading2" :finished="finished2" :finished-text="list2.length?'我是有底线的':''" @load="onLoad2">
+            <no-content v-if="!list2.length&&!loading2"></no-content>
+            <ul class="all" v-else>
               <li v-for="(item, index) in list2" :key="index">
                 <div v-if="item.articlesDto.type.name=='PublishArticle'">
+                  <div v-if="editStatus2" class="checkbox-wrap">
+                    <van-checkbox v-model="item.checked" checked-color="#ffcb00" @click="changeNum(item.checked)"/>
+                  </div>
                   <div class="box-content">
                     <div class="info">
                       <div class="left">
@@ -215,7 +227,7 @@
                     </div>
                     <div class="content1" @click="toDetail(item.articlesDto.type.name,item.articlesDto.id)">
                       <div class="article van-multi-ellipsis--l3">{{item.articlesDto.title}}</div>
-                      <van-image fit="cover" lazy-load :src="item.articlesDto.imagePaths[0]"/>
+                      <van-image fit="cover" lazy-load :src="item.imagePath"/>
                     </div>
                     <div class="opreate">
                       <span>
@@ -242,6 +254,9 @@
                   </div>
                 </div>
                 <div v-if="item.articlesDto.type.name=='PublishVideo'">
+                  <div v-if="editStatus2" class="checkbox-wrap">
+                    <van-checkbox v-model="item.checked" checked-color="#ffcb00" @click="changeNum(item.checked)"/>
+                  </div>
                   <div class="box-content">
                     <div class="info">
                       <div class="left">
@@ -260,7 +275,7 @@
                       <span>
                         <img src="../../assets/img/myhome/icon-share@2x.png" alt />
                       </span>
-                      <span>
+                      <span @click="toDetail(item.articlesDto.type.name,item.articlesDto.id)">
                         <img src="../../assets/img/myhome/icon-49@2x.png" alt />
                         <i class="num">{{item.articlesDto.commentCount}}</i>
                       </span>
@@ -281,6 +296,9 @@
                   </div>
                 </div>
                 <div v-if="item.articlesDto.type.name=='Topic'">
+                  <div v-if="editStatus2" class="checkbox-wrap">
+                    <van-checkbox v-model="item.checked" checked-color="#ffcb00" @click="changeNum(item.checked)"/>
+                  </div>
                   <div class="box-content">
                     <div class="info">
                       <div class="left">
@@ -292,7 +310,7 @@
                       </div>
                     </div>
                     <div class="content2" @click="toDetail(item.articlesDto.type.name,item.articlesDto.id)">
-                    <van-image fit="cover" lazy-load :src="item.articlesDto.imagePaths[0]"/>
+                    <van-image fit="cover" lazy-load :src="item.imagePath"/>
                     </div>
                     <div class="content2-title">{{item.articlesDto.title}}</div>
                     <div class="opreate1" @click="toDetail(item.articlesDto.type.name,item.articlesDto.id)">
@@ -312,10 +330,14 @@
       </van-tab>
       <van-tab title="历史"> 
         <van-pull-refresh v-model="refreshing3" success-text="刷新成功" @refresh="onRefresh3">
-          <van-list v-model="loading3" :finished="finished3" finished-text="我是有底线的" @load="onLoad3">
-            <ul class="all">
+          <van-list v-model="loading3" :finished="finished3" :finished-text="list3.length?'我是有底线的':''" @load="onLoad3">
+            <no-content v-if="!list3.length&&!loading3"></no-content>
+            <ul class="all" v-else>
               <li v-for="(item, index) in list3" :key="index">
                 <div v-if="item.articlesDto.type.name=='PublishArticle'">
+                  <div v-if="editStatus3" class="checkbox-wrap">
+                    <van-checkbox v-model="item.checked" checked-color="#ffcb00" @click="changeNum(item.checked)"/>
+                  </div>
                   <div class="box-content">
                     <div class="info">
                       <div class="left">
@@ -328,7 +350,7 @@
                     </div>
                     <div class="content1" @click="toDetail(item.articlesDto.type.name,item.articlesDto.id)">
                       <div class="article van-multi-ellipsis--l3">{{item.articlesDto.title}}</div>
-                      <van-image fit="cover" lazy-load :src="item.articlesDto.imagePaths[0]"/>
+                      <van-image fit="cover" lazy-load :src="item.imagePath"/>
                     </div>
                     <div class="opreate">
                       <span>
@@ -355,6 +377,9 @@
                   </div>
                 </div>
                 <div v-if="item.articlesDto.type.name=='PublishVideo'">
+                  <div v-if="editStatus3" class="checkbox-wrap">
+                    <van-checkbox v-model="item.checked" checked-color="#ffcb00" @click="changeNum(item.checked)"/>
+                  </div>
                   <div class="box-content">
                     <div class="info">
                       <div class="left">
@@ -373,7 +398,7 @@
                       <span>
                         <img src="../../assets/img/myhome/icon-share@2x.png" alt />
                       </span>
-                      <span>
+                      <span @click="toDetail(item.articlesDto.type.name,item.articlesDto.id)">
                         <img src="../../assets/img/myhome/icon-49@2x.png" alt />
                         <i class="num">{{item.articlesDto.commentCount}}</i>
                       </span>
@@ -394,6 +419,9 @@
                   </div>
                 </div>
                 <div v-if="item.articlesDto.type.name=='Topic'">
+                  <div v-if="editStatus3" class="checkbox-wrap">
+                    <van-checkbox v-model="item.checked" checked-color="#ffcb00" @click="changeNum(item.checked)"/>
+                  </div>
                   <div class="box-content">
                     <div class="info">
                       <div class="left">
@@ -405,7 +433,7 @@
                       </div>
                     </div>
                     <div class="content2" @click="toDetail(item.articlesDto.type.name,item.articlesDto.id)">
-                    <van-image fit="cover" lazy-load :src="item.articlesDto.imagePaths[0]"/>
+                    <van-image fit="cover" lazy-load :src="item.imagePath"/>
                     </div>
                     <div class="content2-title">{{item.articlesDto.title}}</div>
                     <div class="opreate1" @click="toDetail(item.articlesDto.type.name,item.articlesDto.id)">
@@ -424,9 +452,21 @@
         </van-pull-refresh>
       </van-tab>
     </van-tabs>
-    <div id="footer-operate" v-if="editStatus&&active===0">
-      <span @click="emptyCollection()">一键清空</span>
+    <div id="footer-operate" v-if="active===0&&list.length&&editStatus">
+      <span @click="emptyCollection()" >一键清空</span>
       <span class="del" @click="delCollection()">删除(<i>{{checkNum}}</i>)</span>
+    </div>
+    <div id="footer-operate" v-if="active===1&&list1.length&&editStatus1">
+      <span @click="emptyCollection()" >一键清空</span>
+      <span class="del" @click="delCollection()">删除(<i>{{checkNum1}}</i>)</span>
+    </div>
+    <div id="footer-operate" v-if="active===2&&list2.length&&editStatus2">
+      <span @click="emptyCollection()" >一键清空</span>
+      <span class="del" @click="delCollection()">删除(<i>{{checkNum2}}</i>)</span>
+    </div>
+    <div id="footer-operate" v-if="active===3&&list3.length&&editStatus3">
+      <span @click="emptyCollection()" >一键清空</span>
+      <span class="del" @click="delCollection()">删除(<i>{{checkNum3}}</i>)</span>
     </div>
   </div>
 </template>
@@ -440,31 +480,38 @@ export default {
     return {
       active: 1,
       page: 1,
-      size: 20,
+      size: 10,
       list: [],
       loading: false,
       finished: false,
       refreshing: false,
       page1: 1,
-      size1: 20,
+      size1: 10,
       list1: [],
       loading1: false,
       finished1: false,
       refreshing1: false,
       page2: 1,
-      size2: 20,
+      size2: 10,
       list2: [],
       loading2: false,
       finished2: false,
       refreshing2: false,
       page3: 1,
-      size3: 20,
+      size3: 10,
       list3: [],
       loading3: false,
       finished3: false,
       refreshing3: false,
       editStatus: false,
-      checkNum: 0
+      editStatus1: false,
+      editStatus2: false,
+      editStatus3: false,
+      editStatusText: '编辑',
+      checkNum: 0,
+      checkNum1: 0,
+      checkNum2: 0,
+      checkNum3: 0
     };
   },
   created() {
@@ -472,6 +519,29 @@ export default {
   },
   mounted() {},
   methods: {
+    headEdit() {
+      console.log(this.active)
+      switch (this.active) {
+        case 0:
+          this.editStatus=!this.editStatus
+          this.editStatusText = this.editStatus?'取消':'编辑'
+          break;
+        case 1:
+          this.editStatus1=!this.editStatus1
+          this.editStatusText = this.editStatus1?'取消':'编辑'
+          break;
+        case 2:
+          this.editStatus2=!this.editStatus2
+          this.editStatusText = this.editStatus2?'取消':'编辑'
+          break;
+        case 3:
+          this.editStatus3=!this.editStatus3
+          this.editStatusText = this.editStatus3?'取消':'编辑'
+          break;
+        default:
+          break;
+      }
+    },
     getData() {
       return new Promise((resolve, reject) => {
         this.$ajax
@@ -490,12 +560,33 @@ export default {
           });
       });
     },
-    onLoadInit(id) {
+    onLoadInit() {
       this.page=1;
       this.list=[];
       this.finished = false;
       this.loading = true;
       this.onLoad();
+    },
+    onLoadInit1() {
+      this.page1=1;
+      this.list1=[];
+      this.finished1 = false;
+      this.loading1 = true;
+      this.onLoad1();
+    },
+    onLoadInit2() {
+      this.page2=1;
+      this.list2=[];
+      this.finished2 = false;
+      this.loading2 = true;
+      this.onLoad2();
+    },
+    onLoadInit3() {
+      this.page3=1;
+      this.list3=[];
+      this.finished3 = false;
+      this.loading3 = true;
+      this.onLoad3();
     },
     onLoad() {
       if (this.refreshing) {
@@ -506,6 +597,8 @@ export default {
       this.getData().then(res => {
         res.data.content.forEach(element => {
           this.$set(element,'checked',false)
+          // console.log(element)
+          // this.$set(element,'imagePath',element.articlesDto.imagePaths[0])
         });
         this.list.push(...res.data.content);
         this.loading = false;
@@ -542,6 +635,14 @@ export default {
         this.refreshing1 = false;
       }
       this.getData1().then(res => {
+        res.data.content.forEach(element => {
+          this.$set(element,'checked',false)
+          if(element.articlesDto.videoImagePath) {
+            this.$set(element,'imagePath', element.articlesDto.videoImagePath)
+          } else {
+            this.$set(element,'imagePath', element.articlesDto.imagePaths[0])
+          }
+        });
         this.list1.push(...res.data.content);
         this.loading1 = false;
         if (this.page1 >= res.data.totalPages) {
@@ -577,6 +678,14 @@ export default {
         this.refreshing2 = false;
       }
       this.getData2().then(res => {
+        res.data.content.forEach(element => {
+          this.$set(element,'checked',false)
+          if(element.articlesDto.videoImagePath) {
+            this.$set(element,'imagePath', element.articlesDto.videoImagePath)
+          } else {
+            this.$set(element,'imagePath', element.articlesDto.imagePaths[0])
+          }
+        });
         this.list2.push(...res.data.content);
         this.loading2 = false;
         if (this.page2 >= res.data.totalPages) {
@@ -612,6 +721,14 @@ export default {
         this.refreshing3 = false;
       }
       this.getData3().then(res => {
+        res.data.content.forEach(element => {
+          this.$set(element,'checked',false)
+          if(element.articlesDto.videoImagePath) {
+            this.$set(element,'imagePath', element.articlesDto.videoImagePath)
+          } else {
+            this.$set(element,'imagePath', element.articlesDto.imagePaths[0])
+          }
+        });
         this.list3.push(...res.data.content);
         this.loading3 = false;
         if (this.page3 >= res.data.totalPages) {
@@ -626,6 +743,7 @@ export default {
       this.onLoad3();
     },
     toDetail(type,id) {
+      // console.log(type,id)
       let url = ''
       switch (type) {
         case 'PublishArticle':
@@ -674,6 +792,7 @@ export default {
         })
         .then(() => {
           item.articlesQueryResultDto.whetherLikeArticles = true;
+          item.articlesQueryResultDto.likeCount++
           this.$toast("点赞成功");
         })
         .catch(error => {
@@ -687,6 +806,8 @@ export default {
         })
         .then(() => {
           item.articlesQueryResultDto.whetherLikeArticles = false;
+          item.articlesQueryResultDto.likeCount--
+          console.log(item)
           this.$toast("取消点赞");
         })
         .catch(error => {
@@ -700,6 +821,7 @@ export default {
         })
         .then(() => {
           item.articlesDto.whetherLikeArticles = true;
+          item.articlesDto.likeCount++
           this.$toast("点赞成功");
         })
         .catch(error => {
@@ -713,6 +835,7 @@ export default {
         })
         .then(() => {
           item.articlesDto.whetherLikeArticles = false;
+          item.articlesDto.likeCount--
           this.$toast("取消点赞");
         })
         .catch(error => {
@@ -721,31 +844,79 @@ export default {
     },
     changeNum(val) {
       if(val) {
-        this.checkNum++
+        switch (this.active) {
+          case 0:
+            this.checkNum++
+            break;
+          case 1:
+            this.checkNum1++
+            break;
+          case 2:
+            this.checkNum2++
+            break;
+          case 3:
+            this.checkNum3++
+            break;
+          default:
+            break;
+        }
       } else {
-        this.checkNum--
+        switch (this.active) {
+          case 0:
+            this.checkNum--
+            break;
+          case 1:
+            this.checkNum1--
+            break;
+          case 2:
+            this.checkNum2--
+            break;
+          case 3:
+            this.checkNum3--
+            break;
+          default:
+            break;
+        }
       }
     },
     emptyCollection() {
-      if(!this.list.length) {
-        return false
+      let type = ''
+      let text = ''
+      switch (this.active) {
+        case 0:
+          type = 'Collection'
+          text = '收藏'
+          break;
+        case 1:
+          type = 'Comment'
+          text = '评论'
+          break;
+        case 2:
+          type = 'Likes'
+          text = '点赞'
+          break;
+        case 3:
+          type = 'History'
+          text = '历史'
+          break;
+        default:
+          break;
       }
       Dialog.confirm({
-        title: "确定清空收藏？",
+        title: `确定清空${text}？`,
         confirmButtonColor: "#f99307",
-        theme: "round-button"
       })
         .then(() => {
-          this.emptyCollection1();
+          this.emptyCollection1(type);
         })
     },
-    emptyCollection1() {
+    emptyCollection1(type) {
       this.$ajax
         .post("api/front/articles/deleteAllOperation.json", {
-          operationType: 'Collection'
+          operationType: type
         })
         .then(() => {
-          this.onLoadInit()
+          this.onloadType()
           this.$toast("清空成功");
         })
         .catch(error => {
@@ -753,32 +924,80 @@ export default {
         });
     },
     delCollection() {
-      if(!this.list.length) {
-        return false
+      // if(!this.list.length) {
+      //   return false
+      // }
+      let type = ''
+      let endList = []
+      let text = ''
+      switch (this.active) {
+        case 0:
+          type = 'Collection'
+          endList = this.list
+          text = '收藏'
+          break;
+        case 1:
+          type = 'Comment'
+          endList = this.list1
+          text = '评论'
+          break;
+        case 2:
+          type = 'Likes'
+          endList = this.list2
+          text = '点赞'
+          break;
+        case 3:
+          type = 'History'
+          endList = this.list3
+          text = '历史'
+          break;
+        default:
+          break;
       }
       Dialog.confirm({
-        title: "确定删除收藏？",
+        title: `确定删除${text}？`,
         confirmButtonColor: "#f99307",
-        theme: "round-button"
       })
         .then(() => {
-          this.delCollection1();
+          this.delCollection1(type,endList);
         })
     },
-    delCollection1() {
-      let resultList = this.list.filter(item=>item.checked).map(item=>item.id)
+    delCollection1(type,endList) {
+      let resultList = endList.filter(item=>item.checked).map(item=>item.id)
       this.$ajax
         .post("api/front/articles/deleteBatchOperation.json", {
-          operationType: 'Collection',
+          operationType: type,
           ids: resultList
         })
         .then(() => {
-          this.onLoadInit()
+          this.onloadType()
           this.$toast("删除成功");
         })
         .catch(error => {
           this.$toast(error.message);
         });
+    },
+    onloadType() {
+      switch (this.active) {
+        case 0:
+          this.onLoadInit()
+          this.checkNum = 0
+          break;
+        case 1:
+          this.onLoadInit1()
+          this.checkNum1 = 0
+          break;
+        case 2:
+          this.onLoadInit2()
+          this.checkNum2 = 0
+          break;
+        case 3:
+          this.onLoadInit3()
+          this.checkNum3 = 0
+          break;
+        default:
+          break;
+      }
     }
   },
   computed: {
@@ -925,11 +1144,12 @@ export default {
   }
   .content1 {
     display: flex;
+    justify-content: space-between;
     margin-top: 18px;
     .article {
       margin-top: 10px;
       width: 200px;
-      margin-right: 30px;
+      // margin-right: 30px;
       height: 58px;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -983,13 +1203,13 @@ export default {
 }
 .comment-all {
   li {
-    >div {
-      padding-left: 0;
-      padding-right: 0;
-      .comment-box {
-        margin-left: 0;
-      }
-    }
+    // >div {
+    //   padding-left: 0;
+    //   padding-right: 0;
+    //   .comment-box {
+    //     margin-left: 0;
+    //   }
+    // }
   }
   .info {
     padding: 0 15px;
@@ -1007,13 +1227,15 @@ export default {
     }
     .commment-row {
       display: flex;
-      align-items: center;
+      justify-content: space-between;
+      // align-items: center;
       background: #f8f8f8;
-      padding: 16px 15px;
+      // padding: 16px 15px;
       .content-comment {
-        margin-right: 18px;
-        width: 188px;
-        flex-grow:1;
+        // margin-right: 18px;
+        width: 180px;
+        // flex-shrink: 1;
+        // flex-grow:1;
         .van-ellipsis {
           font-size: 16px;
           font-family: PingFang SC Bold, PingFang SC Bold-Bold;
@@ -1034,6 +1256,8 @@ export default {
         }
       }
       .van-image {
+        display: block;
+        // flex-shrink: 1;
         width: 140px;
         height: 105px;
         border-radius: 5px;

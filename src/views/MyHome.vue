@@ -77,7 +77,7 @@
           :finished-text="articleList.length?'没有更多了':''"
           @load="onLoad"
         >
-          <no-content v-if="!articleList.length"></no-content>
+          <no-content v-if="!articleList.length&&!loading"></no-content>
           <ul class="all" v-for="(item, index) in articleList" :key="index" v-else>
             <li v-if="item.type.name === 'PublishVideo'">
               <div class="info">
@@ -223,20 +223,17 @@
 <script type="text/ecmascript-6">
 import {
   Icon,
-  Tabs,
-  Tab,
-  Popup,
   ActionSheet,
   Dialog,
-  Field,
-  Button,
-  List, PullRefresh,
+  List, 
+  PullRefresh,
   Image,
   ShareSheet,
 } from "vant"; // Cell, CellGroup, Button,
 export default {
   data() {
     return {
+      userInfo: null,
       navList: [
         { name: "全部", id: 0,type:''},
         { name: "文章", id: 1,type:'PublishArticle'},
@@ -276,9 +273,26 @@ export default {
     };
   },
   created() {
+    this.getUserInfo()
   },
   mounted() {},
   methods: {
+    getUserInfo() {
+      
+      this.$ajax
+            .post("api/front/member/findMemberById.json", {
+              id: this.$route.query.id,
+            })
+            .then((res) => {
+              // this.$toast('删除成功');
+              // this.checkNav(this.navId,this.type)
+              console.log(res.data)
+              this.userInfo = res.data
+            })
+            .catch(error=> {
+              this.$toast(error)
+            });
+    },
     onSelect(item) {
       if (item.name === "删除") {
         Dialog.confirm({
@@ -400,22 +414,15 @@ export default {
     },
   },
   computed: {
-    userInfo() {
-      return this.$store.state.userInfo;
-    }
+    // userInfo() {
+    //   return this.$store.state.userInfo;
+    // }
   },
   watch: {},
   components: {
-    // "van-cell-group": CellGroup,
-    // "van-cell": Cell,
-    "van-button": Button,
     "van-icon": Icon,
-    "van-tabs": Tabs,
-    "van-tab": Tab,
-    "van-popup": Popup,
     "van-action-sheet": ActionSheet,
     // "van-dialog": Dialog,
-    "van-field": Field,
     "van-list": List,
     "van-pull-refresh": PullRefresh,
     "van-image": Image,

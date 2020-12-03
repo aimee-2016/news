@@ -116,15 +116,11 @@ import {
   Cell,
   ActionSheet,
   Field,
-  Area,
   DatetimePicker,
   Image,
   Icon,
   Uploader
 } from "vant";
-import {
-  Style
-} from "cube-ui";
 export default {
   data() {
     return {
@@ -183,7 +179,7 @@ export default {
           this.$toast(error)
         });
     },
-    onSelect(item) {
+    onSelect() {
       let domObj = this.$refs['uploadAvatar']
         console.log(domObj)
         domObj.chooseFile()
@@ -203,7 +199,6 @@ export default {
       } else {
         return `${val}日`;
       }
-      return val;
     },
     modifyUserName(user) {
       if(!user) {
@@ -297,7 +292,7 @@ export default {
           })
         })
     },
-    selectHandle(selectedVal, selectedIndex, selectedText) {
+    selectHandle(selectedVal) {
       this.$ajax
         .post("api/front/member/update.json", {
           region: selectedVal
@@ -324,7 +319,6 @@ export default {
     "van-action-sheet": ActionSheet,
     'self-button': selfButton,
     'van-field': Field,
-    'van-area': Area,
     'van-datetime-picker': DatetimePicker,
     "van-image": Image,
     "van-icon": Icon,

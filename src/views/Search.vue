@@ -62,7 +62,7 @@
       </div>
       <div class="article">
         <div class="wrap-b" v-if="navId === 1">
-          <div class="div1" v-if="videoList.length">
+          <div class="div1">
             <div class="article-head">
               <h3>视频</h3>
               <span @click="navId = 2" >
@@ -74,6 +74,7 @@
               v-for="(item, index) in videoList"
               :key="index"
               class="article-item"
+              @click="toDetailsPage('/videodetails/',item.id)"
             >
               <div class="content">
                 <div class="img-wrap">
@@ -98,7 +99,7 @@
               </div>
             </div>
           </div>
-          <div class="div2" v-if="informationList.length">
+          <div class="div2">
             <div class="article-head">
               <h3>资讯</h3>
               <span @click="navId = 3">
@@ -110,14 +111,11 @@
               v-for="(item, index) in informationList"
               :key="index"
               class="article-item"
+              @click="toDetailsPage('/articledetails/',item.id)"
             >
               <div class="content">
                 <div class="img-wrap">
-                  <img
-                    v-for="(inner, index) in item.imagePaths"
-                    :key="index"
-                    v-lazy="inner"
-                  />
+                  <img v-lazy="item.imagePaths[0]"/>
                 </div>
                 <h3>{{ item.title }}</h3>
               </div>
@@ -137,7 +135,7 @@
               </div>
             </div>
           </div>
-          <div class="div3" v-if="memberList.length">
+          <div class="div3">
             <div class="article-head">
               <h3>用户</h3>
               <span @click="navId = 4">
@@ -149,6 +147,7 @@
               v-for="(item, index) in memberList"
               :key="index"
               class="member-item"
+              @click="toDetailsPage('/myhome/',item.id)"
             >
               <div class="content">
                 <div class="left">
@@ -183,7 +182,7 @@
               </div>
             </div>
           </div>
-          <div class="div4" v-if="topicList.length">
+          <div class="div4">
             <div class="article-head">
               <h3>话题</h3>
               <span @click="navId = 5">
@@ -195,6 +194,7 @@
               v-for="(item, index) in topicList"
               :key="index"
               class="article-item"
+              @click="toDetailsPage('/topicdetails/',item.id)"
             >
               <div class="content">
                 <div class="img-wrap">
@@ -213,10 +213,13 @@
           </div>
         </div>
         <div class="wrap-b" v-if="navId === 2">
+          <no-content v-if="!videoList.length"></no-content>
           <div
             v-for="(item, index) in videoList"
             :key="index"
             class="article-item"
+            @click="toDetailsPage('/videodetails/',item.id)"
+            v-else
           >
             <div class="content">
               <div class="img-wrap">
@@ -242,18 +245,17 @@
           </div>
         </div>
         <div class="wrap-b" v-if="navId === 3">
+          <no-content v-if="!informationList.length"></no-content>
           <div
             v-for="(item, index) in informationList"
             :key="index"
             class="article-item"
+            @click="toDetailsPage('/articledetails/',item.id)"
+            v-else
           >
             <div class="content">
               <div class="img-wrap">
-                <img
-                  v-for="(inner, index) in item.imagePaths"
-                  :key="index"
-                  v-lazy="inner"
-                />
+                <img v-lazy="item.imagePaths[0]"/>
               </div>
               <h3>{{ item.title }}</h3>
             </div>
@@ -274,10 +276,13 @@
           </div>
         </div>
         <div class="wrap-b" v-if="navId === 4">
+          <no-content v-if="!memberList.length"></no-content>
           <div
             v-for="(item, index) in memberList"
             :key="index"
             class="member-item"
+            @click="toDetailsPage('/myhome/',item.id)"
+            v-else
           >
             <div class="content">
               <div class="left">
@@ -313,10 +318,13 @@
           </div>
         </div>
         <div class="wrap-b" v-if="navId === 5">
+          <no-content v-if="!topicList.length"></no-content>
           <div
             v-for="(item, index) in topicList"
             :key="index"
             class="article-item"
+            @click="toDetailsPage('/topicdetails/',item.id)"
+            v-else
           >
             <div class="content">
               <div class="img-wrap">
@@ -391,6 +399,7 @@ export default {
   },
   methods: {
     focusUser(id) {
+      console.log('guanzhu')
       this.$ajax
         .post('api/front/member/follow.json', {
           id: id,
@@ -406,6 +415,7 @@ export default {
             this.$toast(error.message)
           }
         })
+      event.stopPropagation()
     },
     focusText(item) {
       if (item) {
@@ -475,6 +485,12 @@ export default {
     },
     onCancel() {
       // this.$router.push('/home')
+    },
+    toDetailsPage(url,id) {
+      this.$router.push({
+        path: url,
+        query: { id: id },
+      });
     },
   },
   computed: {

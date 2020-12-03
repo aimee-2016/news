@@ -385,7 +385,8 @@ export default {
           id: item.id,
         })
         .then(() => {
-          item.followType = "Fans";
+          item.followType = {}
+          item.followType.name = 'Fans'
           this.$toast("关注成功");
         })
         .catch((error) => {
@@ -452,7 +453,6 @@ export default {
       Dialog.confirm({
         title: "确定删除此评论？",
         confirmButtonColor: "#f99307",
-        theme: "round-button",
       })
         .then(() => {
           this.delComment(id);
@@ -572,6 +572,7 @@ export default {
           this.commentShow = false;
           this.commentInit();
           this.$toast("评论成功");
+          this.comment = ""
         })
         .catch((error) => {
           if(error.status==='208') {

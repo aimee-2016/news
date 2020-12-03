@@ -35,29 +35,14 @@
 </template>
 
 <script type='text/ecmascript-6'>
-import selfButton from "@/components/button";
 import {
   Image,
-  List,
-  Popup,
-  Dialog,
-  ShareSheet,
-  Cell,
-  CellGroup,
-  Button,
   Field,
   PullRefresh,
 } from "vant";
 export default {
   components: {
     "van-image": Image,
-    "self-button": selfButton,
-    "van-list": List,
-    "van-share-sheet": ShareSheet,
-    "van-popup": Popup,
-    "van-cell-group": CellGroup,
-    "van-cell": Cell,
-    "van-button": Button,
     "van-field": Field,
     "van-pull-refresh": PullRefresh,
   },

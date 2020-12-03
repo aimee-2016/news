@@ -16,22 +16,23 @@
       </div>
     </div>
     <div class="article">
-      <!-- <div class="no-login" v-if="firstId===navId">
-        <img src="../assets/img/home/logo@2x.png" alt="add" />
-        <p v-if="!userInfo">您还没有登录，请前往登录</p>
-        <p v-if="userInfo&&articleList.length===0">你还没有关注任何人，请前往关注</p>
-      </div>-->
       <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
         <van-list
           v-model="loading"
           :finished="finished"
-          finished-text="没有更多了"
+          :finished-text="articleList.length?'没有更多了':''"
           @load="onLoad"
         >
+          <div v-if="!articleList.length&&!loading">
+            <no-content v-if="hotId===navId&&userInfo">您还没有关注任何人，请前往关注</no-content>
+            <no-content v-if="hotId===navId&&!userInfo">您还没有登录，请前往登录</no-content>
+            <no-content v-if="hotId!==navId"></no-content>
+          </div>
           <div
             v-for="(item, index) in articleList"
             :key="index"
             class="article-item"
+            v-else
           >
             <div
               class="img-box"
@@ -45,8 +46,11 @@
               <div class="title-b">
                 <h3>{{ item.title }}</h3>
               </div>
-
-              <van-image lazy-load fit="cover" :src="item.videoImagePath" />
+              <van-image lazy-load fit="cover" :src="item.videoImagePath" >
+                <!-- <template v-slot:loading>
+                  <img src="../assets/img/home/video-no.png" alt="">
+                </template> -->
+              </van-image>
               <img src="../assets/img/video/play2x.png" alt="" />
               <div class="info">
                 <span>{{ item.viewCount }}次播放量 | </span
@@ -173,7 +177,7 @@
 <script>
 // @ is an alias to /src
 // import HelloWorld from '@/components/HelloWorld.vue'
-import { Icon, Search, Toast, List, PullRefresh, Popup, Image } from "vant";
+import { Icon, List, PullRefresh, Popup, Image } from "vant";
 export default {
   name: "Home",
   data() {
@@ -244,10 +248,10 @@ export default {
       ],
       topList: [],
       msgNum: 0,
+      hotId: ''
     };
   },
   components: {
-    "van-search": Search,
     "van-icon": Icon,
     "van-list": List,
     "van-pull-refresh": PullRefresh,
@@ -264,6 +268,7 @@ export default {
         .then((res) => {
           this.navList = res.data;
           this.navId = res.data.filter(item=>item.name==='热点')[0].id
+          this.hotId = res.data.filter(item=>item.name==='关注')[0].id
           // this.firstId = res.data[0].id;
           // this.getArticle();
           this.$nextTick(()=>{

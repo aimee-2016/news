@@ -5,11 +5,11 @@
       <van-button color="#F99307" plain round to="login" class="login-btn">登陆/注册</van-button>
     </div>
     <div class="info-top" v-if="userInfo">
-      <div class="back-home" @click="$router.push('/myhome/')">
+      <div class="back-home" @click="$router.push({path:'/myhome/',query:{id:userInfo.id}})">
         <span>个人主页</span>
         <van-icon name="arrow" />
       </div>
-      <div class="top" @click="$router.push('/myhome/')">
+      <div class="top" @click="$router.push({path:'/myhome/',query:{id:userInfo.id}})">
         <div class="avatar">
           <img :src="userInfo.headImgPath" alt />
           <i class="auth" v-if="userInfo.memberStatus.name==='CertifyAdopt'"></i>
@@ -52,8 +52,8 @@
             </li>
           </ul>
         </div>
-        <van-button plain color="#999999" size="small" round v-if="todaySign" disabled="">已签到</van-button>
-        <van-button plain color="#fcbe64" size="small" round v-else @click="signIn()">打卡赚积分</van-button>
+        <span class="btn signed-btn" v-if="todaySign">已签到</span>
+        <span class="btn unsign-btn" v-else @click="signIn()">打卡赚积分</span>
       </div>
       <div class="desc" @click="$router.push('/integralcenter/')">
         <i class="icon"></i>
@@ -137,7 +137,6 @@
 </template>
 
 <script type="text/ecmascript-6">
-import { mapActions } from "vuex";
 import { Cell, CellGroup, Button, Icon, Popup, } from "vant";
 export default {
   data() {
@@ -174,7 +173,7 @@ export default {
     signIn() {
       this.$ajax
         .post("api/front/member/signIn.json", {})
-        .then(res => {
+        .then(() => {
           this.getSignList()
         });
     },
@@ -353,7 +352,7 @@ export default {
 }
 .signin {
   margin: 20px 14px 10px;
-  padding: 16px 10px 16px 12px;
+  padding: 16px 6px 16px 12px;
   background: #ffffff;
   box-shadow: 0px 1px 10px 0px rgba(4, 0, 0, 0.1);
   .date {
@@ -405,6 +404,25 @@ export default {
         }
       }
     }
+  }
+  .btn {
+    width: 80px;
+    height: 28px;
+    background: #fff;
+    border-radius: 15px;
+    font-size: 11px;
+    font-family: PingFang SC Bold, PingFang SC Bold-Bold;
+    font-weight: 700;
+    line-height: 26px;
+    text-align: center;
+  }
+  .signed-btn {
+    color: #999999;
+    border: solid 1px #DADADA;
+  }
+  .unsign-btn {
+    border: 1px solid #fcbe64;
+    color: #f99307;
   }
   .desc {
     display: inline-block;

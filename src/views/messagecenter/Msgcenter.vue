@@ -19,7 +19,7 @@
             finished-text="list.length?'没有更多了':''"
             @load="onLoad"
           >
-            <no-content v-if="!list.length"></no-content>
+            <no-content v-if="!list.length&&!loading"></no-content>
             <div class="msg-container van-hairline--top" v-else>
               <div
                 v-for="(item, index) in list"
@@ -64,7 +64,7 @@
             finished-text="list.length?'没有更多了':''"
             @load="onLoad1"
           >
-            <no-content v-if="!list1.length"></no-content>
+            <no-content v-if="!list1.length&&!loading1"></no-content>
             <div class="msg-container van-hairline--top" v-else>
               <div v-for="(item, index) in list1" :key="index" class="msg-item" @click="toDetail(item,'2')">
                 <div class="content">

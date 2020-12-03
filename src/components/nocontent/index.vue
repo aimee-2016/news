@@ -1,8 +1,9 @@
 <template>
   <div>
     <div class="no-content">
-      <img src="../../assets/img/home/logo@2x.png" alt="" />
-      <p><slot>暂无数据</slot></p>
+      <img v-lazy="imgsrc" alt="" />
+      <!-- <img v-lazy="item.imagePaths[0]" /> -->
+      <p><slot>亲!暂无数据</slot></p>
     </div>
   </div>
 </template>
@@ -11,7 +12,7 @@
 export default {
   data() {
     return {
-
+      imgsrc: require('../../assets/img/home/logo@2x.png')
     }
   },
   created() {

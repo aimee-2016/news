@@ -49,24 +49,8 @@
                 </li>
               </ul>
             </div>
-            <van-button
-              plain
-              color="#999999"
-              size="small"
-              round
-              v-if="todaySign"
-              disabled=""
-              >已签到</van-button
-            >
-            <van-button
-              plain
-              color="#fcbe64"
-              size="small"
-              round
-              v-else
-              @click="signIn()"
-              >打卡赚积分</van-button
-            >
+            <span class="btn signed-btn" v-if="todaySign">已签到</span>
+            <span class="btn unsign-btn" v-else @click="signIn()">打卡赚积分</span>
           </div>
           <div class="desc">
             <i class="icon"></i>
@@ -391,6 +375,25 @@ export default {
         }
       }
     }
+    .btn {
+    width: 80px;
+    height: 28px;
+    background: #fff;
+    border-radius: 15px;
+    font-size: 11px;
+    font-family: PingFang SC Bold, PingFang SC Bold-Bold;
+    font-weight: 700;
+    line-height: 26px;
+    text-align: center;
+  }
+  .signed-btn {
+    color: #999999;
+    border: solid 1px #DADADA;
+  }
+  .unsign-btn {
+    border: 1px solid #fcbe64;
+    color: #f99307;
+  }
     .date {
       display: flex;
       align-items: center;
