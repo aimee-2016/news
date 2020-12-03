@@ -34,7 +34,7 @@
             "
           >
             <div class="tc-fm">
-              <img :src="item.imagePathsStr" />
+              <van-image lazy-load :src="item.imagePathsStr" fit="cover"/>
             </div>
             <div class="tp-desc">
               <p class="tp-title">{{ item.title }}</p>
@@ -64,7 +64,7 @@
 </template>
 
 <script>
-import { Icon, List, PullRefresh } from "vant";
+import { Icon, List, PullRefresh, Image } from "vant";
 export default {
   data() {
     return {
@@ -94,6 +94,7 @@ export default {
     "van-icon": Icon,
     "van-list": List,
     "van-pull-refresh": PullRefresh,
+    "van-image": Image,
   },
   created() {
     this.checkNav(0);
@@ -245,7 +246,7 @@ export default {
 }
 .tc-content {
   .tc-fm {
-    img {
+    .van-image {
       width: 100%;
       height: 192px;
     }

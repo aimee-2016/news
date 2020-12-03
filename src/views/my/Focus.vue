@@ -16,7 +16,7 @@
           <van-list v-model="loading" :finished="finished" :finished-text="list.length?'没有更多了':''" @load="onLoad">
             <div class="msg-container">
               <no-content v-if="!list.length&&!loading">您还没有关注任何人，请前往关注</no-content>
-              <div v-for="(item, index) in list" :key="index" class="msg-item" v-else>
+              <div v-for="(item, index) in list" :key="index" class="msg-item" v-else @click="$router.push({path:'/myhome/',query:{id:item.id}})">
                 <div class="content">
                   <div class="left">
                     <div class="head-img">
@@ -57,7 +57,7 @@
           <van-list v-model="loading1" :finished="finished1" :finished-text="list1.length?'没有更多了':''" @load="onLoad1">
             <div class="msg-container">
               <no-content v-if="!list1.length&&!loading1"></no-content>
-              <div v-for="(item, index) in list1" :key="index" class="msg-item" v-else>
+              <div v-for="(item, index) in list1" :key="index" class="msg-item" v-else @click="$router.push({path:'/myhome/',query:{id:item.id}})">
                 <div class="content">
                   <div class="left">
                     <div class="head-img">
@@ -103,7 +103,6 @@
 </template>
 
 <script type="text/ecmascript-6">
-import selfButton from "@/components/button";
 import { Tabs, Tab, List, PullRefresh, Image, Icon } from "vant";
 export default {
   name: "svb",
@@ -259,7 +258,6 @@ export default {
     "van-pull-refresh": PullRefresh,
     "van-image": Image,
     "van-icon": Icon,
-    "self-button": selfButton
   }
 };
 </script>

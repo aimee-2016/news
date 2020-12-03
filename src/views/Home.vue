@@ -7,7 +7,11 @@
           placeholder="请输入搜索关键词"
           @click="$router.push('/search')"
         />
-        <van-icon name="chat-o" :badge="msgNum" @click="$router.push('/msgcenter/')" />
+        <van-icon
+          name="chat-o"
+          :badge="msgNum"
+          @click="$router.push('/msgcenter/')"
+        />
       </div>
       <div class="nav">
         <ul ref="navW">
@@ -20,15 +24,12 @@
             {{ item.name }}
           </li>
         </ul>
-        <span class="icon"><van-icon name="wap-nav" @click="getRecommendList()" /></span>
+        <span class="icon"
+          ><van-icon name="wap-nav" @click="getRecommendList()"
+        /></span>
       </div>
     </div>
     <div class="article">
-      <!-- <div class="no-login" v-if="firstId===navId">
-        <img src="../assets/img/home/logo@2x.png" alt="add" />
-        <p v-if="!userInfo">您还没有登录，请前往登录</p>
-        <p v-if="userInfo&&articleList.length===0">你还没有关注任何人，请前往关注</p>
-      </div>-->
       <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
         <!-- <transition name="fade">
           <p class="refresh-m" v-if="refreshMessage">
@@ -38,16 +39,20 @@
         <van-list
           v-model="loading"
           :finished="finished"
-          :finished-text="articleList.length?'没有更多了':''"
+          :finished-text="articleList.length ? '没有更多了' : ''"
           @load="onLoad"
         >
           <!-- <template #loading>
             <img class="doge" src="../assets/img/home/loading.png" />
           </template> -->
-          <div v-if="!articleList.length&&!loading">
-            <no-content v-if="hotId===navId&&userInfo">您还没有关注任何人，请前往关注</no-content>
-            <no-content v-if="hotId===navId&&!userInfo">您还没有登录，请前往登录</no-content>
-            <no-content v-if="hotId!==navId"></no-content>
+          <div v-if="!articleList.length && !loading">
+            <no-content v-if="hotId === navId && userInfo"
+              >您还没有关注任何人，请前往关注</no-content
+            >
+            <no-content v-if="hotId === navId && !userInfo"
+              >您还没有登录，请前往登录</no-content
+            >
+            <no-content v-if="hotId !== navId"></no-content>
           </div>
           <div
             v-for="(item, index) in articleList"
@@ -55,38 +60,72 @@
             class="article-item"
             v-else
           >
-            <div
-              @click="
-                $router.push({
-                  path: '/articledetails/',
-                  query: { id: item.id },
-                })
-              "
-            >
-              <h3>{{ item.title }}</h3>
+            <div v-if="item.whetherTop" class="top-item">
+              <div class="top-left">
+                <div
+                  @click="
+                    $router.push({
+                      path: '/articledetails/',
+                      query: { id: item.id },
+                    })
+                  "
+                >
+                  <h3>{{ item.title }}</h3>
+                </div>
+                <div class="operat">
+                  <div class="left">
+                    <span class="red">置顶</span>
+                    <span>{{ item.author.nickName }}</span>
+                    <span>{{ item.commentCount }}评论</span>
+                    <!-- <span>{{ item.pubDate | changeTime }}</span> -->
+                  </div>
+                  <div class="close">
+                    <van-icon
+                      name="cross"
+                      @click="
+                        modal.article = true;
+                        selectedItem = item;
+                      "
+                    />
+                  </div>
+                </div>
+              </div>
               <div class="img-wrap">
-                <img
-                  v-for="(inner, index) in item.imagePaths"
-                  :key="index"
-                   v-lazy="inner"
-                   alt
-                />
+                <van-image lazy-load :src="inner" v-for="(inner, index) in item.imagePaths" :key="index" fit="cover"/>
               </div>
             </div>
-            <div class="operat">
-              <div class="left">
-                <span>{{ item.author.nickName }}</span>
-                <span>{{ item.commentCount }}评论</span>
-                <span>{{ item.pubDate | changeTime }}</span>
+            <div v-else>
+              <div
+                @click="
+                  $router.push({
+                    path: '/articledetails/',
+                    query: { id: item.id },
+                  })
+                "
+              >
+                <h3>{{ item.title }}</h3>
+                <div class="img-wrap" v-if="item.imagePaths.length>1">
+                  <van-image lazy-load :src="inner" v-for="(inner, index) in item.imagePaths" :key="index" fit="cover"/>
+                </div>
+                <div class="img-wrap-1" v-else>
+                  <van-image lazy-load :src="inner" v-for="(inner, index) in item.imagePaths" :key="index" fit="cover"/>
+                </div>
               </div>
-              <div class="close">
-                <van-icon
-                  name="cross"
-                  @click="
-                    modal.article = true;
-                    selectedItem = item;
-                  "
-                />
+              <div class="operat">
+                <div class="left">
+                  <span>{{ item.author.nickName }}</span>
+                  <span>{{ item.commentCount }}评论</span>
+                  <span>{{ item.pubDate | changeTime }}</span>
+                </div>
+                <div class="close">
+                  <van-icon
+                    name="cross"
+                    @click="
+                      modal.article = true;
+                      selectedItem = item;
+                    "
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -201,7 +240,7 @@
 <script>
 // @ is an alias to /src
 // import HelloWorld from '@/components/HelloWorld.vue'
-import { Icon, Search, Toast, List, PullRefresh, Popup } from "vant";
+import { Icon, Search, Toast, List, PullRefresh, Popup, Image } from "vant";
 export default {
   name: "Home",
   data() {
@@ -212,7 +251,7 @@ export default {
         complaint: false,
         article: false,
         user: false,
-        support: false
+        support: false,
       },
       navList: [
         // { name: "关注", id: 1 },
@@ -273,7 +312,7 @@ export default {
       ],
       topList: [],
       msgNum: 0,
-      hotId: ''
+      hotId: "",
     };
   },
   components: {
@@ -282,33 +321,33 @@ export default {
     "van-list": List,
     "van-pull-refresh": PullRefresh,
     "van-popup": Popup,
+    "van-image": Image
   },
-  created() {
-  },
+  created() {},
   mounted() {
-    this.unreadData()
+    this.unreadData();
     this.getNavList();
   },
   methods: {
     getNavList() {
-      this.$ajax  
+      this.$ajax
         .post("api/front/member/findIndexColumnList.json", {})
         .then((res) => {
           this.navList = res.data;
-          this.navId = res.data.filter(item=>item.name==='热点')[0].id
-          this.hotId = res.data.filter(item=>item.name==='关注')[0].id
+          this.navId = res.data.filter((item) => item.name === "热点")[0].id;
+          this.hotId = res.data.filter((item) => item.name === "关注")[0].id;
 
-          console.log(this.hotId)
+          console.log(this.hotId);
           // this.firstId = res.data.filter(item=>item.name==='热点')[0].id
           // this.getArticle();
-          this.$nextTick(()=>{
-            let liDoms = this.$refs['navW'].children
-            let endWidth = 0
-            liDoms.forEach(element => {
-              endWidth += element.offsetWidth+20
+          this.$nextTick(() => {
+            let liDoms = this.$refs["navW"].children;
+            let endWidth = 0;
+            liDoms.forEach((element) => {
+              endWidth += element.offsetWidth + 20;
             });
-            this.$refs['navW'].style.width = (endWidth+30)/15+'rem'
-          })
+            this.$refs["navW"].style.width = (endWidth + 30) / 15 + "rem";
+          });
           this.onLoad();
         })
         .catch((error) => {
@@ -461,10 +500,13 @@ export default {
     },
     unreadData() {
       this.$ajax
-        .post('api/front/message/findMessageUnRead.json', {})
+        .post("api/front/message/findMessageUnRead.json", {})
         .then((res) => {
-          this.msgNum = res.data.systemMessageCount+res.data.replyCount+res.data.privateLetterCount
-        })
+          this.msgNum =
+            res.data.systemMessageCount +
+            res.data.replyCount +
+            res.data.privateLetterCount;
+        });
     },
   },
   computed: {
@@ -586,6 +628,15 @@ export default {
     border-bottom: 1px solid #f0f0f0;
     padding: 0 16px;
   }
+  .top-item {
+    display: flex;
+    .top-left {
+      margin-right: 20px;
+    }
+    .red {
+      color: #EC4448;
+    }
+  }
   h3 {
     margin-bottom: 10px;
     font-size: 16px;
@@ -597,10 +648,19 @@ export default {
   }
   .img-wrap {
     display: flex;
-    img {
+    .van-image {
       width: 110px;
       height: 80px;
       margin-right: 10px;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+  }
+  .img-wrap-1 {
+    .van-image {
+      width: 100%;
+      height: 180px;
+      overflow: hidden;
     }
   }
   .operat {

@@ -257,7 +257,7 @@ export default {
     },
     toChat(item) {
       console.log(item)
-      this.$router.push({path: '/chat',query: {receiverMemberId:item.receiverMemberId,nickName:item.nickName,headImgPath:item.headImgPath,}})
+      this.$router.push({path: '/chat/',query: {receiverMemberId:item.receiverMemberId,nickName:item.nickName,headImgPath:item.headImgPath}})
     }
   },
   computed: {

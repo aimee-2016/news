@@ -1,58 +1,83 @@
 <template>
   <div>
-    <div
-      class="top-info"
-      :style="{
-        background:
-          '#2e2840 url(' + userInfo.headImgPath + ') no-repeat center',
-        backgroundSize: 'cover',
-      }"
-    >
+    <div class="top-info" v-lazy:background-image="herInfo.headImgPath">
       <div class="bg">
         <div class="return">
           <van-icon name="arrow-left" @click="$router.go(-1)" />
-          <!-- <van-icon name="ellipsis" @click="modal.user = true" /> -->
+          <van-icon
+            name="ellipsis"
+            @click="modal.block = true"
+            v-if="userInfo.id !== herInfo.id"
+          />
         </div>
         <div class="row-1">
-          <img :src="userInfo.headImgPath" alt class="avatar" />
-          <span class="btn-edit" @click="$router.push('/editmaterials/')"
-            >编辑资料</span
-          >
-          <span class="btn-auth" @click="myAuth()">我的认证</span>
+          <img v-lazy="herInfo.headImgPath" alt class="avatar" />
+          <div v-if="userInfo.id === herInfo.id">
+            <span class="btn-edit" @click="$router.push('/editmaterials/')"
+              >编辑资料</span
+            >
+            <span class="btn-auth" @click="myAuth()">我的认证</span>
+          </div>
+          <div v-else>
+            <span
+              class="btn-edit"
+              v-if="
+                !(herInfo.followType && herInfo.followType.name === 'Block')
+              "
+              >私信</span
+            >
+            <span
+              class="btn-auth"
+              v-if="!herInfo.followType"
+              @click="focusUser(herInfo.id)"
+              >关注</span
+            >
+            <span
+              class="btn-auth focused"
+              v-if="herInfo.followType && herInfo.followType.name === 'Fans'"
+              @click="unfocusUser(herInfo.id)"
+              >已关注</span
+            >
+            <span
+              class="btn-edit"
+              v-if="herInfo.followType && herInfo.followType.name === 'Block'"
+              >解除拉黑</span
+            >
+          </div>
         </div>
         <div class="row-2">
-          <span class="name">{{ userInfo.nickName }}</span>
-          <span class="age" v-if="userInfo.sex || userInfo.age">
-            <span v-if="userInfo.sex">{{ userInfo.sex.message }}</span>
-            <span v-if="userInfo.age"> {{ userInfo.age }}</span>
+          <span class="name">{{ herInfo.nickName }}</span>
+          <span class="age" v-if="herInfo.sex || herInfo.age">
+            <span v-if="herInfo.sex">{{ herInfo.sex.message }}</span>
+            <span v-if="herInfo.age"> {{ herInfo.age }}</span>
           </span>
         </div>
         <ul class="row-3">
           <li>
-            <span class="num">{{ userInfo.followCount }}</span>
+            <span class="num">{{ herInfo.followCount }}</span>
             <span class="text">关注</span>
           </li>
           <li>
-            <span class="num">{{ userInfo.fansCount }}</span>
+            <span class="num">{{ herInfo.fansCount }}</span>
             <span class="text">粉丝</span>
           </li>
           <li>
-            <span class="num">{{ userInfo.fabulousCount }}</span>
+            <span class="num">{{ herInfo.fabulousCount }}</span>
             <span class="text">获赞</span>
           </li>
         </ul>
         <ul class="row-4">
           <li>
             <span class="icon-auth icon"></span>
-            <span class="text">认证：{{ userInfo.memberStatus.message }}</span>
+            <span class="text">认证：{{ herInfo.memberStatus.message }}</span>
           </li>
           <li>
             <span class="icon-location icon"></span>
-            <span class="text">位置：{{ userInfo.address || "---" }}</span>
+            <span class="text">位置：{{ herInfo.address || "---" }}</span>
           </li>
           <li class="van-multi-ellipsis--l2">
             <span class="icon-desc icon"></span>
-            <span class="text">简介：{{ userInfo.synopsis || "---" }}</span>
+            <span class="text">简介：{{ herInfo.synopsis || "---" }}</span>
           </li>
         </ul>
       </div>
@@ -74,29 +99,28 @@
         <van-list
           v-model="loading"
           :finished="finished"
-          :finished-text="articleList.length?'没有更多了':''"
+          :finished-text="articleList.length ? '没有更多了' : ''"
           @load="onLoad"
         >
-          <no-content v-if="!articleList.length&&!loading"></no-content>
-          <ul class="all" v-for="(item, index) in articleList" :key="index" v-else>
+          <no-content v-if="!articleList.length && !loading"></no-content>
+          <ul
+            class="all"
+            v-for="(item, index) in articleList"
+            :key="index"
+            v-else
+          >
             <li v-if="item.type.name === 'PublishVideo'">
               <div class="info">
                 <div class="left">
-                  <img :src="userInfo.headImgPath" alt class="avatar" />
+                  <img v-lazy="herInfo.headImgPath" alt class="avatar" />
                   <div class="text">
-                    <span class="name">{{ userInfo.nickName }}</span>
+                    <span class="name">{{ herInfo.nickName }}</span>
                     <span class="time">{{ item.pubDate | changeTime }}</span>
                   </div>
                 </div>
                 <div class="right">
                   <span class="icon-top" v-if="item.whetherTop"></span>
-                  <van-icon
-                    name="ellipsis"
-                    @click="
-                      selectedItem = item;
-                      modal.user = true;
-                    "
-                  />
+                  <van-icon name="ellipsis" @click="articleFunc(item)" />
                 </div>
               </div>
               <div
@@ -145,21 +169,15 @@
             <li v-if="item.type.name === 'PublishArticle'">
               <div class="info">
                 <div class="left">
-                  <img :src="userInfo.headImgPath" alt class="avatar" />
+                  <img v-lazy="herInfo.headImgPath" alt class="avatar" />
                   <div class="text">
-                    <span class="name">{{ userInfo.nickName }}</span>
+                    <span class="name">{{ herInfo.nickName }}</span>
                     <span class="time">{{ item.pubDate | changeTime }}</span>
                   </div>
                 </div>
                 <div class="right">
                   <span class="icon-top" v-if="item.whetherTop"></span>
-                  <van-icon
-                    name="ellipsis"
-                    @click="
-                      selectedItem = item;
-                      modal.user = true;
-                    "
-                  />
+                  <van-icon name="ellipsis" @click="articleFunc(item)" />
                 </div>
               </div>
               <div
@@ -217,6 +235,92 @@
       close-on-click-action
       @select="onSelect"
     />
+    <van-action-sheet
+      v-model="modal.block"
+      :actions="actionsBlock"
+      cancel-text="取消"
+      close-on-click-action
+      @select="onSelectBlock"
+    />
+    <van-popup v-model="modal.article" class="more-popup">
+      <div
+        @click="
+          modal.article = false;
+          uninterested();
+        "
+      >
+        <div class="img-wrap">
+          <img src="../assets/img/myhome/icon-56@2x.png" alt />
+        </div>
+        <div class="text">
+          <span>不感兴趣</span>
+        </div>
+      </div>
+      <div
+        class="row-2"
+        @click="
+          modal.article = false;
+          modal.report = true;
+        "
+      >
+        <div class="img-wrap">
+          <img src="../assets/img/myhome/icon-57@2x.png" alt />
+        </div>
+        <div class="text">
+          <span>举报内容</span>
+          <span>内容质量差 标题党 低俗 暴力血腥 恶心</span>
+        </div>
+      </div>
+      <div
+        @click="
+          modal.article = false;
+          blockAuthor();
+        "
+      >
+        <div class="img-wrap">
+          <img src="../assets/img/myhome/icon-58@2x.png" alt />
+        </div>
+        <div class="text">
+          <span>拉黑作者：{{ herInfo.nickName }}</span>
+        </div>
+      </div>
+    </van-popup>
+    <van-popup v-model="modal.report" class="more-popup">
+      <div
+        v-for="(item, index) in articleReportList"
+        :key="index"
+        @click="reportArticle(item.val)"
+      >
+        <div class="text">
+          <span>{{ item.name }}</span>
+        </div>
+      </div>
+    </van-popup>
+    <van-popup v-model="modal.complaint" closeable class="modal-complaint">
+      <div class="container">
+        <div class="title">举报用户</div>
+        <div class="center">
+          <div class="text"><span>#</span>我有话要说:</div>
+          <van-field
+            v-model="messageComplaint"
+            rows="6"
+            autosize
+            type="textarea"
+            placeholder="请具体说明问题，我们将尽快处理"
+            style="background: #f0f0f0"
+          />
+        </div>
+        <div class="footer">
+          <van-button
+            type="primary"
+            round
+            class="btn-yellow"
+            @click="reportUser()"
+            >确定</van-button
+          >
+        </div>
+      </div>
+    </van-popup>
     <van-share-sheet v-model="modal.share" :options="options1" title="分享到" />
   </div>
 </template>
@@ -225,27 +329,47 @@ import {
   Icon,
   ActionSheet,
   Dialog,
-  List, 
+  List,
   PullRefresh,
   Image,
   ShareSheet,
+  Popup,
+  Button,
+  Field,
 } from "vant"; // Cell, CellGroup, Button,
 export default {
   data() {
     return {
-      userInfo: null,
+      herInfo: {
+        headImgPath: "",
+        sex: { message: "" },
+        memberStatus: { message: "" },
+      },
       navList: [
-        { name: "全部", id: 0,type:''},
-        { name: "文章", id: 1,type:'PublishArticle'},
-        { name: "视频", id: 2,type:'PublishVideo'},
+        { name: "全部", id: 0, type: "" },
+        { name: "文章", id: 1, type: "PublishArticle" },
+        { name: "视频", id: 2, type: "PublishVideo" },
       ],
       navId: 0,
-      type: '',
+      type: "",
       active: 0,
-      actions: [{ name: "编辑" }, { name: "置顶" },{ name: "删除" }],
+      actions: [{ name: "编辑" }, { name: "置顶" }, { name: "删除" }],
+      actionsBlock1: [{ name: "拉黑" }, { name: "举报用户" }],
+      actionsBlock2: [{ name: "解除拉黑" }, { name: "举报用户" }],
+      articleReportList: [
+        { name: "内容质量差", val: "PoorContent" },
+        { name: "标题党", val: "TitleParty" },
+        { name: "低俗", val: "Vulgar" },
+        { name: "暴力血腥", val: "ViolentBloody" },
+        { name: "恶心", val: "Nausea" },
+      ],
       modal: {
         user: false,
-        share: false
+        share: false,
+        block: false,
+        article: false,
+        report: false,
+        complaint: false,
       },
       options1: [
         [
@@ -269,67 +393,30 @@ export default {
       size: 5,
       articleList: [],
       refreshing: false,
-      selectedItem: null
+      selectedItem: null,
+      messageComplaint: "",
     };
   },
   created() {
-    this.getUserInfo()
+    this.getUserInfo();
   },
   mounted() {},
   methods: {
     getUserInfo() {
-      
       this.$ajax
-            .post("api/front/member/findMemberById.json", {
-              id: this.$route.query.id,
-            })
-            .then((res) => {
-              // this.$toast('删除成功');
-              // this.checkNav(this.navId,this.type)
-              console.log(res.data)
-              this.userInfo = res.data
-            })
-            .catch(error=> {
-              this.$toast(error)
-            });
-    },
-    onSelect(item) {
-      if (item.name === "删除") {
-        Dialog.confirm({
-          title: "确定删除此内容吗？",
-          confirmButtonColor: "rgb(255, 203, 0)"
+        .post("api/front/member/findMemberById.json", {
+          id: this.$route.query.id,
         })
-          .then(() => {
-
-            this.$ajax
-            .post("api/front/articles/deleteArticle.json", {
-              id: this.selectedItem.id,
-            })
-            .then(() => {
-              this.$toast('删除成功');
-              this.checkNav(this.navId,this.type)
-            })
-            .catch(error=> {
-              this.$toast(error)
-            });
-          })
-      } else if(item.name === "置顶"){
-        this.$ajax
-        .post("api/front/articles/setTop.json", {
-          id: this.selectedItem.id,
+        .then((res) => {
+          this.herInfo = res.data;
         })
-        .then(() => {
-          this.$toast('置顶成功')
-          this.checkNav(this.navId,this.type)
-        })
-        .catch(error=> {
-          this.$toast(error)
+        .catch((error) => {
+          this.$toast(error);
         });
-      }
     },
-    checkNav(id,type) {
+    checkNav(id, type) {
       this.navId = id;
-      this.type = type
+      this.type = type;
       this.page = 1;
       this.articleList = [];
       this.finished = false;
@@ -340,11 +427,11 @@ export default {
       return new Promise((resolve, reject) => {
         this.$ajax
           .post("api/front/articles/findArticlesPageByCondition.json", {
-            EQ_memberId: this.userInfo.id,
+            EQ_memberId: this.$route.query.id,
             EQ_type: this.type,
             page: this.page,
             size: this.size,
-            sort: 'whetherTop,desc',
+            sort: "whetherTop,desc",
           })
           .then((response) => {
             resolve(response);
@@ -377,11 +464,117 @@ export default {
       this.loading = true;
       this.onLoad();
     },
-    myAuth(){
-      if(this.userInfo.memberStatus.name==='NotApplied') {
-        this.$router.push('/authapply/')
+    onSelect(item) {
+      if (item.name === "删除") {
+        Dialog.confirm({
+          title: "确定删除此内容吗？",
+          confirmButtonColor: "rgb(255, 203, 0)",
+        }).then(() => {
+          this.$ajax
+            .post("api/front/articles/deleteArticle.json", {
+              id: this.selectedItem.id,
+            })
+            .then(() => {
+              this.$toast("删除成功");
+              this.checkNav(this.navId, this.type);
+            })
+            .catch((error) => {
+              this.$toast(error);
+            });
+        });
+      } else if (item.name === "置顶") {
+        this.$ajax
+          .post("api/front/articles/setTop.json", {
+            id: this.selectedItem.id,
+          })
+          .then(() => {
+            this.$toast("置顶成功");
+            this.checkNav(this.navId, this.type);
+          })
+          .catch((error) => {
+            this.$toast(error);
+          });
+      }
+    },
+    onSelectBlock(item) {
+      console.log(item);
+      if (item.name === "拉黑") {
+        Dialog.confirm({
+          title: "确定拉黑该用户？",
+          message: "拉黑后此用户不能关注您，也无法给您发送任何消息",
+          confirmButtonColor: "#f99307",
+        })
+          .then(() => {
+            this.blockAuthor();
+          })
+          .catch(() => {});
+      } else if (item.name === "解除拉黑") {
+        this.unblockAuthor();
+      } else if (item.name === "举报用户") {
+        this.modal.complaint = true;
+      }
+    },
+    blockAuthor() {
+      this.$ajax
+        .post("api/front/member/block.json", {
+          id: this.herInfo.id,
+        })
+        .then(() => {
+          this.$toast("拉黑成功");
+          this.herInfo.followType = {};
+          this.herInfo.followType.name = "Block";
+        })
+        .catch((error) => {
+          this.$toast(error.message);
+        });
+    },
+    unblockAuthor() {
+      this.$ajax
+        .post("api/front/member/relieveBlock.json", {
+          id: this.herInfo.id,
+        })
+        .then(() => {
+          this.$toast("已解除黑名单");
+          this.herInfo.followType = null;
+        })
+        .catch((error) => {
+          this.$toast(error);
+        });
+    },
+    uninterested() {
+      this.$ajax
+        .post("api/front/articles/uninterestedArticle.json", {
+          id: this.selectedItem.id,
+        })
+        .then(() => {
+          // this.checkNav(this.navId);
+          this.$toast("操作成功");
+          this.modal.article = false;
+        })
+        .catch((error) => {
+          this.$toast(error.message);
+        });
+    },
+    reportUser() {
+      this.$ajax
+        .post("api/front/articles/report.json", {
+          type: "Users",
+          beMemberId: this.herInfo.id,
+          content: this.messageComplaint,
+        })
+        .then(() => {
+          this.modal.complaint = false;
+          this.$toast("举报用户成功");
+        })
+        .catch((error) => {
+          this.$toast(error.message);
+        });
+    },
+    myAuth() {
+      if (this.herInfo.memberStatus.name === "NotApplied") {
+        this.$router.push("/authapply/");
       } else {
-        this.$router.push('/applystatus/')
+        this.$router.push("/applystatus/");
       }
     },
     articleSupport(item) {
@@ -391,7 +584,7 @@ export default {
         })
         .then(() => {
           item.whetherLikeArticles = true;
-          item.likeCount++
+          item.likeCount++;
           this.$toast("点赞成功");
         })
         .catch((error) => {
@@ -405,8 +598,60 @@ export default {
         })
         .then(() => {
           item.whetherLikeArticles = false;
-          item.likeCount--
+          item.likeCount--;
           this.$toast("取消点赞");
+        })
+        .catch((error) => {
+          this.$toast(error.message);
+        });
+    },
+    focusUser(id) {
+      this.$ajax
+        .post("api/front/member/follow.json", {
+          id: id,
+        })
+        .then(() => {
+          this.herInfo.followType = {};
+          this.herInfo.followType.name = "Fans";
+          this.$toast("关注成功");
+        })
+        .catch((error) => {
+          this.$toast(error);
+        });
+    },
+    unfocusUser(id) {
+      this.$ajax
+        .post("api/front/member/unFollow.json", {
+          id: id,
+        })
+        .then(() => {
+          this.herInfo.followType = null;
+          this.$toast("取消关注成功");
+        })
+        .catch((error) => {
+          this.$toast(error);
+        });
+    },
+    articleFunc(item) {
+      this.selectedItem = item;
+      if (this.userInfo.id === this.herInfo.id) {
+        console.log(1);
+        this.modal.user = true;
+      } else {
+        console.log(2);
+        this.modal.article = true;
+      }
+    },
+    reportArticle(val) {
+      this.$ajax
+        .post("api/front/articles/report.json", {
+          type: "Article",
+          articleId: this.selectedItem.id,
+          articlesReportType: val,
+        })
+        .then(() => {
+          this.modal.report = false;
+          this.$toast("举报成功");
         })
         .catch((error) => {
           this.$toast(error.message);
@@ -414,20 +659,29 @@ export default {
     },
   },
   computed: {
-    // userInfo() {
-    //   return this.$store.state.userInfo;
-    // }
+    userInfo() {
+      return this.$store.state.userInfo;
+    },
+    actionsBlock() {
+      if (this.herInfo.followType && this.herInfo.followType.name === "Block") {
+        return this.actionsBlock2;
+      } else {
+        return this.actionsBlock1;
+      }
+    },
   },
   watch: {},
   components: {
     "van-icon": Icon,
     "van-action-sheet": ActionSheet,
-    // "van-dialog": Dialog,
     "van-list": List,
     "van-pull-refresh": PullRefresh,
     "van-image": Image,
     "van-share-sheet": ShareSheet,
-  }
+    "van-popup": Popup,
+    "van-button": Button,
+    "van-field": Field,
+  },
 };
 </script>
 
@@ -444,6 +698,8 @@ export default {
 .top-info {
   height: 307px;
   color: #fff;
+  background: #2e2840 no-repeat center;
+  background-size: cover;
   .bg {
     height: 307px;
     padding: 18px 15px;
@@ -458,6 +714,8 @@ export default {
     }
   }
   .row-1 {
+    display: flex;
+    align-items: center;
     .avatar {
       margin-right: 10px;
       width: 62px;
@@ -482,6 +740,9 @@ export default {
     .btn-auth {
       background: #fdd004;
       color: #333333;
+    }
+    .focused {
+      background: #e8e8e8;
     }
   }
   .row-2 {
@@ -740,6 +1001,77 @@ export default {
       img {
         width: 16px;
         vertical-align: text-top;
+      }
+    }
+  }
+}
+.more-popup {
+  padding: 0 22px;
+  width: 300px;
+  background: #ffffff;
+  border-radius: 5px;
+  > div {
+    display: flex;
+    padding: 24px 0;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  .img-wrap {
+    margin-right: 8px;
+    width: 15px;
+    img {
+      width: 100%;
+    }
+  }
+  .text {
+    font-size: 15px;
+    font-family: PingFang SC Medium, PingFang SC Medium-Medium;
+    font-weight: 500;
+    text-align: left;
+    color: #333333;
+    line-height: 1;
+    letter-spacing: -1px;
+  }
+  .row-2 {
+    .text {
+      span {
+        display: block;
+        &:last-child {
+          margin-top: 10px;
+          color: #999999;
+        }
+      }
+    }
+  }
+}
+.modal-complaint {
+  width: 320px;
+  border-radius: 5px;
+  padding: 17px;
+  .title {
+    font-size: 16px;
+    font-family: PingFang SC Medium, PingFang SC Medium-Medium;
+    font-weight: bold;
+    color: #333333;
+    line-height: 24px;
+    letter-spacing: 0px;
+    text-align: center;
+  }
+  .selected {
+    .van-cell__value--alone {
+      color: #f99307;
+    }
+  }
+  .center {
+    margin-top: 14px;
+    .text {
+      margin-bottom: 12px;
+      font-size: 15px;
+      font-family: PingFang SC Medium, PingFang SC Medium-Medium;
+      font-weight: 500;
+      text-align: justifyLeft;
+      color: #333333;
+      span {
+        color: #f99307;
       }
     }
   }

@@ -112,7 +112,7 @@
 </template>
 
 <script type="text/ecmascript-6">
-import { Cell, CellGroup, Button, Icon, Popup, Image, Switch,ShareSheet, } from "vant";
+import { Cell, Button, Icon, Image, Switch,ShareSheet, } from "vant";
 export default {
   data() {
     return {
@@ -175,7 +175,7 @@ export default {
     signIn() {
       this.$ajax
         .post("api/front/member/signIn.json", {})
-        .then(res => {
+        .then(() => {
           this.getSignList()
         }).catch(error=> {
           this.$toast(error)
@@ -184,7 +184,7 @@ export default {
     setSignReminder(val) {
       this.$ajax
         .post("api/front/member/setSignReminder.json", {whetherSignReminder:val})
-        .then(res => {
+        .then(() => {
           this.$toast('设置成功')
         }).catch(error=> {
           this.whetherSignReminder = !val
@@ -251,11 +251,9 @@ export default {
 
   },
   components: {
-    "van-cell-group": CellGroup,
     "van-cell": Cell,
     "van-button": Button,
     "van-icon": Icon,
-    "van-popup": Popup,
     "van-image": Image,
     "van-switch": Switch,
     "van-share-sheet": ShareSheet,

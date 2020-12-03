@@ -63,13 +63,16 @@
                 <span class="name">{{ item.author.nickName }}</span>
                 <span
                   class="focus"
-                  @click="focusUser(item)"
                   v-if="!item.author.followType"
-                  >+关注</span
+                  @click="
+                    $router.push({
+                      path: '/videodetails/',
+                      query: { id: item.id },
+                    })
+                  ">+关注</span
                 >
                 <span
                   class="focused"
-                  @click="unfocusUser(item)"
                   v-if="item.author.followType&&item.author.followType.name === 'Fans'"
                   >已关注</span
                 >

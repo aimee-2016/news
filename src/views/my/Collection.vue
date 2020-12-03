@@ -472,7 +472,6 @@
 </template>
 
 <script type="text/ecmascript-6">
-import selfButton from "@/components/button";
 import { Tabs, Tab, List, PullRefresh, Image, Icon, Checkbox, Dialog } from "vant";
 export default {
   name: "svb",
@@ -1013,7 +1012,6 @@ export default {
     "van-pull-refresh": PullRefresh,
     "van-image": Image,
     "van-icon": Icon,
-    "self-button": selfButton,
     "van-checkbox": Checkbox
   }
 };

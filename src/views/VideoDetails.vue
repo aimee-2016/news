@@ -9,10 +9,11 @@
           <van-icon name="ellipsis" @click="showShare = true" />
         </div>
       </div>
-      <video width="100%" controls>
+      <video width="100%" controls :poster="topicDetails.videoImagePath" ref="video1">
         <source :src="topicDetails.videoPath" type="video/mp4" />
         您的浏览器不支持Video标签。
       </video>
+      <!-- <img class="play-icon" src="../assets/img/video/play2x.png" alt="" @click="playPause()" /> -->
     </div>
     <div class="tp-top-box">
       <div class="tp-top-content">
@@ -102,7 +103,7 @@
             <div class="tp-ct-rt">
               <div class="tp-ct-info">
                 <div class="tp-ct-nm">
-                  <span>{{ item.memberDto.nickName }}</span>
+                  <span v-if="item.memberDto">{{ item.memberDto.nickName }}</span>
                 </div>
                 <div class="tp-ct-jb">
                   <span
@@ -588,6 +589,13 @@ export default {
         query: { articleId: this.$route.query.id, id: id },
       });
     },
+    playPause() {
+      let myVideo = this.$refs['video1']
+      if (myVideo.paused) 
+        myVideo.play(); 
+      else 
+        myVideo.pause();
+    }
   },
   components: {
     "van-image": Image,
@@ -624,6 +632,15 @@ export default {
   video {
     width: 100%;
     height: 230px;
+  }
+  .play-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 38px;
+    height: 38px;
+    transform: translate(-14px, -14px);
+    z-index: 1;
   }
   .tp-head {
     position: absolute;
