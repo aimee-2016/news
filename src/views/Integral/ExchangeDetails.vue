@@ -184,7 +184,7 @@ export default {
     getMessage(msg) {
       let data = JSON.parse(msg.data);
       if (data.code === '200' && data.data.actionType === 'CreateRoom'&& data.data.pushType === 'Server') {
-        this.$router.push({path: '/chat/',query: {roomId:data.data.chartRoomId,receiverMemberId:this.details.customerId,nickName:this.details.customerName}})
+        this.$router.push({path: '/chat/',query: {roomId:data.data.chartRoomId,receiverMemberId:this.details.customerId,nickName:this.details.customerName || '客服'}})
       }
     }
   },

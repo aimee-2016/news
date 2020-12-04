@@ -75,18 +75,8 @@
                   }}</span
                 >
               </div>
-              <van-button plain color="#fcbe64" size="small" round v-if="item.currentCompleteCount<item.completeNumber" @click="toPage(item.integralType.name)">{{
-                item.integralType.message
-              }}</van-button>
-              <van-button
-              plain
-              color="#999999"
-              size="small"
-              round
-              disabled=""
-              v-else
-              >已完成</van-button
-            >
+              <span class="btn-dotask btn-dotask-1" @click="toPage(item.integralType.name)" v-if="item.currentCompleteCount<item.completeNumber">{{item.integralType.message}}</span>
+              <span class="btn-dotask btn-dotask-2" v-else>已完成</span>
             </li>
           </ul>
         </div>
@@ -489,6 +479,24 @@ export default {
           color: #fc4d00;
         }
       }
+    }
+    .btn-dotask {
+      display: inline-block;
+      width: 65px;
+      height: 25px;
+      background: #fff;
+      border: 1px solid #fdd195;
+      border-radius: 13px;
+      font-size: 11px;
+      font-family: PingFang SC Bold, PingFang SC Bold-Bold;
+      font-weight: 700;
+      color: #f99307;
+      line-height: 23px;
+      text-align: center;
+    }
+    .btn-dotask-2 {
+      border-color: #DADADA;
+      color: #999999;
     }
     ul {
       li {
