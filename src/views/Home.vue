@@ -325,7 +325,9 @@ export default {
   },
   created() {},
   mounted() {
-    this.unreadData();
+    if(this.$store.state.token) {
+      this.unreadData();
+    }
     this.getNavList();
   },
   methods: {
@@ -336,8 +338,6 @@ export default {
           this.navList = res.data;
           this.navId = res.data.filter((item) => item.name === "热点")[0].id;
           this.hotId = res.data.filter((item) => item.name === "关注")[0].id;
-
-          console.log(this.hotId);
           // this.firstId = res.data.filter(item=>item.name==='热点')[0].id
           // this.getArticle();
           this.$nextTick(() => {

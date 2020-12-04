@@ -149,18 +149,13 @@ export default {
     };
   },
   created() {
-    // this.init();
-    this.getSignList()
-    this.unreadData()
+    if(this.$store.state.token) {
+      this.getSignList()
+      this.unreadData()
+    }
   },
   mounted() {},
   methods: {
-    // ...mapActions(["getUserInfo"]),
-    // init() {
-    //   if (this.$store.state.token && !this.userInfo) {
-    //     this.getUserInfo();
-    //   }
-    // },
     getSignList() {
       this.$ajax
         .post("api/front/member/findMemberSignList.json", {})

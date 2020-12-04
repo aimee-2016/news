@@ -1,6 +1,7 @@
 // 引入axios
 import axios from 'axios';
 import store from '@/store';
+import VueRouter from '../router/index'
 
 // 创建axios实例
 const httpService = axios.create({
@@ -44,6 +45,8 @@ httpService.interceptors.response.use(
             });
         } else if(res.code === '200') {
             return response.data;
+        } else if(res.code === '208') {
+            VueRouter.push('/login/')
         } else {
            // 返回异常
            return Promise.reject({

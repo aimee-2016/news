@@ -208,7 +208,7 @@ export default {
       comment: "",
       commentShow: false,
       selectedItem: null,
-      authorData: null,
+      authorData: {memberDto:{}},
       modal: {
         complaint: false
       },
