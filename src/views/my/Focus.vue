@@ -217,7 +217,7 @@ export default {
           this.$toast("关注成功");
         })
         .catch(error => {
-          this.$toast(error);
+          this.$toast(error.message);
         });
     },
     unfocusUser(item) {
@@ -230,7 +230,7 @@ export default {
           this.$toast('取消关注成功')
         })
         .catch((error) => {
-          this.$toast(error)
+          this.$toast(error.message)
         })
     },
     focusText(item) {

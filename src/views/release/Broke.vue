@@ -117,7 +117,7 @@ export default {
             this.imagePaths.push(res.data.viewUrl)
         })
         .catch(error=> {
-          this.$toast(error)
+          this.$toast(error.message)
         });
     },
     onOversize(file) {
@@ -161,7 +161,7 @@ export default {
           this.$router.push('/myexplosive/')
         })
         .catch((error)=> {
-          this.$toast(error)
+          this.$toast(error.message)
         });
     },
   },

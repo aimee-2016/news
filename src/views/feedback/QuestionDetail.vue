@@ -52,7 +52,7 @@ export default {
         .then(() => {
           this.$toast('操作成功')
         }).catch((error)=> {
-          this.$toast(error)
+          this.$toast(error.message)
         });
     },
   },

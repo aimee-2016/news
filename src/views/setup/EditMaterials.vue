@@ -160,7 +160,7 @@ export default {
           this.modifyAvatar(res.data.viewUrl)
         })
         .catch(error=> {
-          this.$toast(error)
+          this.$toast(error.message)
         });
     },
     showDialog() {
@@ -176,7 +176,7 @@ export default {
           this.$toast('修改成功')
         })
         .catch(error=> {
-          this.$toast(error)
+          this.$toast(error.message)
         });
     },
     onSelect() {
@@ -215,7 +215,7 @@ export default {
           this.$toast('修改成功')
         })
         .catch(error=> {
-          this.$toast(error)
+          this.$toast(error.message)
         });
     },
     modifySynopsis(val) {
@@ -233,7 +233,7 @@ export default {
           this.$toast('修改成功')
         })
         .catch(error=> {
-          this.$toast(error)
+          this.$toast(error.message)
         });
     },
     modifySex(item) {
@@ -246,7 +246,7 @@ export default {
           this.$toast('修改成功')
         })
         .catch(error=> {
-          this.$toast(error)
+          this.$toast(error.message)
         });
     },
     modifyBirthday(val) {
@@ -261,7 +261,7 @@ export default {
           this.$toast('修改成功')
         })
         .catch(error=> {
-          this.$toast(error)
+          this.$toast(error.message)
         });
     },
     getZoneAll() {
@@ -302,7 +302,7 @@ export default {
           this.$toast('修改成功')
         })
         .catch(error=> {
-          this.$toast(error)
+          this.$toast(error.message)
         });
     }
   },

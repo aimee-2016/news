@@ -102,7 +102,7 @@ export default {
           this.$toast('申请创作者成功')
           this.$router.push('/applystatus/')
         }).catch(error=> {
-          this.$toast(error)
+          this.$toast(error.message)
         });
           })
           .catch(() => {});

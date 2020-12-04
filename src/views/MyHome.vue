@@ -414,7 +414,7 @@ export default {
           this.herInfo = res.data;
         })
         .catch((error) => {
-          this.$toast(error);
+          this.$toast(error.message);
         });
     },
     checkNav(id, type) {
@@ -482,7 +482,7 @@ export default {
               this.checkNav(this.navId, this.type);
             })
             .catch((error) => {
-              this.$toast(error);
+              this.$toast(error.message);
             });
         });
       } else if (item.name === "置顶") {
@@ -495,7 +495,7 @@ export default {
             this.checkNav(this.navId, this.type);
           })
           .catch((error) => {
-            this.$toast(error);
+            this.$toast(error.message);
           });
       }
     },
@@ -540,7 +540,7 @@ export default {
           this.herInfo.followType = null;
         })
         .catch((error) => {
-          this.$toast(error);
+          this.$toast(error.message);
         });
     },
     uninterested() {
@@ -618,7 +618,7 @@ export default {
           this.$toast("关注成功");
         })
         .catch((error) => {
-          this.$toast(error);
+          this.$toast(error.message);
         });
     },
     unfocusUser(id) {
@@ -631,7 +631,7 @@ export default {
           this.$toast("取消关注成功");
         })
         .catch((error) => {
-          this.$toast(error);
+          this.$toast(error.message);
         });
     },
     articleFunc(item) {
@@ -687,7 +687,7 @@ export default {
     getMessage(msg) {
       let data = JSON.parse(msg.data);
       if (data.code === '200' && data.data.actionType === 'CreateRoom'&& data.data.pushType === 'Server') {
-        this.$router.push({path: '/chat/',query: {roomId:data.data.chartRoomId,receiverMemberId:this.herInfo.id,nickName:this.herInfo.nickName,headImgPath:this.herInfo.headImgPath}})
+        this.$router.push({path: '/chat/',query: {roomId:data.data.chartRoomId,receiverMemberId:this.herInfo.id,nickName:this.herInfo.nickName}})
       }
     }
   },

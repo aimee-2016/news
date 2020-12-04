@@ -770,7 +770,7 @@ export default {
           this.getAll();
         })
         .catch(error => {
-          this.$toast(error);
+          this.$toast(error.message);
         });
     },
     focusText(item) {

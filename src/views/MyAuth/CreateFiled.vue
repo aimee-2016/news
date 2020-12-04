@@ -66,7 +66,7 @@ export default {
             .then(res => {
               this.$router.push('/applystatus/')
             }).catch(error=> {
-              this.$toast(error)
+              this.$toast(error.message)
             });
           })
     }

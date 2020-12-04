@@ -101,7 +101,7 @@ export default {
           this.initOnload()
         })
         .catch(error=> {
-          this.$toast(error)
+          this.$toast(error.message)
         });
     },
     initOnload() {

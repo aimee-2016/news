@@ -17,9 +17,7 @@
           <div class="right-info">
             <div class="name">{{ details.name }}</div>
             <div class="price">
-              规格：{{
-                formatconfig(details.specificationDetailsDto.attribute)
-              }}
+              规格：{{formatconfig}}
             </div>
             <div class="integral">
               <span>{{ details.integral }}积分</span
@@ -38,7 +36,7 @@
         </div>
       </div>
       <div class="service">
-        <div>
+        <div @click="init()">
           <img src="../../assets/img/integral/icon-message@2x.png" alt="" />
           <span>联系客服</span>
         </div>
@@ -114,7 +112,7 @@ import { Cell, CellGroup, Button, Icon, Popup, Image,Step, Steps } from "vant";
 export default {
   data() {
     return {
-      details: null,
+      details: {name: '', specificationDetailsDto: {attribute:"{'规格':'15*15'}"}},
       goodsStatusT: ''
     }
   },
@@ -132,14 +130,6 @@ export default {
           this.details = res.data
           this.goodsStatus(this.details.exchangeStatus.name)
         });
-    },
-    formatconfig(val) {
-      let valJ = JSON.parse(val)
-      let resultarr=[]
-      for (const key in valJ) {
-        resultarr.push(valJ[key])
-      }
-      return resultarr.join()
     },
     goodsStatus(name) {
       let text = ''
@@ -163,13 +153,55 @@ export default {
       this.$refs['inputT'].select()
       document.execCommand("copy"); // 执行浏览器复制命令
       this.$toast("复制成功")
+    },
+    init() {
+      if (typeof WebSocket === "undefined") {
+        alert("您的浏览器不支持socket");
+      } else {
+        // 实例化socket
+        this.socket = new WebSocket(
+          "ws://47.56.186.16:8099/ws?token=" + this.$store.state.token.split(' ')[1]
+        );
+        // 监听socket连接
+        this.socket.onopen = this.open;
+        // 监听socket错误信息
+        this.socket.onerror = this.error;
+        // 监听socket消息
+        this.socket.onmessage = this.getMessage;
+      }
+    },
+    open() {
+      console.log("socket连接成功订单详情");
+      var paramsJie = {
+        actionType: "CreateRoom",                                                         
+        receiverMemberId: this.details.customerId
+      }
+      this.socket.send(JSON.stringify(paramsJie))
+    },
+    error() {
+      console.log("连接错误");
+    },
+    getMessage(msg) {
+      let data = JSON.parse(msg.data);
+      if (data.code === '200' && data.data.actionType === 'CreateRoom'&& data.data.pushType === 'Server') {
+        this.$router.push({path: '/chat/',query: {roomId:data.data.chartRoomId,receiverMemberId:this.details.customerId,nickName:this.details.customerName}})
+      }
     }
   },
   computed: {
-      userInfo() {
+    userInfo() {
       return this.$store.state.userInfo;
     },
-
+    formatconfig() {
+      if(this.details.specificationDetailsDto.attribute) {
+        let valJ = JSON.parse(this.details.specificationDetailsDto.attribute)
+        let resultarr=[]
+        for (const key in valJ) {
+          resultarr.push(valJ[key])
+        }
+        return resultarr.join()
+      }
+    },
   },
   watch: {
 

@@ -113,6 +113,10 @@ export default {
               }
             })
           } else if(data.data.pushType === "Other") {
+              while (data.data.content.indexOf("\\n") >= 0) { 
+                let str2 = data.data.content.replace("\\n", " \n "); 
+                data.data.content = str2
+              } 
             let info = {
                 whetherOwn: false,
                 headImgPath: data.data.headImgPath,
@@ -166,6 +170,12 @@ export default {
       this.page = Math.floor(this.chatList.length/10) + 1
       let sliceNum = 10 - this.chatList.length%10
       this.testPromise().then((res) => {
+        res.data.content.forEach(element => {
+          while (element.content.indexOf("\\n") >= 0) { 
+            let str2 = element.content.replace("\\n", " \n "); 
+            element.content = str2
+          } 
+        });
         this.chatList.unshift(...res.data.content.reverse().slice(0,sliceNum));
         this.isLoading = false;
         this.allPage = res.data.totalPages
@@ -175,13 +185,35 @@ export default {
         this.page++;
       });
     },
+    firstHistory() {
+      this.page = 1
+      this.testPromise().then((res) => {
+        res.data.content.forEach(element => {
+          while (element.content.indexOf("\\n") >= 0) { 
+            let str2 = element.content.replace("\\n", " \n "); 
+            element.content = str2
+          } 
+        });
+        this.chatList.unshift(...res.data.content);
+        this.$nextTick(()=> {
+            if(document.body.scrollTop>=0) {
+              document.body.scrollTop = document.getElementsByClassName('van-pull-refresh')[0].scrollHeight;
+            }
+            if(document.documentElement.scrollTop>=0) {
+              document.documentElement.scrollTop = document.getElementsByClassName('van-pull-refresh')[0].scrollHeight;
+            }
+          })
+        this.isLoading = false;
+        this.allPage = res.data.totalPages
+        this.page++;
+      });
+    }
   },
   created() {
-    this.isLoading = true
-    this.onRefresh()
   },
   mounted() {
     this.init();
+    this.firstHistory()
   },
 };
 </script>

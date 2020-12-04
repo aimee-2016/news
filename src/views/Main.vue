@@ -80,7 +80,7 @@ export default {
           this.$router.push({path: '/releasevideo/', query: {videoPath:res.data.viewUrl}})
         })
         .catch(error=> {
-          this.$toast(error)
+          this.$toast(error.message)
         });
     },
     selectType(){

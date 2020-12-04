@@ -253,10 +253,10 @@ export default {
       })
     },
     toDetail(item,type) {
-      this.$router.push({path: '/msgdetail',query: {id:item.id,type:type,title:item.nickName}})
+      this.$router.push({path: '/msgdetail/',query: {id:item.id,type:type,title:item.nickName}})
     },
     toChat(item) {
-      this.$router.push({path: '/chat/',query: {roomId:item.id,receiverMemberId:item.receiverMemberId,nickName:item.nickName,headImgPath:item.headImgPath}})
+      this.$router.push({path: '/chat/',query: {roomId:item.id,receiverMemberId:item.receiverMemberId,nickName:item.nickName}})
     }
   },
   computed: {

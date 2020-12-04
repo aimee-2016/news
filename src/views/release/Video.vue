@@ -140,7 +140,7 @@ export default {
           this.imagePath = res.data.viewUrl;
         })
         .catch((error) => {
-          this.$toast(error);
+          this.$toast(error.message);
         });
     },
     onOversize(file) {
@@ -180,7 +180,7 @@ export default {
           this.$router.push("/video/");
         })
         .catch((error) => {
-          this.$toast(error);
+          this.$toast(error.message);
         });
     },
     getLabelList() {

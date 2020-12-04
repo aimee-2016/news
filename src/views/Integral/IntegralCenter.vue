@@ -178,7 +178,7 @@ export default {
         .then(() => {
           this.getSignList()
         }).catch(error=> {
-          this.$toast(error)
+          this.$toast(error.message)
         });
     },
     setSignReminder(val) {
@@ -188,7 +188,7 @@ export default {
           this.$toast('设置成功')
         }).catch(error=> {
           this.whetherSignReminder = !val
-          this.$toast(error)
+          this.$toast(error.message)
         });
     },
     getGoodesList() {
