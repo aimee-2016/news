@@ -47,12 +47,16 @@ httpService.interceptors.response.use(
             return response.data;
         } else if(res.code === '208') {
             VueRouter.push('/login/')
+            return Promise.reject({
+                status: res.code,
+                message: res.message
+            });
         } else {
            // 返回异常
            return Promise.reject({
-            status: res.code,
-            message: res.message
-        });
+               status: res.code,
+               message: res.message
+           });
         }
     },
     // 处理处理

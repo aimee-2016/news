@@ -468,6 +468,7 @@ export default {
   padding: 20px 16px 0;
   width: 100%;
   overflow-x: scroll;
+  &::-webkit-scrollbar{display: none;}
   ul {
     display: flex;
     flex-wrap: wrap;

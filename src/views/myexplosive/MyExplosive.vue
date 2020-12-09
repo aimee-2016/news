@@ -26,15 +26,8 @@
               <div class="operate">
                 <span
                   class="status"
-                  :class="{ success: item.status.code === 'Approved' }"
-                  >{{
-                    item.status.code === 'UnderReview'
-                      ? '审核中'
-                      : item.status.code === 'Approved'
-                      ? '审核通过'
-                      : '审核失败'
-                  }}</span
-                >
+                  :class="{ success: item.status.name === 'Approved' }"
+                  >{{item.status.message}}</span>
                 <span class="time">{{ item.pubDate | changeTime }}</span>
               </div>
             </div>

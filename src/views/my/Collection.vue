@@ -477,7 +477,7 @@ export default {
   name: "svb",
   data() {
     return {
-      active: 1,
+      active: 0,
       page: 1,
       size: 10,
       list: [],
@@ -514,12 +514,14 @@ export default {
     };
   },
   created() {
-    this.active = this.$route.query.active;
+    this.active = Number(this.$route.query.active);
+    // console.log(this.active)
+    // console.log(typeof(this.active))
   },
   mounted() {},
   methods: {
     headEdit() {
-      console.log(this.active)
+      // console.log(this.active)
       switch (this.active) {
         case 0:
           this.editStatus=!this.editStatus

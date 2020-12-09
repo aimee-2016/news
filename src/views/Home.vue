@@ -311,7 +311,7 @@ export default {
         { name: "恶心", val: "Nausea" },
       ],
       topList: [],
-      msgNum: 0,
+      msgNum: null,
       hotId: "",
     };
   },
@@ -506,6 +506,9 @@ export default {
             res.data.systemMessageCount +
             res.data.replyCount +
             res.data.privateLetterCount;
+          if(!this.msgNum) {
+            this.msgNum = null
+          }
         });
     },
   },
@@ -558,6 +561,7 @@ export default {
   padding: 0 16px;
   width: 100%;
   overflow-x: scroll;
+  &::-webkit-scrollbar{display: none;}
   ul {
     display: flex;
     flex-wrap: wrap;

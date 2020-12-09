@@ -81,7 +81,7 @@
                   <img v-lazy="item.videoImagePath" alt />
                   <van-icon name="play-circle" />
                 </div>
-                <h3>{{ item.title }}</h3>
+                <h3 v-html="item.title"></h3>
               </div>
               <div class="operat">
                 <div class="left">
@@ -117,7 +117,7 @@
                 <div class="img-wrap">
                   <img v-lazy="item.imagePaths[0]"/>
                 </div>
-                <h3>{{ item.title }}</h3>
+                <h3 v-html="item.title"></h3>
               </div>
               <div class="operat">
                 <div class="left">
@@ -161,7 +161,7 @@
                     />
                   </div>
                   <div>
-                    <span class="name">{{ item.nickName }}</span>
+                    <span class="name" v-html="item.nickName"></span>
                     <div class="desc">
                       <span>{{ item.memberFansCountCount }}个粉丝</span>
                       <span>{{ item.synopsis }}</span>
@@ -200,7 +200,7 @@
                 <div class="img-wrap">
                   <img v-lazy="item.imagePathsStr" />
                 </div>
-                <h3>{{ item.title }}</h3>
+                <h3 v-html="item.title"></h3>
               </div>
               <div class="operat">
                 <div class="left">
@@ -226,7 +226,7 @@
                 <img v-lazy="item.videoImagePath" alt />
                 <van-icon name="play-circle" />
               </div>
-              <h3>{{ item.title }}</h3>
+              <h3 v-html="item.title"></h3>
             </div>
             <div class="operat">
               <div class="left">
@@ -257,7 +257,7 @@
               <div class="img-wrap">
                 <img v-lazy="item.imagePaths[0]"/>
               </div>
-              <h3>{{ item.title }}</h3>
+              <h3 v-html="item.title"></h3>
             </div>
             <div class="operat">
               <div class="left">
@@ -296,7 +296,7 @@
                   />
                 </div>
                 <div>
-                  <span class="name">{{ item.nickName }}</span>
+                  <span class="name" v-html="item.nickName"></span>
                   <div class="desc">
                     <span>{{ item.memberFansCountCount }}个粉丝</span>
                     <span>{{ item.synopsis }}</span>
@@ -330,7 +330,7 @@
               <div class="img-wrap">
                 <img v-lazy="item.imagePathsStr" />
               </div>
-              <h3>{{ item.title }}</h3>
+              <h3 v-html="item.title"></h3>
             </div>
             <div class="operat">
               <div class="left">
@@ -445,9 +445,21 @@ export default {
         })
         .then((res) => {
           this.informationList = res.data.informationList
-          this.memberList = res.data.memberList
+          this.informationList.forEach(item=>{
+            item.title = item.title.replace(this.serchValue,`<span style="color:red">${this.serchValue}</span>`)
+          })
+          this.memberList = res.data.memberList 
+          this.memberList.forEach(item=>{
+            item.nickName = item.nickName.replace(this.serchValue,`<span style="color:red">${this.serchValue}</span>`)
+          })
           this.topicList = res.data.topicList
+          this.topicList.forEach(item=>{
+            item.title = item.title.replace(this.serchValue,`<span style="color:red">${this.serchValue}</span>`)
+          })
           this.videoList = res.data.videoList
+          this.videoList.forEach(item=>{
+            item.title = item.title.replace(this.serchValue,`<span style="color:red">${this.serchValue}</span>`)
+          })
         })
         .catch((error) => {
           console.log(error)
@@ -459,10 +471,8 @@ export default {
     onSearch(val) {
       if (val) {
         this.navShow = false
-        let historyRecord = JSON.parse(localStorage.getItem('historyR'))
-          ? JSON.parse(localStorage.getItem('historyR'))
-          : []
-        historyRecord.push(val)
+        let historyRecord = JSON.parse(localStorage.getItem('historyR')) || []
+        historyRecord.unshift(val)
         let historyRecordL = historyRecord.filter(function(
           element,
           index,

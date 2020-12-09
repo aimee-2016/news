@@ -14,7 +14,7 @@ import {
 Vue.use(CascadePicker)
 // 15002304121 123456
 // http://47.56.186.16:8090/
-// https://www.c-cnews.com/api/front/articles/findArticlesByColumnId.json
+// http://m.c-cnews.com/
 Vue.component('selfHeader',selfHeader);
 import noContent from "@/components/nocontent";
 Vue.component('noContent',noContent);

@@ -54,7 +54,7 @@
         <p class="tp-top-ed">
           <span>{{ topicDetails.viewCount }}次播放量</span>
           <span>{{ topicDetails.likeCount }}人点赞</span>
-          <span>{{ topicDetails.pubDate }}2发布</span>
+          <span>{{ topicDetails.pubDate }}发布</span>
         </p>
       </div>
     </div>
@@ -78,8 +78,8 @@
         </div>
         <van-image :src="item.videoImagePath" fit="cover" lazy-load />
       </div>
-      <div class="see-more">
-        <div class="content-box" @click="$router.push('/video/')">
+      <div class="see-more" v-if="showMore">
+        <div class="content-box" @click="onLoadRe()">
           <span>查看更多</span><van-icon name="arrow-down" />
         </div>
       </div>
@@ -328,11 +328,13 @@ export default {
       comment: "",
       commentShow: false,
       delAddnum: 0,
+      rePage: 1,
+      showMore: true      
     };
   },
   created() {
     this.queryTopicById();
-    this.getRecommendList();
+    this.onLoadRe();
   },
   methods: {
     queryTopicById() {
@@ -405,19 +407,30 @@ export default {
         return "关注";
       }
     },
-    getRecommendList() {
-      this.$ajax
-        .post("api/front/articles/findRecommendArticles.json", {
-          page: 1,
-          size: 5,
-          id: this.$route.query.id,
-        })
-        .then((res) => {
-          this.recommendList = res.data.content;
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+    getDataRe() {
+      return new Promise((resolve, reject) => {
+        this.$ajax
+          .post("api/front/articles/findRecommendArticles.json", {
+            page: this.rePage,
+            size: 5,
+            id: this.$route.query.id,
+          })
+          .then((response) => {
+            resolve(response);
+          })
+          .catch((error) => {
+            reject(error);
+          });
+      });
+    },
+    onLoadRe() {
+      this.getDataRe().then((res) => {
+        this.recommendList.push(...res.data.content);
+        if (this.rePage > res.data.totalPages) {
+          this.showMore = false;
+        }
+        this.rePage++;
+      });
     },
     toDetailsPage(id) {
       this.$router.push({

@@ -93,7 +93,7 @@
           <span>消息中心</span>
         </template>
         <template #right-icon>
-          <span class="badge">{{msgNum}}</span>
+          <span class="badge" v-if="msgNum">{{msgNum}}</span>
           <van-icon name="arrow" style="line-height: inherit;font-size:16px;color:#969799;" />
         </template>
       </van-cell>

@@ -1,8 +1,7 @@
 <template>
   <div class="container">
     <h3>{{ details.problemTitle }}</h3>
-    <div class="content">
-      {{ details.content }}
+    <div class="content" v-html="details.content">
     </div>
     <div class="btn-wrap">
       <div class="btn" @click="support(1)">
