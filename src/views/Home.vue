@@ -634,6 +634,7 @@ export default {
   }
   .top-item {
     display: flex;
+    justify-content: space-between;
     .top-left {
       margin-right: 20px;
     }

@@ -446,19 +446,19 @@ export default {
         .then((res) => {
           this.informationList = res.data.informationList
           this.informationList.forEach(item=>{
-            item.title = item.title.replace(this.serchValue,`<span style="color:red">${this.serchValue}</span>`)
+            item.title = item.title.replace(this.serchValue,`<span style="color:#fc4d00">${this.serchValue}</span>`)
           })
           this.memberList = res.data.memberList 
           this.memberList.forEach(item=>{
-            item.nickName = item.nickName.replace(this.serchValue,`<span style="color:red">${this.serchValue}</span>`)
+            item.nickName = item.nickName.replace(this.serchValue,`<span style="color:#fc4d00">${this.serchValue}</span>`)
           })
           this.topicList = res.data.topicList
           this.topicList.forEach(item=>{
-            item.title = item.title.replace(this.serchValue,`<span style="color:red">${this.serchValue}</span>`)
+            item.title = item.title.replace(this.serchValue,`<span style="color:#fc4d00">${this.serchValue}</span>`)
           })
           this.videoList = res.data.videoList
           this.videoList.forEach(item=>{
-            item.title = item.title.replace(this.serchValue,`<span style="color:red">${this.serchValue}</span>`)
+            item.title = item.title.replace(this.serchValue,`<span style="color:#fc4d00">${this.serchValue}</span>`)
           })
         })
         .catch((error) => {

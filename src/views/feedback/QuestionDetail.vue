@@ -5,11 +5,13 @@
     </div>
     <div class="btn-wrap">
       <div class="btn" @click="support(1)">
-        <i class="icon"></i>
+        <i class="icon" v-if="!details.whetherUseful"></i>
+        <i class="icon selected" v-else></i>
         <span>有用</span>
       </div>
       <div class="btn" @click="support(2)">
-        <i class="icon"></i>
+        <i class="icon" v-if="details.whetherUseful"></i>
+        <i class="icon selected" v-else></i>
         <span>没用</span>
       </div>
     </div>
@@ -23,7 +25,7 @@
 export default {
   data() {
     return {
-      details: null
+      details: {problemTitle:''}
     }
   },
   created() {
@@ -43,16 +45,21 @@ export default {
         })
     },
     support(type) {
-      this.$ajax
+      if(this.details.whetherUseful === true ||this.details.whetherUseful === false) {
+        this.$toast('您已经反馈过该问题')
+      } else {
+        this.$ajax
         .post('api/front/help/createOrUpdateHelpUseful.json', {
           helpId: this.$route.query.id,
           whetherUseful: type===1?true:false
         })
         .then(() => {
-          this.$toast('操作成功')
+          
+          this.getDetails()
         }).catch((error)=> {
           this.$toast(error.message)
         });
+      }
     },
   },
   computed: {
@@ -127,11 +134,9 @@ export default {
           background: url('../../assets/img/home/icon-support@2x.png');
           background-size: cover;
         }
-        &:hover {
-          i {
-            background: url('../../assets/img/home/icon-support-hover@2x.png');
-            background-size: cover;
-          }
+        .selected {
+          background: url('../../assets/img/home/icon-support-hover@2x.png');
+          background-size: cover;
         }
       }
       &:last-child {
@@ -139,11 +144,9 @@ export default {
           background: url('../../assets/img/home/icon-unsupport@2x.png');
           background-size: cover;
         }
-        &:hover {
-          i {
-            background: url('../../assets/img/home/icon-unsupport-hover@2x.png');
-            background-size: cover;
-          }
+        .selected {
+          background: url('../../assets/img/home/icon-unsupport-hover@2x.png');
+          background-size: cover;
         }
       }
     }

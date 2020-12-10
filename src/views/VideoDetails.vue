@@ -9,7 +9,7 @@
           <van-icon name="ellipsis" @click="showShare = true" />
         </div>
       </div>
-      <video width="100%" controls :poster="topicDetails.videoImagePath" ref="video1">
+      <video width="100%" controls :poster="topicDetails.videoImagePath" ref="video1" preload="auto">
         <source :src="topicDetails.videoPath" type="video/mp4" />
         您的浏览器不支持Video标签。
       </video>
@@ -604,10 +604,12 @@ export default {
     },
     playPause() {
       let myVideo = this.$refs['video1']
-      if (myVideo.paused) 
-        myVideo.play(); 
-      else 
+      if (myVideo.paused) {
+        myVideo.play();
+      }
+      else {
         myVideo.pause();
+      }
     }
   },
   components: {
