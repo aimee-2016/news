@@ -9,11 +9,11 @@
           <van-icon name="ellipsis" @click="showShare = true" />
         </div>
       </div>
-      <video width="100%" controls :poster="topicDetails.videoImagePath" ref="video1" preload="auto">
-        <source :src="topicDetails.videoPath" type="video/mp4" />
-        您的浏览器不支持Video标签。
-      </video>
-      <!-- <img class="play-icon" src="../assets/img/video/play2x.png" alt="" @click="playPause()" /> -->
+      <jz-video
+      :videoUrl="topicDetails.videoPath"
+      :videoImg='topicDetails.videoImagePath'
+      :id='topicDetails.id.toString()'
+      />
     </div>
     <div class="tp-top-box">
       <div class="tp-top-content">
@@ -248,6 +248,7 @@
 
 <script>
 import selfButton from "@/components/button";
+import video from "@/components/video/index";
 import {
   Image,
   List,
@@ -601,15 +602,6 @@ export default {
         path: "/articlecommentdetails/",
         query: { articleId: this.$route.query.id, id: id },
       });
-    },
-    playPause() {
-      let myVideo = this.$refs['video1']
-      if (myVideo.paused) {
-        myVideo.play();
-      }
-      else {
-        myVideo.pause();
-      }
     }
   },
   components: {
@@ -623,6 +615,7 @@ export default {
     "van-button": Button,
     "van-field": Field,
     "van-icon": Icon,
+    "jz-video": video,
   },
 };
 </script>

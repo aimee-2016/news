@@ -38,12 +38,14 @@ import {
   Image,
   Field,
   PullRefresh,
+  Icon
 } from "vant";
 export default {
   components: {
     "van-image": Image,
     "van-field": Field,
     "van-pull-refresh": PullRefresh,
+    "van-icon": Icon
   },
   data() {
     return {

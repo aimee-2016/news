@@ -1,26 +1,13 @@
 <template>
   <div class="jz-vbox">
-    <p>{{author.title}}</p>
     <div :id="id">
-
-    </div>
-    <div class="video-info">
-      <div class="vi-left"> 
-        <img :src="author.author.headImgPath">
-        <span class="vi-name">{{author.author.nickName}}</span>
-        <span class="vi-gz">+关注</span>
-      </div>
-      <div class="vi-right">
-        <span>355</span>
-        <span>12</span>
-        <img src="../../assets/img/video/other2x.png">
-      </div>
     </div>
   </div>
 </template>
 
 <script>
 import Player from "xgplayer";
+// import './.xgplayer/skin/index.js';
 export default {
   name: "vd",
   props: {
@@ -34,28 +21,28 @@ export default {
     },
     id: {
       default: '',
-      type: [String, Number]
+      type: String
     },
-    author: {
-      default: function () {
-        return {}
-      },
-      type: Object
-    }
+    // author: {
+    //   default: function () {
+    //     return {}
+    //   },
+    //   type: Object
+    // }
   },
   data() {
     return {
     };
   },
   created() {
-    let loadings = function () {
-      let player = this; let util = Player.util; let container = util.createDom('xg-loading', `
-        <img src="../../assets/img/home/play2x.png" style='width: 50px;height:50px'>
-        </img>
-        `, {}, 'xgplayer-loading')
-      player.root.appendChild(container)
-    }
-    Player.install('zxloading', loadings)
+    // let loadings = function () {
+    //   let player = this; let util = Player.util; let container = util.createDom('xg-loading', `
+    //     <img src="../../assets/img/home/play2x.png" style='width: 50px;height:50px'>
+    //     </img>
+    //     `, {}, 'xgplayer-loading')
+    //   player.root.appendChild(container)
+    // }
+    // Player.install('zxloading', loadings)
   },
   mounted() {
     let play = new Player({
@@ -65,11 +52,11 @@ export default {
         height: 200,
         poster: this.videoImg,
         cssFullscreen: true,
-        // closeVideoTouch: true,
+        closeVideoTouch: true,
         ignores: ['pc', 'play', 'volume', 'fullscreen', 'loading'],
-        preview: {
-          // uploadEl
-        },
+        // preview: {
+        //   uploadEl
+        // },
         zxloading: true
     })
     play

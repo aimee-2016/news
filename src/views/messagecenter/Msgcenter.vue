@@ -66,11 +66,12 @@
           >
             <no-content v-if="!list1.length&&!loading1"></no-content>
             <div class="msg-container van-hairline--top" v-else>
-              <div v-for="(item, index) in list1" :key="index" class="msg-item" @click="toDetail(item,'2')">
+              <div v-for="(item, index) in list1" :key="index" class="msg-item" @click="toCommentDetail(item.commentId,item.parentCommentId)">
                 <div class="content">
                   <div class="left">
                     <div class="head-img">
-                      <van-image round fit="cover" :src="item.headImgPath" />
+                        <i class="dot" v-if="item.readType.name === 'Unread'"></i>
+                        <van-image round fit="cover" :src="item.headImgPath" />
                     </div>
                     <div>
                       <div class="row-1">
@@ -95,7 +96,7 @@
       <van-tab title="私信" :badge="privateLetterCount">
         <no-content v-if="!list2.length"></no-content>
         <div class="msg-container van-hairline--top">
-          <div v-for="(item, index) in list2" :key="index" class="msg-item" @click="toChat(item,'2')">
+          <div v-for="(item, index) in list2" :key="index" class="msg-item" @click="toChat(item)">
             <div class="content">
               <div class="left">
                 <div class="head-img">
@@ -127,7 +128,8 @@ import {
   Tab,
   List,
   PullRefresh,
-  Image
+  Image,
+  Icon
 } from "vant"; 
 export default {
   name: 'svb',
@@ -157,7 +159,11 @@ export default {
     this.unreadData()
   },
   mounted() {
-
+    // if(this.$route.query.tab&&this.$route.query.tab===1) {
+    //   this.active = 1
+    // } else if(this.$route.query.tab&&this.$route.query.tab===2) {
+    //   this.active = 2
+    // }
   },
   methods: {
     unreadData() {
@@ -255,8 +261,14 @@ export default {
     toDetail(item,type) {
       this.$router.push({path: '/msgdetail/',query: {id:item.id,type:type,title:item.nickName}})
     },
+    toCommentDetail(id,parentId) {
+      this.$router.push({
+        path: "/articlecommentdetails/",
+        query: { articleId: id, id: parentId,type:'msg' },
+      });
+    },
     toChat(item) {
-      this.$router.push({path: '/chat/',query: {roomId:item.id,receiverMemberId:item.receiverMemberId,nickName:item.nickName}})
+      this.$router.push({path: '/chat/',query: {roomId:item.id,receiverMemberId:item.receiverMemberId,nickName:item.nickName,type:'msg'}})
     }
   },
   computed: {
@@ -271,6 +283,7 @@ export default {
     "van-list": List,
     "van-pull-refresh": PullRefresh,
     'van-image': Image,
+    "van-icon": Icon
   }
 }
 </script>
@@ -295,6 +308,16 @@ export default {
         margin-right: 12px;
         width: 43px;
         height: 43px;
+        .dot {
+          position: absolute;
+          top: 0;
+          right: 0;
+          z-index: 100;
+          width: 10px;
+          height: 10px;
+          background:#ee0a24;
+          border-radius: 50%;
+        }
         .van-image--round {
           width: 43px;
           height: 43px;

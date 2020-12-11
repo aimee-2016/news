@@ -28,7 +28,6 @@
             </div>
             <div
               class="tp-ct-lt"
-              @click="selectedItem = authorData;commentShow = true"
             >{{ authorData.content }}</div>
             <div class="time">
               <span>{{ authorData.commentDate }}</span>
@@ -42,7 +41,7 @@
                         modal.complaint = true
                       "
                 >举报</span>
-                <div class="message" @click="selectedItem = authorData;commemtType = 1;commentShow = true;">
+                <div class="message" @click="comment1()" >
                   <img src="../assets/img/home/information.png" />
                   <span>{{ authorData.replyCount }}</span>
                 </div>
@@ -97,7 +96,7 @@
                 <div class="tp-ct-wr">
                   <div
                     class="tp-ct-lt"
-                    @click="selectedItem = item;commemtType = 2;commentShow = true"
+                    @click="comment2(item)"
                   >
                   <span v-if="item.replyCommentMemberDto" class="ait">@{{item.replyCommentMemberDto.nickName}}:</span>
                   <span>{{ item.content }}</span>
@@ -129,7 +128,7 @@
         </div>
       </van-list>
     </div>
-    <div class="at-bottom">
+    <div class="at-bottom" v-if="$route.query.type!=='msg'">
       <span class="comment" @click="selectedItem = authorData;commemtType = 1;commentShow = true;">写评价</span>
       <div class="operate">
         <div class="icon-support">
@@ -416,7 +415,31 @@ export default {
         .catch(error => {
           this.$toast(error.message);
         });
-    }
+    },
+    comment1() {
+      if(this.$route.query.type!=='msg') {
+        this.selectedItem = this.authorData;
+        this.commemtType = 1;
+        this.commentShow = true; 
+      }
+    },
+    comment2(item) {
+      if(this.$route.query.type!=='msg') {
+        this.selectedItem = item;
+        this.commemtType = 2;
+        this.commentShow = true
+      }
+    },
+    // backType(){
+    //   if(this.$route.query.type&&this.$route.query.type==='msg') {
+    //     this.$router.push({
+    //       path: "/msgcenter/",
+    //       query: { tab: 1 },
+    //     });
+    //   } else {
+    //     this.$router.go(-1) 
+    //   }
+    // }
   },
   computed: {},
   watch: {},
