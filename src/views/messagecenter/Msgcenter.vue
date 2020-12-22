@@ -66,7 +66,7 @@
           >
             <no-content v-if="!list1.length&&!loading1"></no-content>
             <div class="msg-container van-hairline--top" v-else>
-              <div v-for="(item, index) in list1" :key="index" class="msg-item" @click="toCommentDetail(item.commentId,item.parentCommentId)">
+              <div v-for="(item, index) in list1" :key="index" class="msg-item" @click="toCommentDetail(item.commentId,item.parentCommentId,item.id)">
                 <div class="content">
                   <div class="left">
                     <div class="head-img">
@@ -261,11 +261,25 @@ export default {
     toDetail(item,type) {
       this.$router.push({path: '/msgdetail/',query: {id:item.id,type:type,title:item.nickName}})
     },
-    toCommentDetail(id,parentId) {
-      this.$router.push({
-        path: "/articlecommentdetails/",
-        query: { articleId: id, id: parentId,type:'msg' },
-      });
+    getDetailOne(id) {
+      return new Promise((resolve, reject) => {
+          this.$ajax
+            .post("api/front/message/findCommentMessageDetails.json", {
+              id: id
+            }).then(response=>{
+              resolve(response)
+            }).catch(error=>{
+              reject(error)
+            })
+        })
+    },
+    toCommentDetail(id,parentId,idOne) {
+      this.getDetailOne(idOne).then(res=>{
+        this.$router.push({
+          path: "/articlecommentdetails/",
+          query: { articleId: id, id: parentId,type:'msg' },
+        });
+      })
     },
     toChat(item) {
       this.$router.push({path: '/chat/',query: {roomId:item.id,receiverMemberId:item.receiverMemberId,nickName:item.nickName,type:'msg'}})

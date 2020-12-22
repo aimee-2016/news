@@ -16,7 +16,7 @@
         </div>
         <div class="user-info" v-if="topicDetails.title">
           <div class="left">
-            <div class="head-img">
+            <div class="head-img" @click="$router.push({path:'/myhome/',query:{id:topicDetails.author.id}})">
               <van-image round fit="cover" :src="topicDetails.author.headImgPath" />
               <img
                 src="../assets/img/home/icon-auth-1@2x.png"
@@ -27,7 +27,7 @@
             </div>
             <div>
               <span class="name">{{ topicDetails.author.nickName }}</span>
-              <div class="desc">
+              <div class="desc van-multi-ellipsis--l2">
                 <span>{{ topicDetails.pubDate | changeTime }}</span>
                 <span>{{ topicDetails.author.synopsis }}</span>
               </div>
@@ -630,6 +630,9 @@ export default {
           right: 0;
           width: 14px;
         }
+      }
+      .right {
+        flex-shrink:0;
       }
     }
     .tp-top-ed {

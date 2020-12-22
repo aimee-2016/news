@@ -19,7 +19,7 @@
       <div class="tp-top-content">
         <div class="user-info" v-if="topicDetails.title">
           <div class="left">
-            <div class="head-img">
+            <div class="head-img" @click="$router.push({path:'/myhome/',query:{id:topicDetails.author.id}})">
               <van-image
                 round
                 fit="cover"

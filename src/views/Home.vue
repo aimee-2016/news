@@ -392,19 +392,21 @@ export default {
         // }, 3000);
       }
       this.testPromise().then((res) => {
-        // console.log(res.data.content)
-        this.resultSize = res.data.number * res.data.size;
-        this.articleList.push(...res.data.content);
-        // let topList = res.data.content.filter(element => {
-        //   return element.whetherTop === true
-        // });
-        // this.topList.push(...topList)
-        // console.log(topList)
-        this.loading = false;
-        if (this.page >= res.data.totalPages) {
-          this.finished = true;
+        if(res.code==='200'&&res.data.content.length) {
+          // console.log(res.data.content)
+          this.resultSize = res.data.number * res.data.size;
+          this.articleList.push(...res.data.content);
+          // let topList = res.data.content.filter(element => {
+          //   return element.whetherTop === true
+          // });
+          // this.topList.push(...topList)
+          // console.log(topList)
+          this.loading = false;
+          if (this.page >= res.data.totalPages) {
+            this.finished = true;
+          }
+          this.page++;
         }
-        this.page++;
       });
     },
     onRefresh() {

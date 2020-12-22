@@ -320,12 +320,14 @@ export default {
         this.refreshing = false;
       }
       this.testPromise().then((res) => {
-        this.articleList.push(...res.data.content);
-        this.loading = false;
-        if (this.page >= res.data.totalPages) {
-          this.finished = true;
+        if(res.code==='200'&&res.data.content.length) {
+          this.articleList.push(...res.data.content);
+          this.loading = false;
+          if (this.page >= res.data.totalPages) {
+            this.finished = true;
+          }
+          this.page++;
         }
-        this.page++;
       });
     },
     onRefresh() {
