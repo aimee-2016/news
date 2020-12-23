@@ -164,7 +164,7 @@
                 <span class="desc">点击添加栏目</span>
               </div>
             </div>
-            <ul class="list list1">
+            <ul class="list">
               <li
                 v-for="(item, index) in recommendList"
                 :key="index"
@@ -445,6 +445,9 @@ export default {
       let endItem = this.recommendList.filter((item) => item.id === id);
       this.recommendList.splice(endIndex, 1);
       this.myList.push(endItem[0]);
+      if(this.isEdit) {
+        this.addColumn()
+      }
     },
     addColumn() {
       let ids = this.myList.map((item) => item.id);
@@ -710,9 +713,6 @@ export default {
   height: 100%;
   background: #fff;
   text-align: left;
-  .column {
-    padding: 0 15px;
-  }
   .head {
     text-align: center;
     margin: 17px 0 31px;
@@ -731,7 +731,7 @@ export default {
       display: flex;
       align-items: center;
       justify-content: space-between;
-
+      padding: 0 15px;
       margin-bottom: 23px;
       .text {
         .title {
@@ -764,8 +764,10 @@ export default {
     .list {
       display: flex;
       flex-wrap: wrap;
+      padding-left: 15px;
       li {
-        width: 77px;
+        padding: 0 10px;
+        min-width: 77px;
         height: 31px;
         margin-bottom: 15px;
         margin-right: 12px;
@@ -777,23 +779,14 @@ export default {
         font-weight: 500;
         text-align: center;
         color: #333333;
-        &:nth-of-type(4n + 4) {
-          margin-right: 0;
-        }
         .van-icon-plus {
           color: #f99307;
+          vertical-align: -2px;
         }
         .van-icon-cross {
           font-size: 8px;
           color: #666666;
         }
-      }
-    }
-    .list1 {
-      li {
-        padding: 9px 16px;
-        width: auto;
-        height: auto;
       }
     }
   }

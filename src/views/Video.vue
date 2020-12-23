@@ -59,7 +59,7 @@
             </div>
             <div class="operat">
               <div class="left">
-                <van-image round fit="cover" :src="item.author.headImgPath" />
+                <van-image round fit="cover" :src="item.author.headImgPath" @click="$router.push({path:'/myhome/',query:{id:item.author.id}})"/>
                 <span class="name">{{ item.author.nickName }}</span>
                 <span
                   class="focus"

@@ -107,7 +107,7 @@ export default {
     justify-content: space-between;
     align-items: center;
     padding: 10px 0;
-    border: solid 1px #f0f0f0;
+    border-bottom: solid 1px #f0f0f0;
   }
   .left {
     .name {
