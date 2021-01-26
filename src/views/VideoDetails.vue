@@ -12,7 +12,7 @@
       <jz-video
       :videoUrl="topicDetails.videoPath"
       :videoImg='topicDetails.videoImagePath'
-      :id='topicDetails.id.toString()'
+      :id="topicDetails.id+''"
       />
     </div>
     <div class="tp-top-box">

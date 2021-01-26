@@ -102,7 +102,7 @@
 </template>
 
 <script type="text/ecmascript-6">
-import { Cell, Button, Icon, Image, Switch,ShareSheet, } from "vant";
+import { Cell, Icon, Image, Switch,ShareSheet, } from "vant";
 export default {
   data() {
     return {
@@ -209,7 +209,7 @@ export default {
           url = 'home'
           break;
         case 'ViewVideo':
-          url = 'home'
+          url = 'video'
           break;
         case 'ReadingNews':
           url = 'home'
@@ -242,7 +242,6 @@ export default {
   },
   components: {
     "van-cell": Cell,
-    "van-button": Button,
     "van-icon": Icon,
     "van-image": Image,
     "van-switch": Switch,

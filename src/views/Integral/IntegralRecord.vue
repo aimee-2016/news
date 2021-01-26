@@ -55,7 +55,7 @@ export default {
             .post("api/front/member/findIntegralRecordPageByCondition.json", {
               page: this.page,
               size: this.size,
-              sort: 'integralDate'
+              sort: 'integralDate,desc'
             }).then(response=>{
               resolve(response)
             }).catch(error=>{
