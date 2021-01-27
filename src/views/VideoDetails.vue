@@ -9,11 +9,7 @@
           <van-icon name="ellipsis" @click="showShare = true" />
         </div>
       </div>
-      <jz-video
-      :videoUrl="topicDetails.videoPath"
-      :videoImg='topicDetails.videoImagePath'
-      :id="topicDetails.id+''"
-      />
+      <div id="mse"></div>
     </div>
     <div class="tp-top-box">
       <div class="tp-top-content">
@@ -248,7 +244,8 @@
 
 <script>
 import selfButton from "@/components/button";
-import video from "@/components/video/index";
+// import video from "@/components/video/index";
+import Player from "xgplayer";
 import {
   Image,
   List,
@@ -330,12 +327,15 @@ export default {
       commentShow: false,
       delAddnum: 0,
       rePage: 1,
-      showMore: true      
+      showMore: true,
+      videoPlay: null,   
     };
   },
   created() {
     this.queryTopicById();
     this.onLoadRe();
+  },
+  mounted() {
   },
   methods: {
     queryTopicById() {
@@ -345,6 +345,19 @@ export default {
         })
         .then((res) => {
           this.topicDetails = res.data;
+          this.$nextTick(()=>{
+            this.videoPlay = new Player({
+              id: 'mse',
+              url: this.topicDetails.videoPath,
+              width: '100%',
+              height: 200,
+              poster: this.topicDetails.videoImagePath,
+              cssFullscreen: true,
+              closeVideoTouch: true,
+              ignores: ['pc', 'play', 'volume', 'fullscreen', 'loading'],
+              zxloading: true
+            })
+          })
         });
     },
     getData() {
@@ -602,7 +615,21 @@ export default {
         path: "/articlecommentdetails/",
         query: { articleId: this.$route.query.id, id: id },
       });
-    }
+    },
+    lookVideo() {
+      this.$ajax
+        .post("api/front/articles/integralApproach.json", {
+          type: 'ViewVideo',
+          articleId: this.$route.query.id,
+        })
+        .then(() => {
+          
+        })
+        .catch(() => {
+          
+        });
+    },
+    
   },
   components: {
     "van-image": Image,
@@ -615,8 +642,15 @@ export default {
     "van-button": Button,
     "van-field": Field,
     "van-icon": Icon,
-    "jz-video": video,
+    // "jz-video": video,
   },
+  watch: {
+    'videoPlay.hasStart': function(val) {
+      if(val) {
+        this.lookVideo()
+      }
+    }
+  }
 };
 </script>
 
