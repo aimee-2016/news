@@ -21,7 +21,7 @@
               <img
                 src="../assets/img/home/icon-auth-1@2x.png"
                 alt
-                v-if="topicDetails.author.memberStatus.name === 'CertifyAdopt'"
+                v-if="topicDetails.author.memberStatus&&topicDetails.author.memberStatus.name === 'CertifyAdopt'"
                 class="auth"
               />
             </div>

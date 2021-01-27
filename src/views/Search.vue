@@ -90,7 +90,7 @@
                   <img
                     src="../assets/img/home/icon-auth@2x.png"
                     alt
-                    v-if="item.author.memberStatus.name === 'CertifyAdopt'"
+                    v-if="item.author.memberStatus&&item.author.memberStatus.name === 'CertifyAdopt'"
                     class="auth"
                   />
                   <span>{{ item.commentCount }}评论</span>
@@ -126,7 +126,7 @@
                   <img
                     src="../assets/img/home/icon-auth@2x.png"
                     alt
-                    v-if="item.author.memberStatus.name === 'CertifyAdopt'"
+                    v-if="item.author.memberStatus&&item.author.memberStatus.name === 'CertifyAdopt'"
                     class="auth"
                   />
                   <span>{{ item.commentCount }}评论</span>
@@ -156,7 +156,7 @@
                     <img
                       src="../assets/img/home/icon-auth-1@2x.png"
                       alt
-                      v-if="item.memberStatus.name === 'CertifyAdopt'"
+                      v-if="item.memberStatus&&item.memberStatus.name === 'CertifyAdopt'"
                       class="auth"
                     />
                   </div>
@@ -235,7 +235,7 @@
                 <img
                   src="../assets/img/home/icon-auth@2x.png"
                   alt
-                  v-if="item.author.memberStatus.name === 'CertifyAdopt'"
+                  v-if="item.author.memberStatus&&item.author.memberStatus.name === 'CertifyAdopt'"
                   class="auth"
                 />
                 <span>{{ item.commentCount }}评论</span>
@@ -266,7 +266,7 @@
                 <img
                   src="../assets/img/home/icon-auth@2x.png"
                   alt
-                  v-if="item.author.memberStatus.name === 'CertifyAdopt'"
+                  v-if="item.author.memberStatus&&item.author.memberStatus.name === 'CertifyAdopt'"
                   class="auth"
                 />
                 <span>{{ item.commentCount }}评论</span>
@@ -291,7 +291,7 @@
                   <img
                     src="../assets/img/home/icon-auth-1@2x.png"
                     alt
-                    v-if="item.memberStatus.name === 'CertifyAdopt'"
+                    v-if="item.memberStatus&&item.memberStatus.name === 'CertifyAdopt'"
                     class="auth"
                   />
                 </div>

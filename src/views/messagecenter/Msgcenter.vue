@@ -36,7 +36,7 @@
                       <div class="row-1">
                         <span class="name">{{ item.title }}</span>
                         <span class="time">{{
-                          item.pubDate | changeTime
+                          item.pubDate
                         }}</span>
                       </div>
                       <div class="desc">
@@ -77,7 +77,7 @@
                       <div class="row-1">
                         <span class="name">{{ item.nickName }}</span>
                         <span class="time">{{
-                          item.pubDate | changeTime
+                          item.pubDate
                         }}</span>
                       </div>
                       <div class="desc">
@@ -105,7 +105,7 @@
                 <div>
                   <div class="row-1">
                     <span class="name">{{ item.nickName }}</span>
-                    <span class="time">{{ item.pubDate | changeTime }}</span>
+                    <span class="time">{{ item.pubDate}}</span>
                   </div>
                   <div class="desc">
                     {{
@@ -198,6 +198,7 @@ export default {
         }
         this.getData().then(res=>{
           this.list.push(...res.data.content);
+          this.dataFomat(this.list)
           this.loading = false;
           if(this.page>=res.data.totalPages) {
             this.finished = true;
@@ -231,6 +232,7 @@ export default {
         }
         this.getData1().then(res=>{
           this.list1.push(...res.data.content);
+          this.dataFomat(this.list1)
           this.loading1 = false;
           if(this.page1>=res.data.totalPages) {
             this.finished1 = true;
@@ -256,6 +258,14 @@ export default {
     onLoad2() {
       this.getData2().then(res=>{
         this.list2 = res.data
+        this.dataFomat(this.list2)
+      })
+    },
+    dataFomat(list) {
+      list.forEach((item,index)=>{
+        let startIndex = item.pubDate.indexOf('-')+1
+        let endIndex = item.pubDate.indexOf(' ')
+        item.pubDate = item.pubDate.slice(startIndex,endIndex)
       })
     },
     toDetail(item,type) {
@@ -317,6 +327,10 @@ export default {
     .left {
       display: flex;
       align-items: center;
+      width: 100%;
+      >div:nth-of-type(2) {
+        flex-grow: 1;
+      }
       .head-img {
         position: relative;
         margin-right: 12px;

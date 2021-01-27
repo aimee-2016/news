@@ -48,7 +48,7 @@
         </div>
         <div class="row-2">
           <span class="name">{{ herInfo.nickName }}</span>
-          <span class="age" v-if="herInfo.sex || herInfo.age">
+          <span class="age" v-if="herInfo.sex || herInfo.age" :class="{blue:herInfo.sex.name!=='WoMan'}">
             <span v-if="herInfo.sex">{{ herInfo.sex.message }}</span>
             <span v-if="herInfo.age"> {{ herInfo.age }}</span>
           </span>
@@ -796,6 +796,9 @@ export default {
       font-family: PingFang SC Bold, PingFang SC Bold-Bold;
       font-weight: 700;
       color: #ffffff;
+    }
+    .blue {
+      background: #83ade5;
     }
   }
   .row-3 {

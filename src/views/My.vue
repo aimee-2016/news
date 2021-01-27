@@ -2,7 +2,7 @@
   <div>
     <div class="no-login" v-if="!userInfo">
       <div class="avatar"></div>
-      <van-button color="#F99307" plain round to="login" class="login-btn">登陆/注册</van-button>
+      <van-button color="#F99307" plain round to="/login/" class="login-btn">登陆/注册</van-button>
     </div>
     <div class="info-top" v-if="userInfo">
       <div class="back-home" @click="$router.push({path:'/myhome/',query:{id:userInfo.id}})">
@@ -12,16 +12,16 @@
       <div class="top" @click="$router.push({path:'/myhome/',query:{id:userInfo.id}})">
         <div class="avatar">
           <img :src="userInfo.headImgPath" alt />
-          <i class="auth" v-if="userInfo.memberStatus.name==='CertifyAdopt'"></i>
+          <i class="auth" v-if="userInfo.memberStatus&&userInfo.memberStatus.name==='CertifyAdopt'"></i>
         </div>
         <div class="text">
           <div class="name">{{userInfo.nickName}}</div>
           <div class="obtain">
             <!-- <span class="icon-tech tech-video"></span>
             <span class="icon-tech tech-article"></span>-->
-            <span class="icon-auth noauth" v-if="userInfo.memberStatus.name==='NotApplied'" @click="$router.push('/authapply/')"></span>
-            <span class="icon-auth authing" v-if="userInfo.memberStatus.name==='AssessmentPeriod'"></span>
-            <span class="icon-auth authed" v-if="userInfo.memberStatus.name==='CertifyAdopt'"></span>
+            <span class="icon-auth noauth" v-if="userInfo.memberStatus&&userInfo.memberStatus.name==='NotApplied'" @click="$router.push('/authapply/')"></span>
+            <span class="icon-auth authing" v-if="userInfo.memberStatus&&userInfo.memberStatus.name==='AssessmentPeriod'"></span>
+            <span class="icon-auth authed" v-if="userInfo.memberStatus&&userInfo.memberStatus.name==='CertifyAdopt'"></span>
           </div>
         </div>
       </div>
