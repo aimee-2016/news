@@ -279,6 +279,11 @@ const routes = [
     component: () => import('../views/release/Video.vue'),
   },
   {
+    path: '/qqlogin',
+    name: 'qqlogin',
+    component: () => import('../views/LoginQQ.vue'),
+  },
+  {
     path: '*',
     name: '404',
     component: () => import('../views/404.vue'),
@@ -314,7 +319,7 @@ const LOGIN_PAGE_NAME = 'login'
 router.beforeEach((to, from, next) => {
   const token = getToken()
   // next()
-  if (to.name == 'home' || to.name == 'articledetails' || to.name == 'articlecommentdetails' || to.name == 'video' || to.name == 'videodetails' || to.name == 'my' || to.name == 'topic' || to.name == 'topicdetails' || to.name == 'search' || to.name == 'aboutus' || to.name == 'useragreement') {
+  if (to.name == 'home' || to.name == 'articledetails' || to.name == 'articlecommentdetails' || to.name == 'video' || to.name == 'videodetails' || to.name == 'my' || to.name == 'topic' || to.name == 'topicdetails' || to.name == 'search' || to.name == 'aboutus' || to.name == 'useragreement'|| to.name == 'qqlogin') {
     next()
   } else if (!token && to.name !== LOGIN_PAGE_NAME) {
     // 未登录且要跳转的页面不是登录页

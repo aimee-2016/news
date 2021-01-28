@@ -33,7 +33,7 @@
         <div class="title">第三方登录</div>
         <div class="place">
           <span class="we-chat"></span>
-          <span class="qq"></span>
+          <span class="qq" @click="useqqlogin()"></span>
         </div>
       </div>
     </div>
@@ -333,6 +333,13 @@ export default {
         .catch(function(error) {
           Toast(error.message)
         });
+    },
+    useqqlogin(){//点击QQ登录
+    console.log(window.location.host)
+      QC.Login.showPopup({//打开QQ授权登录界面，授权成功后会重定向
+        appId:"101915463",
+        redirectURI:window.location.origin+"/qqlogin" //登录成功后会自动跳往该地址
+     });
     }
   },
   computed: {},

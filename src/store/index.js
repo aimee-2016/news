@@ -24,7 +24,7 @@ export default new Vuex.Store({
   },
   actions: {
     // 登录
-    handleLogin({ commit }, { userName, password, loginType, codeArea }) {
+    handleLogin({ commit }, { userName, password, loginType, codeArea, accessToken }) {
       return new Promise((resolve, reject) => {
         userName = userName.trim()
         let params = {}
@@ -35,11 +35,16 @@ export default new Vuex.Store({
             codeArea: codeArea,
             loginType: loginType
           }
-        } else {
+        } else if(loginType == 'SYSCODE') {
           params = {
             phone: userName,
             sysCode: password,
             codeArea: codeArea,
+            loginType: loginType
+          }
+        } else if(loginType == 'QQ') {
+          params = {
+            qqToken: accessToken,
             loginType: loginType
           }
         }
