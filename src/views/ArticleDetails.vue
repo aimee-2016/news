@@ -183,6 +183,9 @@
         <span @click="articleComment">发送</span>
       </div>
     </van-popup>
+    <van-overlay :show="modal.showImg" @click="modal.showImg=false" z-index="11" class-name="show-img-modal">
+      <img :src="imgSrc" alt="" class="show-img">
+    </van-overlay>
   </div>
 </template>
 
@@ -197,15 +200,18 @@ import {
   Cell,
   CellGroup,
   Button,
-  Field
+  Field,
+  Overlay
 } from "vant";
 export default {
   inject: ["reload"],
   data() {
     return {
       modal: {
-        complaint: false
+        complaint: false,
+        showImg: false,
       },
+      imgSrc:'',
       articleReportList: [
         { name: "淫秽色情", val: "Pornographic" },
         { name: "违法信息", val: "IllegalInformation" },
@@ -289,6 +295,10 @@ export default {
             this.$refs['at-content'].getElementsByTagName('img').forEach(img => {
               img.style.width = '100%';
               img.style.height = 'auto';
+              img.onclick=()=>{
+                this.imgSrc = img.getAttribute('src')
+                this.modal.showImg = true
+              }
             });
           })
         });
@@ -542,7 +552,8 @@ export default {
     "van-cell-group": CellGroup,
     "van-cell": Cell,
     "van-button": Button,
-    "van-field": Field
+    "van-field": Field,
+    "van-overlay": Overlay
   }
 };
 </script>
@@ -883,4 +894,14 @@ export default {
     color: #999;
   }
 }
+.show-img-modal {
+  background-color: #000;
+  .show-img {
+    position: absolute;
+    top: 50%;
+    transform:translateY(-50%);
+    width: 100%;
+  }
+}
+
 </style>
