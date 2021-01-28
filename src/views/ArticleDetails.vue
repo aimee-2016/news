@@ -140,7 +140,7 @@
           />
           <img src="../assets/img/home/icon-collection.png" @click="articleCollection()" v-else />
         </div>
-        <div class="icon-share" @click="showShare1=true">
+        <div class="icon-share" @click="showShare=true">
           <img src="../assets/img/home/icon-share.png" alt />
         </div>
       </div>
@@ -175,8 +175,7 @@
         </div>
       </div>
     </van-popup>
-    <van-share-sheet v-model="showShare" :options="options" title="分享到" />
-    <van-share-sheet v-model="showShare1" :options="options1" title="分享到" />
+    <van-share-sheet v-model="showShare" :options="options"  @select="onSelectShare" title="分享到" />
     <van-popup v-model="commentShow" position="bottom">
       <div class="comment-textarea">
         <van-field v-model="comment" rows="2" autosize label type="textarea" placeholder="写评价" />
@@ -232,7 +231,6 @@ export default {
       loading: false,
       finished: false,
       showShare: false,
-      showShare1: false,
       options: [
         [
           { name: "微信好友", icon: "wechat" },
@@ -248,28 +246,7 @@ export default {
         ],
         [
           { name: "微博", icon: "weibo" },
-          {
-            name: "系统分享",
-            icon: require("../assets/img/home/love@2x.png")
-          },
           { name: "复制链接", icon: "link" }
-        ]
-      ],
-      options1: [
-        [
-          { name: "微信好友", icon: "wechat" },
-          {
-            name: "微信朋友圈",
-            icon: require("../assets/img/home/friendscircle@2x.png")
-          },
-          { name: "QQ", icon: "qq" },
-          {
-            name: "QQ空间",
-            icon: require("../assets/img/home/qqzone@2x.png")
-          }
-        ],
-        [
-          { name: "微博", icon: "weibo" }
         ]
       ],
       comment: "",
@@ -542,6 +519,35 @@ export default {
       });
       this.reload();
     },
+    onSelectShare(option) {
+      console.log(option)
+      this.showShare = false;
+      switch (option.name) {
+        case '微信好友':
+          
+          break;
+        case '微信朋友圈':
+          
+          break;
+        case 'QQ':
+          
+          break;
+        case 'QQ空间':
+           window.open('http://connect.qq.com/widget/shareqq/index.html?url=' +
+                'http://www.xinruiyun.cn' + '&sharesource=qzone&title=' + '新睿云云服务器' + '&desc=' +
+                '便宜实惠的云服务器');
+          break;
+        case '微博':
+            window.open('http://service.weibo.com/share/share.php?url=http://www.xinruiyun.cn&title=' +
+                '新睿云 - 提供免费云服务器租用、便宜弹性云主机试用等云产品服务！' + '&pic=' + '' + '&searchPic=false');
+          break;
+        case '复制链接':
+          
+          break;
+        default:
+          break;
+      }
+    }
   },
   components: {
     "van-image": Image,
