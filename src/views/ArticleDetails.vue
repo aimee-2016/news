@@ -185,6 +185,7 @@
     <van-overlay :show="modal.showImg" @click="modal.showImg=false" z-index="11" class-name="show-img-modal">
       <img :src="imgSrc" alt="" class="show-img">
     </van-overlay>
+    <textarea v-model="hostUrl" ref="inputUrl" style="display:none"></textarea>
   </div>
 </template>
 
@@ -249,12 +250,14 @@ export default {
           { name: "复制链接", icon: "link" }
         ]
       ],
+      hostUrl: '',
       comment: "",
       commentShow: false,
       delAddnum: 0,
     };
   },
   created() {
+    this.hostUrl = window.location.href
     this.queryTopicById();
     this.getRecommendList();
   },
@@ -520,8 +523,8 @@ export default {
       this.reload();
     },
     onSelectShare(option) {
-      console.log(option)
       this.showShare = false;
+      // 1.分享到QQ空间接口：https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=你的网址&sharesource=qzone&title=你的分享标题&pics=你的分享图片&summary=你的分享描述信息 
       switch (option.name) {
         case '微信好友':
           
@@ -530,19 +533,19 @@ export default {
           
           break;
         case 'QQ':
-          
+          window.open('http://connect.qq.com/widget/shareqq/index.html?sharesource=qzone&title='+this.topicDetails.title+'&pics=&summary=&desc=&url='+window.location.href)
           break;
         case 'QQ空间':
-           window.open('http://connect.qq.com/widget/shareqq/index.html?url=' +
-                'http://www.xinruiyun.cn' + '&sharesource=qzone&title=' + '新睿云云服务器' + '&desc=' +
-                '便宜实惠的云服务器');
+          window.open('https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?title='+ this.topicDetails.title+'&sharesource=qzone&summary=&site=&pics=&url=' + window.location.href);
           break;
         case '微博':
-            window.open('http://service.weibo.com/share/share.php?url=http://www.xinruiyun.cn&title=' +
-                '新睿云 - 提供免费云服务器租用、便宜弹性云主机试用等云产品服务！' + '&pic=' + '' + '&searchPic=false');
+            window.open('http://service.weibo.com/share/share.php?title='+ this.topicDetails.title+'&url='+window.location.href);
+
           break;
         case '复制链接':
-          
+            this.$refs['inputUrl'].select()
+            document.execCommand("copy"); // 执行浏览器复制命令
+            this.$toast("复制成功")
           break;
         default:
           break;
